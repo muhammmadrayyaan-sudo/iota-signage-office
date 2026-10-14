@@ -474,9 +474,11 @@ body.started #start{display:none}
    ONE-TIME SETTING: change thomashaden66 below to your
    real GitHub username (keep the quotes). Nothing else here.
    ============================================================ */
-const SYNC = { owner: 'thomashaden66', repo: 'iota-signage-office', branch: 'data', file: 'signage-data.json' };
-/* For the ADMIN-OFFICE screen only: make a copy of this file, set this to true (and use another repo name above). */
-const SLIDES_ONLY = true;
+/* One file for BOTH screens. Any web address containing a word in OFFICE_WORDS is the office slideshow site. */
+const OFFICE_WORDS = ['iwadmin'];
+const IS_OFFICE_SITE = OFFICE_WORDS.some(w => location.hostname.indexOf(w) > -1) || /[?&]screen=office/.test(location.search);
+const SYNC = { owner: 'thomashaden66', repo: IS_OFFICE_SITE ? 'iota-signage-office' : 'iota-signage', branch: 'data', file: 'signage-data.json' };
+const SLIDES_ONLY = IS_OFFICE_SITE;
 if (!window.structuredClone) window.structuredClone = o => JSON.parse(JSON.stringify(o));
 window.addEventListener('error', e => { let b = document.getElementById('err'); if (!b) { b = document.createElement('div'); b.id = 'err'; b.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:999;background:#900;color:#fff;font:2.2vh monospace;padding:6px'; document.body.appendChild(b); } b.textContent = 'Error: ' + e.message + ' (line ' + e.lineno + ')'; });
 (() => {
