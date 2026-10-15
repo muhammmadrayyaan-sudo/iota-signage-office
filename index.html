@@ -424,7 +424,7 @@ body.started #start{display:none}
     <p class="hint"><b>Slideshow items:</b> add pictures (JPG/PNG, you can pick many at once, they play in file-name order) and/or MP4 videos (under 25 MB). Pictures work on every TV browser; videos may not. Ticked items play in the order shown. Nothing is overwritten. Click Publish to TV when done.</p>
     <div class="row"><label class="b primary">+ Add video or pictures<input type="file" accept="video/*,image/*" multiple id="videoFile" hidden></label><label><input type="checkbox" data-k="videoOn"> Play these in the slideshow</label></div>
     <div id="videoList"></div>
-    <div class="row"><label>Seconds per picture <input type="number" min="3" max="60" data-k="imageSec" style="width:70px"></label><label>Azan at prayer time <select data-k="azanMode"><option value="off">Off</option><option value="before">Azan, then announcement</option><option value="only">Azan only</option></select></label><label>Picture animation <select data-k="slideFx"><option value="curtain">Curtain opening</option><option value="zoom">Slow zoom</option><option value="slide">Slide in</option><option value="fade">Fade</option><option value="mix">Mix of all</option></select></label></div>
+    <div class="row"><label>Seconds per picture <input type="number" min="3" max="60" data-k="imageSec" style="width:70px"></label><label>Azan at prayer time <select data-k="azanMode"><option value="off">Off</option><option value="before">Azan, then announcement</option><option value="only">Azan only</option></select></label><label>Office screen shows <select data-k="officeMode"><option value="both">Timetable + slideshow</option><option value="slides">Slideshow only</option></select></label><label>Picture animation <select data-k="slideFx"><option value="curtain">Curtain opening</option><option value="zoom">Slow zoom</option><option value="slide">Slide in</option><option value="fade">Fade</option><option value="mix">Mix of all</option></select></label></div>
     <p class="hint"><b>Voice recordings (best quality):</b> upload one MP3 per prayer and language. Use “default” to cover every prayer.</p>
     <div class="row"><select id="audSel"><option value="default">default (all prayers)</option><option value="fajr">Fajr</option><option value="zuhr">Zuhr</option><option value="asr">Asr</option><option value="maghrib">Maghrib</option><option value="isha">Isha</option><option value="azan">Azan (all prayers)</option><option value="azan-fajr">Azan (Fajr only)</option></select><select id="audLang"><option value="en">English</option><option value="ur">Urdu</option></select><label class="b s">Upload MP3<input type="file" accept="audio/*" id="audFile" hidden></label></div>
     <div id="mediaStatus" class="hint"></div>
@@ -578,13 +578,14 @@ const DEFAULTS = {
   ttsText: 'Attention please. It is now time for {prayer} prayer. Please proceed for {prayer} prayer. {note}',
   ttsUr: 'توجہ فرمائیں۔ {prayer} کی نماز کا وقت ہو گیا ہے۔ براہ کرم نماز کے لیے تشریف لے جائیں۔',
   urNames: { Fajr: 'فجر', Zuhr: 'ظہر', Asr: 'عصر', Maghrib: 'مغرب', Isha: 'عشاء' },
-  plans: {}, videoOn: false, videoV: 0, videos: [], azanMode: 'off', imageSec: 8, slideFx: 'curtain', audioV: 0,
+  plans: {}, videoOn: false, videoV: 0, videos: [], officeMode: 'both', azanMode: 'off', imageSec: 8, slideFx: 'curtain', audioV: 0,
   voiceName: 'auto', rate: 0.88, pitch: 1,
   audioNames: {}, imageName: '', oneOff: null, fired: {}
 };
 
 const ADMIN = /[?&]admin\b/.test(location.search);
-const OFFICE = SLIDES_ONLY && !ADMIN;
+let OFFICE = false;
+const calcOffice = () => { OFFICE = IS_OFFICE_SITE && !ADMIN && S.officeMode === 'slides'; };
 let S;
 function load() {
   let s = {};
@@ -665,7 +666,7 @@ function inkOn(c) {
 }
 let pvDate = null;
 const PLAN = () => (S.plans || {})[pvDate || dateStr(new Date())] || null;
-const rawUrl = p => `https://raw.githubusercontent.com/${SYNC.owner}/${SYNC.repo}/${SYNC.branch}/${p}`;
+const rawUrl = (p, repo) => `https://raw.githubusercontent.com/${SYNC.owner}/${repo || SYNC.repo}/${SYNC.branch}/${p}`;
 const ROWS = () => { const p = PLAN(); return p && Array.isArray(p.rows) ? p.rows : S.rows; };
 function legendItems() {
   const used = new Map();
@@ -747,7 +748,7 @@ function startPager() {
 }
 async function renderImage() {
   const pp = PLAN(), box = $('#imgWrap');
-  if (pp && pp.image && !(pp.rows && pp.rows.length)) { box.innerHTML = `<img src="${rawUrl(pp.image)}?v=${pp.v || 0}" alt="Master plan">`; return; }
+  if (pp && pp.image && !(pp.rows && pp.rows.length)) { box.innerHTML = `<img src="${rawUrl(pp.image, pp.repo)}?v=${pp.v || 0}" alt="Master plan">`; return; }
   const blob = await idbGet('image');
   if (imgUrl) { URL.revokeObjectURL(imgUrl); imgUrl = null; }
   if (blob) { imgUrl = URL.createObjectURL(blob); box.innerHTML = `<img src="${imgUrl}" alt="Master plan">`; }
@@ -1421,15 +1422,28 @@ function wireUI() {
 /* ================= cloud sync / master plans / TV mode ================= */
 const API = `https://api.github.com/repos/${SYNC.owner}/${SYNC.repo}/contents/${SYNC.file}`;
 const LOCAL_ONLY = ['fired', 'oneOff', 'audioNames', 'imageName', 'mode_local'];
+const TT_KEYS = ['plans', 'rows', 'subjects', 'teachers', 'classColors', 'groups', 'floorsText', 'dayLabel', 'footerNote', 'title', 'prayers', 'ttsText', 'ttsUr', 'urNames'];
+async function pullStair() {   /* office site: take the timetable from the stairway site, so it is only uploaded once */
+  if (!IS_OFFICE_SITE || ADMIN || S.officeMode === 'slides') return;
+  try {
+    const r = await fetch(`https://api.github.com/repos/${SYNC.owner}/iota-signage/contents/${SYNC.file}?ref=${SYNC.branch}&t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw+json' }, cache: 'no-store' });
+    if (!r.ok) return; const d = await r.json(), keep = {};
+    TT_KEYS.forEach(k => { if (d[k] !== undefined) keep[k] = d[k]; });
+    Object.values(keep.plans || {}).forEach(p => { if (p.image) p.repo = 'iota-signage'; });
+    if (JSON.stringify(TT_KEYS.map(k => S[k])) === JSON.stringify(TT_KEYS.map(k => keep[k] !== undefined ? keep[k] : S[k]))) return;
+    Object.assign(S, keep); save(); buildSecMap(); renderStage(); renderPrayerStrip(); scheduleInter();
+  } catch (e) {}
+}
 async function pull() {
   if (/YOUR-GITHUB/.test(SYNC.owner)) return false;
   try {
     const r = await fetch(`${API}?ref=${SYNC.branch}&t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw+json' }, cache: 'no-store' });
     if (!r.ok) return false;
     const d = await r.json(); LOCAL_ONLY.forEach(k => delete d[k]);
+    if (IS_OFFICE_SITE && (d.officeMode || S.officeMode) !== 'slides') TT_KEYS.forEach(k => delete d[k]);
     const keep = { fired: S.fired, oneOff: S.oneOff, audioNames: S.audioNames, imageName: S.imageName };
     if (JSON.stringify(Object.assign({}, S, keep)) === JSON.stringify(Object.assign({}, S, d, keep))) return true;
-    Object.assign(S, d, keep); S.ver = DEFAULTS.ver; save(); buildSecMap(); renderStage(); renderPrayerStrip(); scheduleInter(); prefetchAudio(); return true;
+    Object.assign(S, d, keep); S.ver = DEFAULTS.ver; save(); calcOffice(); buildSecMap(); renderStage(); renderPrayerStrip(); scheduleInter(); prefetchAudio(); return true;
   } catch (e) { return false; }
 }
 async function publish() {
@@ -1626,6 +1640,7 @@ function startTV() { goFull(); enableAudio(true); requestWake(); document.body.c
 
 /* ================= start ================= */
 const hadSaved = load();
+calcOffice();
 buildSecMap();
 initBindings(); wireUI(); wireSync(); wireMedia(); refreshAll();
 if (/[?&]diag\b/.test(location.search)) runDiag();
@@ -1633,7 +1648,8 @@ if (ADMIN) document.body.classList.add('started');
 else {
   document.body.classList.add('tv');
   ['keydown', 'click', 'pointerdown'].forEach(ev => addEventListener(ev, () => { if (!document.body.classList.contains('started')) startTV(); else if (!document.fullscreenElement) goFull(); }));
-  goFull(); pull().then(prefetchAudio); setInterval(pull, 120000);
+  const syncAll = async () => { await pull(); await pullStair(); };
+  goFull(); syncAll().then(prefetchAudio); setInterval(syncAll, 120000);
 }
 renderLogo(); renderImage(); requestWake();
 tick(); setInterval(tick, 1000); scheduleInter();
