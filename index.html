@@ -139,7 +139,7 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 #inter{position:fixed;top:0;right:0;bottom:0;left:0;z-index:20;background:#fff;display:none;opacity:0;transition:opacity 1s ease;overflow:hidden}
 #inter.show{display:block}
 #inter.vis{opacity:1}
-#inter::before,#inter::after{content:"";position:absolute;left:0;right:0;height:3.5vh;background:var(--red)}
+#inter{--bar:3.5vh}#inter.nobar{--bar:0vh}#inter.nobar::before,#inter.nobar::after{display:none}#inter::before,#inter::after{content:"";position:absolute;left:0;right:0;height:var(--bar);background:var(--red)}#inter::after{z-index:5}
 #inter::before{top:0}
 #inter::after{bottom:0}
 .slide{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 1s ease;padding:6vh 4vw}
@@ -208,9 +208,19 @@ body.tv{cursor:none}
 #start{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100;background:#fff;color:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3vh;font:700 6vh var(--display);text-align:center}
 #start small{font:600 3vh var(--body);color:#555}
 body.started #start{display:none}
-.fx{position:absolute;top:0;right:0;bottom:0;left:0;overflow:hidden;background:#000}
+.fx{position:absolute;top:0;right:0;bottom:var(--bar,3.5vh);left:0;overflow:hidden;background:#000}
+.slide > video.vid{bottom:var(--bar,3.5vh);height:calc(100% - var(--bar,3.5vh))}
 .fx .vid{transition:transform 10s ease-out}
-.slide.on .fx-zoom .vid{transform:scale(1.09)}
+
+
+
+.fx-up .vid{transform:translateY(12%);opacity:0}
+.slide.on .fx-up .vid{transform:none;opacity:1;transition:transform 1.1s cubic-bezier(.2,.8,.2,1),opacity .9s}
+.fx-wipe .vid{clip-path:inset(0 100% 0 0);transition:clip-path 1.4s cubic-bezier(.7,0,.2,1)}
+.slide.on .fx-wipe .vid{clip-path:inset(0 0 0 0)}
+.fx .bg{position:absolute;top:-6%;left:-6%;width:112%;height:112%;object-fit:cover;filter:blur(3.2vh) brightness(.78)}
+.slide .fx .vid{background:transparent}
+.slide .fit-cover .vid{object-fit:cover}.slide .fit-stretch .vid{object-fit:fill}.slide .fit-contain .vid,.slide .fit-blur .vid{object-fit:contain}
 .fx-slide .vid{transform:translateX(9%);opacity:0}
 .slide.on .fx-slide .vid{transform:none;opacity:1;transition:transform 1.1s cubic-bezier(.2,.8,.2,1),opacity .9s}
 .fx .cur{position:absolute;top:0;bottom:0;width:51%;z-index:2;background:linear-gradient(90deg,#6d0000,#c10000 55%,#7d0000);box-shadow:0 0 5vh rgba(0,0,0,.7);transition:transform 1.5s cubic-bezier(.75,0,.2,1) .3s}
@@ -218,8 +228,24 @@ body.started #start{display:none}
 .fx .cur.r{right:0;border-left:.7vh solid #d9b44a;transform:translateX(0)}
 .slide.on .fx .cur.l{transform:translateX(-104%)}
 .slide.on .fx .cur.r{transform:translateX(104%)}
-.slide.on .fx-curtain .vid{transform:scale(1.05)}
+.slide.on .fx-curtain .vid{transform:none}
 .slide .vid{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:contain;background:#000}
+
+/* ---- v2 animations: nothing is scaled beyond the frame, so nothing is cropped ---- */
+.fx-zoom .vid{transform:scale(.93);opacity:0}
+.slide.on .fx-zoom .vid{transform:none;opacity:1;transition:transform 2.2s cubic-bezier(.2,.8,.2,1),opacity 1s}
+.fx-zoomout .vid{transform:none}
+.slide.on .fx-zoomout .vid{transform:scale(.97);transition:transform 10s ease-out}
+.fx-left .vid{transform:translateX(-9%);opacity:0}
+.slide.on .fx-left .vid{transform:none;opacity:1;transition:transform 1.1s cubic-bezier(.2,.8,.2,1),opacity .9s}
+.fx-down .vid{transform:translateY(-12%);opacity:0}
+.slide.on .fx-down .vid{transform:none;opacity:1;transition:transform 1.1s cubic-bezier(.2,.8,.2,1),opacity .9s}
+.fx-flip{perspective:120vh}
+.fx-flip .vid{transform:rotateY(-70deg);opacity:0}
+.slide.on .fx-flip .vid{transform:none;opacity:1;transition:transform 1.3s cubic-bezier(.2,.8,.2,1),opacity .9s}
+.slide > video.vfit-cover{object-fit:cover}
+.slide > video.vfit-stretch{object-fit:fill}
+.slide > video.vfit-contain{object-fit:contain}
 </style>
 </head>
 <body>
@@ -370,6 +396,7 @@ body.started #start{display:none}
       <label><span><input type="checkbox" data-k="interOn"> Show intermission slides</span></label>
       <label>Show every (seconds) <input type="number" min="20" max="1800" step="10" data-k="interEvery"></label>
       <label><span><input type="checkbox" data-k="interLogo"> Include the logo slide</span></label>
+      <label><span><input type="checkbox" data-k="interBar"> Show red line at the bottom of slides</span></label>
       <label>Logo slide length (seconds) <input type="number" min="3" max="60" data-k="interLogoSec"></label>
       <label>Each notice length (seconds) <input type="number" min="3" max="60" data-k="interNoticeSec"></label>
     </div>
@@ -424,7 +451,7 @@ body.started #start{display:none}
     <p class="hint"><b>Slideshow items:</b> add pictures (JPG/PNG, you can pick many at once, they play in file-name order) and/or MP4 videos (under 25 MB). Pictures work on every TV browser; videos may not. Ticked items play in the order shown. Nothing is overwritten. Click Publish to TV when done.</p>
     <div class="row"><label class="b primary">+ Add video or pictures<input type="file" accept="video/*,image/*" multiple id="videoFile" hidden></label><label><input type="checkbox" data-k="videoOn"> Play these in the slideshow</label></div>
     <div id="videoList"></div>
-    <div class="row"><label>Seconds per picture <input type="number" min="3" max="60" data-k="imageSec" style="width:70px"></label><label>Azan at prayer time <select data-k="azanMode"><option value="off">Off</option><option value="before">Azan, then announcement</option><option value="only">Azan only</option></select></label><label>Office screen shows <select data-k="officeMode"><option value="both">Timetable + slideshow</option><option value="slides">Slideshow only</option></select></label><label>Picture animation <select data-k="slideFx"><option value="curtain">Curtain opening</option><option value="zoom">Slow zoom</option><option value="slide">Slide in</option><option value="fade">Fade</option><option value="mix">Mix of all</option></select></label></div>
+    <div class="row"><label>Seconds per picture <input type="number" min="3" max="60" data-k="imageSec" style="width:70px"></label><label>Azan at prayer time <select data-k="azanMode"><option value="off">Off</option><option value="before">Azan, then announcement</option><option value="only">Azan only</option></select></label><label>Office screen shows <select data-k="officeMode"><option value="both">Timetable + slideshow</option><option value="slides">Slideshow only</option></select></label><label>Default animation <select data-k="slideFx"><option value="curtain">Curtain opening</option><option value="zoom">Zoom in</option><option value="zoomout">Zoom out</option><option value="slide">Slide from right</option><option value="up">Slide up</option><option value="wipe">Wipe</option><option value="fade">Fade</option><option value="left">Slide from left</option><option value="down">Slide down</option><option value="flip">Flip</option><option value="mix">Mix of all</option></select></label><label>Picture fit <select data-k="picFit"><option value="cover">Fill the whole screen (crops edges a little)</option><option value="stretch">Stretch to fill (no crop, may look squashed)</option><option value="blur">Fit whole picture, blurred sides</option><option value="contain">Fit whole picture, black bars</option></select></label></div>
     <p class="hint"><b>Voice recordings (best quality):</b> upload one MP3 per prayer and language. Use “default” to cover every prayer.</p>
     <div class="row"><select id="audSel"><option value="default">default (all prayers)</option><option value="fajr">Fajr</option><option value="zuhr">Zuhr</option><option value="asr">Asr</option><option value="maghrib">Maghrib</option><option value="isha">Isha</option><option value="azan">Azan (all prayers)</option><option value="azan-fajr">Azan (Fajr only)</option></select><select id="audLang"><option value="en">English</option><option value="ur">Urdu</option></select><label class="b s">Upload MP3<input type="file" accept="audio/*" id="audFile" hidden></label></div>
     <div id="mediaStatus" class="hint"></div>
@@ -570,7 +597,7 @@ const DEFAULTS = {
     { id: 'isha',    name: 'Isha',    time: '20:35', enabled: true,  note: 'Jamat: Staff 8:35 PM, Teacher 9:05 PM – Terrace Area' }
   ],
   repeats: 4, gap: 3, minDisplay: 30, volume: 1, boost: 2, chime: true, blink: 'normal',
-  interOn: true, interEvery: 120, interLogo: true, interLogoSec: 7, interNoticeSec: 9,
+  interOn: true, interBar: true, interEvery: 120, interLogo: true, interLogoSec: 7, interNoticeSec: 9,
   notices: [
     { on: true, title: 'Fee Reminder', text: 'Monthly fee vouchers are due by the 10th of every month.' },
     { on: true, title: 'Reminder', text: 'Please switch off mobile phones during class.' }
@@ -578,7 +605,7 @@ const DEFAULTS = {
   ttsText: 'Attention please. It is now time for {prayer} prayer. Please proceed for {prayer} prayer. {note}',
   ttsUr: 'توجہ فرمائیں۔ {prayer} کی نماز کا وقت ہو گیا ہے۔ براہ کرم نماز کے لیے تشریف لے جائیں۔',
   urNames: { Fajr: 'فجر', Zuhr: 'ظہر', Asr: 'عصر', Maghrib: 'مغرب', Isha: 'عشاء' },
-  plans: {}, videoOn: false, videoV: 0, videos: [], officeMode: 'both', azanMode: 'off', imageSec: 8, slideFx: 'curtain', audioV: 0,
+  plans: {}, videoOn: false, videoV: 0, videos: [], officeMode: 'both', azanMode: 'off', imageSec: 8, slideFx: 'curtain', picFit: 'blur', audioV: 0,
   voiceName: 'auto', rate: 0.88, pitch: 1,
   audioNames: {}, imageName: '', oneOff: null, fired: {}
 };
@@ -1060,12 +1087,12 @@ function logoSlideHtml() {
 function buildSlides() {
   const out = [];
   if (S.interLogo) out.push({ html: logoSlideHtml(), sec: S.interLogoSec });
-  const FX = ['curtain', 'zoom', 'slide', 'fade'];
+  const FX = ['curtain', 'zoom', 'zoomout', 'slide', 'left', 'up', 'down', 'wipe', 'flip', 'fade'];
   if (S.videoOn) (S.videos || []).filter(v => v.on).forEach((v, i) => {
-    const fx = S.slideFx === 'mix' ? FX[i % 4] : (S.slideFx || 'curtain');
+    const pick = v.fx || S.slideFx || 'curtain', fx = pick === 'mix' ? FX[i % FX.length] : pick, fit = v.fit || S.picFit || 'blur', u = `${rawUrl(v.file)}?v=${v.v || 0}`;
     out.push(v.type === 'image'
-      ? { sec: S.imageSec || 8, html: `<div class="fx fx-${fx}"><img class="vid" src="${rawUrl(v.file)}?v=${v.v || 0}" alt="">${fx === 'curtain' ? '<i class="cur l"></i><i class="cur r"></i>' : ''}</div>` }
-      : { video: true, sec: 45, html: `<video class="vid" playsinline preload="auto" src="${rawUrl(v.file)}?v=${v.v || 0}"></video>` });
+      ? { sec: v.sec || S.imageSec || 8, html: `<div class="fx fx-${fx} fit-${fit}">${(fit === 'blur' || fit === 'cover') ? `<img class="bg" src="${u}" alt="">` : ''}<img class="vid" src="${u}" alt="">${fx === 'curtain' ? '<i class="cur l"></i><i class="cur r"></i>' : ''}</div>` }
+      : { video: true, sec: 45, html: `<video class="vid vfit-${fit === 'blur' ? 'contain' : fit}" playsinline preload="auto" src="${u}"></video>` });
   });
   const brand = $('#brand').innerHTML;
   (S.notices || []).filter(n => n.on && ((n.title || '').trim() || (n.text || '').trim())).forEach(n =>
@@ -1087,6 +1114,7 @@ async function runInter(force) {
   const o = $('#inter'), box = $('#interBody');
   box.innerHTML = slides.map(s => `<div class="slide">${s.html}</div>`).join('');
   const els = $$('.slide', box);
+  o.classList.toggle('nobar', S.interBar === false);
   o.classList.add('show');
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   o.classList.add('vis');
@@ -1570,9 +1598,11 @@ async function ghDelete(path) {
     return d.ok;
   } catch (e) { return false; }
 }
+const FX_OPTS = [['', 'Default animation'], ['curtain', 'Curtain'], ['zoom', 'Zoom in'], ['zoomout', 'Zoom out'], ['slide', 'Slide from right'], ['left', 'Slide from left'], ['up', 'Slide up'], ['down', 'Slide down'], ['wipe', 'Wipe'], ['flip', 'Flip'], ['fade', 'Fade']];
+const FIT_OPTS = [['', 'Default fit'], ['cover', 'Fill screen (crop)'], ['stretch', 'Stretch to fill'], ['blur', 'Fit + blurred sides'], ['contain', 'Fit + black bars']];
 function renderVideos() {
   const L = S.videos || [];
-  $('#videoList').innerHTML = L.length ? L.map((v, i) => `<div class="row"><label><input type="checkbox" data-vi="${i}" data-a="on" ${v.on ? 'checked' : ''}> <input data-vi="${i}" data-a="name" value="${esc(v.name)}" style="min-width:200px"> ${v.type === 'image' ? '🖼' : '🎬'}</label><button class="b s" data-vi="${i}" data-a="up">↑</button><button class="b s" data-vi="${i}" data-a="down">↓</button><button class="b s" data-vi="${i}" data-a="rm">Remove</button></div>`).join('') : '<p class="hint">No videos yet.</p>';
+  $('#videoList').innerHTML = L.length ? L.map((v, i) => `<div class="row"><label><input type="checkbox" data-vi="${i}" data-a="on" ${v.on ? 'checked' : ''}> <input data-vi="${i}" data-a="name" value="${esc(v.name)}" style="min-width:180px"> ${v.type === 'image' ? '🖼' : '🎬'}</label>${v.type === 'image' ? ` <select data-vi="${i}" data-a="fx">${FX_OPTS.map(o => `<option value="${o[0]}" ${(v.fx || '') === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select> <input type="number" min="3" max="60" data-vi="${i}" data-a="sec" value="${v.sec || ''}" placeholder="sec" title="Seconds on screen (empty = default)" style="width:60px">` : ''} <select data-vi="${i}" data-a="fit">${FIT_OPTS.filter(o => v.type === 'image' || o[0] !== 'blur').map(o => `<option value="${o[0]}" ${(v.fit || '') === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select><button class="b s" data-vi="${i}" data-a="up">↑</button><button class="b s" data-vi="${i}" data-a="down">↓</button><button class="b s" data-vi="${i}" data-a="rm">Remove</button></div>`).join('') : '<p class="hint">No videos yet.</p>';
 }
 async function readPlanAI(blob, key) {
   const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
@@ -1628,7 +1658,7 @@ function wireMedia() {
     } else return;
     save(); renderVideos();
   };
-  $('#videoList').onchange = e => { const i = +e.target.dataset.vi, a = e.target.dataset.a, v = (S.videos || [])[i]; if (!v) return; if (a === 'on') v.on = e.target.checked; if (a === 'name') v.name = e.target.value; save(); };
+  $('#videoList').onchange = e => { const i = +e.target.dataset.vi, a = e.target.dataset.a, v = (S.videos || [])[i]; if (!v) return; if (a === 'on') v.on = e.target.checked; if (a === 'name') v.name = e.target.value; if (a === 'fx') v.fx = e.target.value; if (a === 'fit') v.fit = e.target.value; if (a === 'sec') v.sec = +e.target.value || 0; save(); };
   renderVideos();
   $('#audFile').onchange = async e => {
     const f = e.target.files[0], st = $('#mediaStatus'), id = $('#audSel').value, lg = $('#audLang').value; e.target.value = ''; if (!f) return;
