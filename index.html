@@ -1422,12 +1422,26 @@ function wireUI() {
 /* ================= cloud sync / master plans / TV mode ================= */
 const API = `https://api.github.com/repos/${SYNC.owner}/${SYNC.repo}/contents/${SYNC.file}`;
 const LOCAL_ONLY = ['fired', 'oneOff', 'audioNames', 'imageName', 'mode_local'];
+async function fetchData(repo) {
+  const t = Math.floor(Date.now() / 60000);
+  try { const r = await fetch(`https://raw.githubusercontent.com/${SYNC.owner}/${repo}/${SYNC.branch}/${SYNC.file}?t=${t}`, { cache: 'no-store' }); if (r.ok) return await r.json(); } catch (e) {}
+  try { const r = await fetch(`https://api.github.com/repos/${SYNC.owner}/${repo}/contents/${SYNC.file}?ref=${SYNC.branch}&t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw+json' }, cache: 'no-store' }); if (r.ok) return await r.json(); } catch (e) {}
+  return null;
+}
+let lastOk = 'never';
+function stamp(ok) {
+  if (ADMIN) return;
+  const hm = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  let e = document.getElementById('syncStamp');
+  if (!e) { e = document.createElement('div'); e.id = 'syncStamp'; e.style.cssText = 'position:fixed;right:6px;bottom:3px;z-index:60;font:1.3vh sans-serif;color:#666;opacity:.6;pointer-events:none'; document.body.appendChild(e); }
+  if (ok) lastOk = hm;
+  e.textContent = ok ? 'Synced ' + hm : 'SYNC FAILED (last OK ' + lastOk + ')';
+}
 const TT_KEYS = ['plans', 'rows', 'subjects', 'teachers', 'classColors', 'groups', 'floorsText', 'dayLabel', 'footerNote', 'title', 'prayers', 'ttsText', 'ttsUr', 'urNames'];
 async function pullStair() {   /* office site: take the timetable from the stairway site, so it is only uploaded once */
   if (!IS_OFFICE_SITE || ADMIN || S.officeMode === 'slides') return;
   try {
-    const r = await fetch(`https://api.github.com/repos/${SYNC.owner}/iota-signage/contents/${SYNC.file}?ref=${SYNC.branch}&t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw+json' }, cache: 'no-store' });
-    if (!r.ok) return; const d = await r.json(), keep = {};
+    const d = await fetchData('iota-signage'); if (!d) return; const keep = {};
     TT_KEYS.forEach(k => { if (d[k] !== undefined) keep[k] = d[k]; });
     Object.values(keep.plans || {}).forEach(p => { if (p.image) p.repo = 'iota-signage'; });
     if (JSON.stringify(TT_KEYS.map(k => S[k])) === JSON.stringify(TT_KEYS.map(k => keep[k] !== undefined ? keep[k] : S[k]))) return;
@@ -1437,9 +1451,8 @@ async function pullStair() {   /* office site: take the timetable from the stair
 async function pull() {
   if (/YOUR-GITHUB/.test(SYNC.owner)) return false;
   try {
-    const r = await fetch(`${API}?ref=${SYNC.branch}&t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw+json' }, cache: 'no-store' });
-    if (!r.ok) return false;
-    const d = await r.json(); LOCAL_ONLY.forEach(k => delete d[k]);
+    const d = await fetchData(SYNC.repo); if (!d) { stamp(false); return false; } stamp(true);
+    LOCAL_ONLY.forEach(k => delete d[k]);
     if (IS_OFFICE_SITE && (d.officeMode || S.officeMode) !== 'slides') TT_KEYS.forEach(k => delete d[k]);
     const keep = { fired: S.fired, oneOff: S.oneOff, audioNames: S.audioNames, imageName: S.imageName };
     if (JSON.stringify(Object.assign({}, S, keep)) === JSON.stringify(Object.assign({}, S, d, keep))) return true;
@@ -1649,7 +1662,7 @@ else {
   document.body.classList.add('tv');
   ['keydown', 'click', 'pointerdown'].forEach(ev => addEventListener(ev, () => { if (!document.body.classList.contains('started')) startTV(); else if (!document.fullscreenElement) goFull(); }));
   const syncAll = async () => { await pull(); await pullStair(); };
-  goFull(); syncAll().then(prefetchAudio); setInterval(syncAll, 120000);
+  goFull(); syncAll().then(prefetchAudio); setInterval(syncAll, 90000);
 }
 renderLogo(); renderImage(); requestWake();
 tick(); setInterval(tick, 1000); scheduleInter();
