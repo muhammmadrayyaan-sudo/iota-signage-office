@@ -575,8 +575,8 @@ const DEFAULTS = {
     R('8:00-9:00', '', 'A2', 'B', 'R6', 'ZA'),
     BRK('9:00-9:30', 'Isha Break — Jamat: Staff 8:35 PM, Teacher 9:05 PM, Terrace Area')
   ],
-  subjects: { M: 'Mathematics', P: 'Physics', C: 'Chemistry', B: 'Biology', E: 'English', CS: 'Computer Science', 'U/I': 'Urdu / Islamiyat' },
-  teachers: { ZA: 'Zuhair Ahmed', HZ: 'Hassan Raza', ZD: 'M Zaid', ZK: 'Zaki Uddin Siddique', ZAB: 'Zain ul Abideen Baig', MAI: 'Muhammad Anas Iqbal', HM: 'Hammad', FS: 'Fazal Shahbaz', AR: 'Abbas Raza', HK: 'Hamza Khan' },
+  subjects: { M: 'Mathematics', P: 'Physics', C: 'Chemistry', B: 'Biology', E: 'English', CS: 'Computer Science', 'U/I': 'Urdu / Islamiyat', PST: 'Pakistan Studies' },
+  teachers: { ZA: 'Zuhair Ahmed', HZ: 'Hassan Raza', ZD: 'M Zaid', ZK: 'Zaki Uddin Siddiqui', ZAB: 'Zain ul Abideen Baig', MAI: 'Muhammad Anas Iqbal', HM: 'Hammad', FS: 'Fazal Shahbaz', AR: 'Abbas Raza', HK: 'Hamza Khan', SK: 'Salman Kosar', CH: 'Shahid Munawwar', AM: 'Adil Mahmood', HB: 'Haris Basin', MR: 'Mohammed Rahim' },
   classColors: {},
   ver: 5,
   groups: [
@@ -661,18 +661,15 @@ function parseT(s) {
   else if (h >= 1 && h <= 11) h += 12;
   return h * 60 + mi;
 }
-function inRange(t, nowM) {
-  const p = String(t || '').split(/\s*[-–—]\s*/);
-  if (p.length < 2) return false;
-  const a = parseT(p[0]), b = parseT(p[1]);
-  return !isNaN(a) && !isNaN(b) && nowM >= a && nowM < b;
-}
+function inRange(t, nowM) { const r = rangeOf(t); return !!r && nowM >= r[0] && nowM < r[1]; }
 const fmtRange = t => String(t || '').replace(/\s*[-–—]\s*/, ' – ');
 
 /* ================= class groups (class + boys/girls) ================= */
 let colorsDirty = false;
 let secMap = {};
+function ensureNames() { S.subjects = Object.assign({}, DEFAULTS.subjects, S.subjects || {}); S.teachers = Object.assign({}, DEFAULTS.teachers, S.teachers || {}); }
 function buildSecMap() {
+  ensureNames();
   secMap = {};
   (S.groups || []).forEach(g => String(g.sections || '').split(/[,\s]+/).filter(Boolean).forEach(x => { secMap[x.toUpperCase()] = g; }));
 }
@@ -794,7 +791,7 @@ function renderPrayerStrip(now) {
 }
 const rangeOf = t => {
   const p = String(t || '').split(/\s*[-–—]\s*/); if (p.length < 2) return null;
-  const a = parseT(p[0]), b = parseT(p[1]); return (isNaN(a) || isNaN(b)) ? null : [a, b];
+  let a = parseT(p[0]); const b = parseT(p[1]); if (!isNaN(a) && !isNaN(b) && a >= b && !/[ap]/i.test(p[0])) a -= 720; return (isNaN(a) || isNaN(b)) ? null : [a, b];
 };
 const roomKey = r => (r.room || '').trim().toUpperCase() || '—';
 function parseFloors() {
@@ -1491,6 +1488,7 @@ function mergeCloud(o, c) {
   const dm = S.delMedia || [], dp = S.delPlans || [], have = new Set((S.videos || []).map(v => v.id));
   (c.videos || []).forEach(v => { if (v.id !== 'legacy' && !have.has(v.id) && !dm.includes(v.id)) (S.videos = S.videos || []).push(v); });
   Object.keys(c.plans || {}).forEach(k => { if (!(S.plans || {})[k] && !dp.includes(k)) (S.plans = S.plans || {})[k] = c.plans[k]; });
+  S.subjects = Object.assign({}, c.subjects || {}, S.subjects || {}); S.teachers = Object.assign({}, c.teachers || {}, S.teachers || {}); o.subjects = S.subjects; o.teachers = S.teachers;
   delete S.videoV; save(); o.videos = S.videos; o.plans = S.plans; o.videoOn = S.videoOn; o.delMedia = S.delMedia; o.delPlans = S.delPlans; delete o.videoV;
   renderPlans(); renderVideos();
 }
