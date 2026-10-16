@@ -575,8 +575,8 @@ const DEFAULTS = {
     R('8:00-9:00', '', 'A2', 'B', 'R6', 'ZA'),
     BRK('9:00-9:30', 'Isha Break — Jamat: Staff 8:35 PM, Teacher 9:05 PM, Terrace Area')
   ],
-  subjects: { M: 'Mathematics', P: 'Physics', C: 'Chemistry', B: 'Biology', E: 'English', CS: 'Computer Science', 'U/I': 'Urdu / Islamiyat', PST: 'Pakistan Studies' },
-  teachers: { ZA: 'Zuhair Ahmed', HZ: 'Hassan Raza', ZD: 'M Zaid', ZK: 'Zaki Uddin Siddiqui', ZAB: 'Zain ul Abideen Baig', MAI: 'Muhammad Anas Iqbal', HM: 'Hammad', FS: 'Fazal Shahbaz', AR: 'Abbas Raza', HK: 'Hamza Khan', SK: 'Salman Kosar', CH: 'Shahid Munawwar', AM: 'Adil Mahmood', HB: 'Haris Basin', MR: 'Mohammed Rahim' },
+  subjects: { M: 'Mathematics', P: 'Physics', C: 'Chemistry', B: 'Biology', E: 'English', CS: 'Computer Science', 'U/I': 'Urdu / Islamiyat', PST: 'Pakistan Studies', 'U/PST': 'Urdu / Pakistan Studies' },
+  teachers: { ZA: 'Zuhair Ahmed', HZ: 'Hassan Raza', ZD: 'M Zaid', ZK: 'Zakiuddin Siddique', ZAB: 'Zain ul Abideen Baig', MAI: 'Muhammad Anas Iqbal', HM: 'Hammad', FS: 'Fazal Shahbaz', AR: 'Abbas Raza', HK: 'Hamza Khan', SK: 'Salman Kausar', CH: 'Shahid Munawar', AM: 'Adeel Mahmood', HB: 'Haris Basim', MR: 'Muhammad Raheel' },
   classColors: {},
   ver: 5,
   groups: [
@@ -667,7 +667,7 @@ const fmtRange = t => String(t || '').replace(/\s*[-–—]\s*/, ' – ');
 /* ================= class groups (class + boys/girls) ================= */
 let colorsDirty = false;
 let secMap = {};
-function ensureNames() { S.subjects = Object.assign({}, DEFAULTS.subjects, S.subjects || {}); S.teachers = Object.assign({}, DEFAULTS.teachers, S.teachers || {}); }
+function ensureNames() { if (S.namesVer !== 3) { S.subjects = Object.assign({}, S.subjects || {}, DEFAULTS.subjects); S.teachers = Object.assign({}, S.teachers || {}, DEFAULTS.teachers); S.namesVer = 3; save(); } else { S.subjects = Object.assign({}, DEFAULTS.subjects, S.subjects || {}); S.teachers = Object.assign({}, DEFAULTS.teachers, S.teachers || {}); } }
 function buildSecMap() {
   ensureNames();
   secMap = {};
