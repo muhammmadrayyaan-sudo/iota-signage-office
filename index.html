@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="mobile-web-app-capable" content="yes">
@@ -41,6 +42,7 @@ h1::after{content:"";display:block;width:14vh;height:.55vh;background:var(--red)
 #audioChip.ok{opacity:.85}
 
 main{flex:1;min-height:0;position:relative;overflow:hidden}
+#planWarn{display:none;position:absolute;top:1.6vh;right:2.6vw;z-index:6;background:#b00505;color:#fff;font:800 2.5vh var(--display);padding:.7vh 1.6vw;border-radius:2em;box-shadow:0 .4vh 1.4vh rgba(0,0,0,.35)}
 #tableWrap{margin:.9vh 1.6vw;background:#fff;border-radius:1.2vh;box-shadow:0 .4vh 1.6vh rgba(120,20,30,.14);overflow:hidden;transition:opacity .7s ease}
 #imgWrap{display:none;margin:.9vh 1.6vw;height:calc(100% - 1.8vh);background:#fff;border-radius:1.2vh;box-shadow:0 .4vh 1.6vh rgba(120,20,30,.14);align-items:center;justify-content:center;overflow:hidden}
 #imgWrap img{max-width:100%;max-height:100%;object-fit:contain}
@@ -261,7 +263,7 @@ body.started #start{display:none}
     <span id="next"></span>
     <span><span id="pager"></span> &nbsp; <span id="audioChip" class="off"></span></span>
   </div>
-  <main id="main">
+  <main id="main"><div id="planWarn"></div>
     <div id="tableWrap"></div>
     <div id="imgWrap"></div>
     <div id="gridWrap"></div>
@@ -531,52 +533,12 @@ const BRK = (time, note) => ({ kind: 'break', time, cls: '', sec: '', subj: '', 
 
 const DEFAULTS = {
   title: 'Master Plan (Campus - I)',
-  dayLabel: 'MONDAY | 12 OCT',
-  footerNote: 'Sir Haris is not available  •  Assignment collection in B1, G2',
+  dayLabel: '',
+  footerNote: '',
   mode: 'grid', scale: 1, rowsPerPage: 12, pageSeconds: 12, autoPage: true,
-  rows: [
-    BRK('12:40-2:15', 'Zuhr Break — Jamat 12:40 PM, Prayer Room'),
-    R('2:15-3:10', '', 'A7', 'B', 'R1', 'ZA'),
-    R('2:15-3:10', '', 'B2', 'CS', 'R3', 'HZ'),
-    R('2:15-3:10', '', 'A7', 'M', 'R4', 'ZK'),
-    R('2:15-3:10', '', 'B1', 'P', 'R5', 'ZAB'),
-    R('2:15-3:10', '', 'B3', 'C', 'R6', 'HM'),
-    R('3:10-4:05', '', 'B1', 'B', 'R1', 'ZA'),
-    R('3:10-4:05', '', 'A6', 'P', 'R2', 'ZAB'),
-    R('3:10-4:05', '', 'B2', 'P', 'R3', 'MAI'),
-    R('3:10-4:05', '', 'B1', 'M', 'R5', 'ZK'),
-    R('3:10-4:05', '', 'B3', 'E', 'R6', 'FS'),
-    R('2:50-4:20', '', 'A7', 'C', 'R4', '', 'Grand Test'),
-    R('4:05-5:00', '', 'A6', 'M', 'R2', 'ZAB'),
-    R('4:05-5:00', '', 'B2', 'M', 'R3', 'ZK'),
-    R('4:05-5:00', '', 'A7', 'P', 'R4', 'MAI'),
-    R('4:05-5:00', '', 'B1', 'C', 'R5', '', 'Test'),
-    R('4:05-5:00', '', 'B3', 'E', 'R6', 'FS', 'Extra'),
-    R('4:10-5:40', '', 'A1', 'C', 'R1', '', 'Grand Test'),
-    BRK('5:00-5:40', 'Asr Break — Jamat 5:20 PM, Terrace Area'),
-    R('5:40-6:40', '', 'XG2', 'P', 'R1', 'MAI'),
-    R('5:40-6:40', '', 'G1', 'P', 'R2', 'ZAB'),
-    R('5:40-6:40', '', 'G5', 'CS', 'R3', 'HZ'),
-    R('5:40-6:40', '', 'G2', 'B', 'R5', 'ZA'),
-    R('5:50-6:40', '', 'A1+A3', 'M', 'R4', 'ZK'),
-    R('5:40-7:10', '', 'A2', 'C', 'R6', '', 'Grand Test'),
-    BRK('6:40-7:00', 'Maghrib Break — Jamat 6:45 PM, Staff Room'),
-    R('7:00-8:00', '', 'XG2', 'M', 'R1', 'AR'),
-    R('7:00-8:00', '', 'G1', 'CS', 'R2', 'HZ'),
-    R('7:00-8:00', '', 'G5', 'M', 'R3', 'ZK'),
-    R('7:00-8:00', '', 'A1+A3', 'P', 'R4', 'MAI'),
-    R('7:00-8:00', '', 'G2', 'C', 'R5', '', 'Test'),
-    R('7:00-8:00', '', 'A2', 'P', 'R6', 'ZAB'),
-    R('8:00-9:00', '', 'XG2', 'C', 'R1', '', 'Test'),
-    R('8:00-9:00', '', 'G1', 'M', 'R2', 'ZK'),
-    R('8:00-9:00', '', 'G5', 'P', 'R3', 'MAI'),
-    R('8:00-9:00', '', 'A3', 'CS', 'R4', 'HZ'),
-    R('8:00-9:00', '', 'G2', 'P', 'R5', 'ZAB'),
-    R('8:00-9:00', '', 'A2', 'B', 'R6', 'ZA'),
-    BRK('9:00-9:30', 'Isha Break — Jamat: Staff 8:35 PM, Teacher 9:05 PM, Terrace Area')
-  ],
-  subjects: { M: 'Mathematics', P: 'Physics', C: 'Chemistry', B: 'Biology', E: 'English', CS: 'Computer Science', 'U/I': 'Urdu / Islamiyat', PST: 'Pakistan Studies', 'U/PST': 'Urdu / Pakistan Studies' },
-  teachers: { ZA: 'Zuhair Ahmed', HZ: 'Hassan Raza', ZD: 'M Zaid', ZK: 'Zakiuddin Siddique', ZAB: 'Zain ul Abideen Baig', MAI: 'Muhammad Anas Iqbal', HM: 'Hammad', FS: 'Fazal Shahbaz', AR: 'Abbas Raza', HK: 'Hamza Khan', SK: 'Salman Kausar', CH: 'Shahid Munawar', AM: 'Adeel Mahmood', HB: 'Haris Basim', MR: 'Muhammad Raheel' },
+  rows: [],
+  subjects: { M: 'Mathematics', P: 'Physics', C: 'Chemistry', B: 'Biology', E: 'English', CS: 'Computer Science', 'U/I': 'Urdu / Islamiyat', PST: 'Pakistan Studies', 'U/PST': 'Urdu / Pakistan Studies', 'U/P': 'Urdu / Pakistan Studies' },
+  teachers: { ZA: 'Zuhair Ahmed', HZ: 'Hassan Raza', ZD: 'M Zaid', ZK: 'Zaki Uddin Siddique', ZAB: 'Zain ul Abideen Baig', MAI: 'Muhammad Anas Iqbal', HM: 'Hammad', FS: 'Fazal Shahbaz', AR: 'Abbas Raza', HK: 'Hamza Khan', SK: 'Salman Kausar', CH: 'Shahid Munawar', AM: 'Adil Mahmood', HB: 'M. Haris Basim', MR: 'M. Raheel', AA: 'Ahtesham Ali', MS: 'Mohsin Sarfaraz', WA: 'Waqas Ahmed', JS: 'M. Jawed Shaikh', AI: 'Asif Iqbal', SH: 'Shahid Munawar' },
   classColors: {},
   ver: 5,
   groups: [
@@ -596,7 +558,7 @@ const DEFAULTS = {
     { id: 'maghrib', name: 'Maghrib', time: '18:45', enabled: true,  note: 'Jamat 6:45 PM – Staff Room' },
     { id: 'isha',    name: 'Isha',    time: '20:35', enabled: true,  note: 'Jamat: Staff 8:35 PM, Teacher 9:05 PM – Terrace Area' }
   ],
-  repeats: 4, gap: 3, minDisplay: 30, volume: 1, boost: 2, chime: true, blink: 'normal',
+  repeats: 5, gap: 3, minDisplay: 60, volume: 1, boost: 2, chime: true, blink: 'normal',
   interOn: true, interBar: true, interEvery: 120, interLogo: true, interLogoSec: 7, interNoticeSec: 9,
   notices: [
     { on: true, title: 'Fee Reminder', text: 'Monthly fee vouchers are due by the 10th of every month.' },
@@ -667,9 +629,10 @@ const fmtRange = t => String(t || '').replace(/\s*[-–—]\s*/, ' – ');
 /* ================= class groups (class + boys/girls) ================= */
 let colorsDirty = false;
 let secMap = {};
-function ensureNames() { if (S.namesVer !== 3) { S.subjects = Object.assign({}, S.subjects || {}, DEFAULTS.subjects); S.teachers = Object.assign({}, S.teachers || {}, DEFAULTS.teachers); S.namesVer = 3; save(); } else { S.subjects = Object.assign({}, DEFAULTS.subjects, S.subjects || {}); S.teachers = Object.assign({}, DEFAULTS.teachers, S.teachers || {}); } }
+function ensureNames() { if (S.namesVer !== 4) { S.subjects = Object.assign({}, S.subjects || {}, DEFAULTS.subjects); S.teachers = Object.assign({}, S.teachers || {}, DEFAULTS.teachers); S.namesVer = 4; save(); } else { S.subjects = Object.assign({}, DEFAULTS.subjects, S.subjects || {}); S.teachers = Object.assign({}, DEFAULTS.teachers, S.teachers || {}); } }
 function buildSecMap() {
   ensureNames();
+  if (S.cleanV !== 2) { S.cleanV = 2; S.rows = []; S.dayLabel = ''; S.footerNote = ''; save(); }
   secMap = {};
   (S.groups || []).forEach(g => String(g.sections || '').split(/[,\s]+/).filter(Boolean).forEach(x => { secMap[x.toUpperCase()] = g; }));
 }
@@ -688,8 +651,8 @@ function inkOn(c) {
   const n = parseInt(m[1], 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
   return (0.299 * r + 0.587 * g + 0.114 * b) > 165 ? '#1c1416' : '#fff';
 }
-let pvDate = null;
-const PLAN = () => (S.plans || {})[pvDate || dateStr(new Date())] || null;
+let pvDate = null, planStale = false, planKey = '';
+const PLAN = () => { const P = S.plans || {}, d = pvDate || dateStr(new Date()); planStale = false; planKey = d; if (P[d]) return P[d]; if (pvDate) return null; const ks = Object.keys(P).filter(k => k < d).sort(); if (!ks.length) return null; planStale = true; planKey = ks[ks.length - 1]; return P[planKey]; };
 const rawUrl = (p, repo) => `https://raw.githubusercontent.com/${SYNC.owner}/${repo || SYNC.repo}/${SYNC.branch}/${p}`;
 const ROWS = () => { const p = PLAN(); return p && Array.isArray(p.rows) ? p.rows : S.rows; };
 function legendItems() {
@@ -868,8 +831,8 @@ function renderStage() {
   buildSecMap();
   document.documentElement.style.setProperty('--scale', S.scale);
   $('#title').textContent = S.title;
-  const pl = PLAN(); $('#dayLabel').textContent = (pl && pl.dayLabel) || (pl ? new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'}).toUpperCase().replace(/,/g,' |') : S.dayLabel);
-  const n = ((pl && pl.footerNote != null) ? pl.footerNote : (S.footerNote || '')).trim();
+  const pl = PLAN(); { const w = $('#planWarn'); w.style.display = (planStale || !pl) ? 'block' : 'none'; w.textContent = pl ? '⚠ TODAY’S PLAN NOT UPDATED – showing ' + (pl.dayLabel || planKey) : '⚠ NO PLAN UPLOADED FOR TODAY'; } $('#dayLabel').textContent = (pl && pl.dayLabel) || (pl && planStale ? planKey : pl ? new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'}).toUpperCase().replace(/,/g,' |') : S.dayLabel);
+  const n = planStale ? '' : ((pl && pl.footerNote != null) ? pl.footerNote : (S.footerNote || '')).trim();
   $('#footNote').innerHTML = n ? `<b>Note:</b> ${esc(n)}` : '';
   $('#legend').innerHTML = legendItems().map(g => `<span class="lg" style="--c:${g.color}"><i></i>${esc(g.label)}</span>`).join('');
   renderPrayerStrip();
@@ -899,7 +862,7 @@ async function enableAudio(quiet) {
 }
 function updateChip() {
   const on = getCtx().state === 'running', el = $('#audioChip');
-  el.textContent = on ? 'Audio ready' : 'Audio OFF – click “Enable audio”';
+  el.textContent = on ? 'Sound ON' : 'Sound OFF – press OK on remote';
   el.className = on ? 'ok' : 'off';
 }
 const sleepCancelable = ms => new Promise(res => { const t = setTimeout(done, ms); function done() { clearTimeout(t); if (ann) ann.wake = null; res(); } if (ann) ann.wake = done; });
@@ -1027,8 +990,7 @@ async function runAnnouncement(ev) {
   showOverlay(ev);
   for (let i = 1; i <= n; i++) {
     if (ann.cancelled) break;
-    $('#pCount').textContent = `Announcement ${i} of ${n}`;
-    if (i === 1 && S.chime) await chime();
+    $('#pCount').textContent = '';
     if (ann.cancelled) break;
     await announceOnce(ev);
     if (ann.cancelled) break;
@@ -1041,23 +1003,22 @@ async function runAnnouncement(ev) {
   $('#pCount').textContent = '';
   ann = null; hideOverlay();
 }
+async function azanFallback(ev) {
+  for (const id of ['azan-' + ev.audioId, 'azan']) {
+    const blob = await idbGet('audio:' + id); let u = blob ? URL.createObjectURL(blob) : null;
+    if (!u) { const cu = rawUrl('audio/' + id + '.mp3') + '?v=' + (S.audioV || 0); try { const r = await fetch(cu, { method: 'HEAD', cache: 'no-store' }); if (r.ok) u = cu; } catch (e) {} }
+    if (!u) continue;
+    const ok = await new Promise(res => { const a = new Audio(u), t = setTimeout(() => res(false), 600000); a.volume = S.volume; const fin = v => { clearTimeout(t); res(v); }; a.onended = () => fin(true); a.onerror = () => fin(false); current = { stop() { a.pause(); fin(true); } }; a.play().catch(() => fin(false)); });
+    current = null; if (ok) return true;
+  }
+  return false;
+}
 async function announceOnce(ev) {
   const c = getCtx();
   if (c.state !== 'running') { try { await Promise.race([c.resume(), new Promise(r => setTimeout(r, 400))]); } catch (e) {} }
-  const blocked = c.state !== 'running';
-  $('#pWarn').textContent = blocked ? 'Sound is blocked by the browser. Click anywhere on this page once to enable it.' : '';
-  if (S.azanMode === 'before' || S.azanMode === 'only') {
-    const ab = (await loadBuffer('azan-' + ev.audioId)) || (await loadBuffer('azan'));
-    if (ab && !blocked) { await playBuffer(ab); if (S.azanMode === 'only') return; }
-  }
-  for (const lang of ['en', 'ur']) {
-    if (ann && ann.cancelled) return;
-    let buf = (await loadBuffer(ev.audioId + '-' + lang)) || (await loadBuffer('default-' + lang));
-    if (!buf && lang === 'en') buf = (await loadBuffer(ev.audioId)) || (await loadBuffer('default'));
-    if (buf && !blocked) { await playBuffer(buf); continue; }
-    if (lang === 'en') await speak(ttsFor(ev.name, ev.note));
-    else { const v = urVoice(); await speakWith(ttsForUr(ev.name), v || Object.assign({ lang: 'ur-PK' }, {})); }
-  }
+  $('#pWarn').textContent = '';
+  if (c.state === 'running') { const ab = (await loadBuffer('azan-' + ev.audioId)) || (await loadBuffer('azan')); if (ab) { await playBuffer(ab); return; } }
+  await azanFallback(ev);
 }
 function stopAnnouncement() {
   queue.length = 0;
@@ -1449,7 +1410,7 @@ const API = `https://api.github.com/repos/${SYNC.owner}/${SYNC.repo}/contents/${
 const LOCAL_ONLY = ['fired', 'oneOff', 'audioNames', 'imageName', 'mode_local'];
 async function fetchData(repo) {
   const t = Math.floor(Date.now() / 60000);
-  try { const r = await fetch(`https://raw.githubusercontent.com/${SYNC.owner}/${repo}/${SYNC.branch}/${SYNC.file}?t=${t}`, { cache: 'no-store' }); if (r.ok) return await r.json(); } catch (e) {}
+  try { const r = await fetch(`https://raw.githubusercontent.com/${SYNC.owner}/${repo}/${SYNC.branch}/${SYNC.file}?t=${Date.now()}`, { cache: 'no-store' }); if (r.ok) return await r.json(); } catch (e) {}
   try { const r = await fetch(`https://api.github.com/repos/${SYNC.owner}/${repo}/contents/${SYNC.file}?ref=${SYNC.branch}&t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw+json' }, cache: 'no-store' }); if (r.ok) return await r.json(); } catch (e) {}
   return null;
 }
@@ -1499,7 +1460,7 @@ async function publishNow() {
   if (/YOUR-GITHUB/.test(SYNC.owner)) { st.textContent = 'Open index.html in GitHub and replace thomashaden66 with your real username first.'; return; }
   if (!tok) { st.textContent = 'Paste the GitHub token first.'; return; }
   try { localStorage.setItem('iotaToken', tok); } catch (e) {}
-  const today = dateStr(new Date()); Object.keys(S.plans || {}).forEach(k => { if (k < today) delete S.plans[k]; });
+  const today = dateStr(new Date()); Object.keys(S.plans || {}).filter(k => k < today).sort().slice(0, -1).forEach(k => delete S.plans[k]);
   const o = structuredClone(S); LOCAL_ONLY.forEach(k => delete o[k]);
   const h = { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json' };
   try {
@@ -1534,7 +1495,7 @@ function planFromCSV(text) {
 }
 function renderPlans() {
   const t0 = dateStr(new Date()), tp = (S.plans || {})[t0];
-  $('#planNow').textContent = 'Showing today (' + t0 + '): ' + (tp ? (tp.rows ? 'the uploaded plan (' + tp.rows.length + ' lines)' : 'the photo plan') : 'NO plan uploaded for today, so the built-in sample timetable is showing');
+  $('#planNow').textContent = 'Showing today (' + t0 + '): ' + (tp ? (tp.rows ? 'the uploaded plan (' + tp.rows.length + ' lines)' : 'the photo plan') : 'NO plan uploaded for today – the TV shows the last published plan with a red warning sign');
   const ks = Object.keys(S.plans || {}).sort();
   $('#planList').innerHTML = ks.length ? 'Scheduled plans: ' + ks.map(k => `${k} (${S.plans[k].rows ? S.plans[k].rows.length + ' classes' : 'photo'}) <button class="b s" data-d="${k}">Remove</button>`).join(' &nbsp; ') : 'No dated master plans uploaded. The normal timetable is used.';
 }
@@ -1580,9 +1541,9 @@ One line per class cell and one per break row. Quote any field containing a comm
 const ghWhy = c => c === 401 ? 'GitHub rejected the token (wrong, expired or revoked). Make a new token and paste it in section 0.' : c === 403 ? 'The token has no permission. It needs Contents: Read and write on this repository.' : c === 404 ? 'GitHub cannot find the repository or the “data” branch. Check the username, repository name, and that branch “data” exists.' : 'Failed (' + c + ').';
 const b64OfBlob = b => new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.readAsDataURL(b); });
 function shrink(file, max = 1800) {
-  return new Promise((res, rej) => { const i = new Image(); i.onload = () => { const k = Math.min(1, max / Math.max(i.width, i.height)), c = document.createElement('canvas'); c.width = i.width * k; c.height = i.height * k; c.getContext('2d').drawImage(i, 0, 0, c.width, c.height); c.toBlob(res, 'image/jpeg', 0.88); }; i.onerror = rej; i.src = URL.createObjectURL(file); });
+  return new Promise((res, rej) => { const i = new Image(); i.onload = () => { const k = Math.min(1, max / Math.max(i.width, i.height)), c = document.createElement('canvas'); c.width = i.width * k; c.height = i.height * k; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(i, 0, 0, c.width, c.height); c.toBlob(res, 'image/jpeg', 0.88); }; i.onerror = rej; i.src = URL.createObjectURL(file); });
 }
-async function ghPut(path, blob, st, quiet) {
+async function ghPut(path, blob, st, quiet, tries = 0) {
   const tok = $('#ghToken').value.trim();
   if (/YOUR-GITHUB/.test(SYNC.owner)) { st.textContent = 'This copy of the site still has the placeholder username. Upload the latest index.html to GitHub.'; return false; }
   if (!tok) { st.textContent = 'The token box is empty. Scroll up to section 0, paste your GitHub token in the token box, then try again.'; return false; }
@@ -1592,6 +1553,7 @@ async function ghPut(path, blob, st, quiet) {
     if (!quiet) st.textContent = 'Uploading… please wait';
     const g = await fetch(`${u}?ref=${SYNC.branch}`, { headers: h, cache: 'no-store' }), sha = g.ok ? (await g.json()).sha : undefined;
     const p = await fetch(u, { method: 'PUT', headers: h, body: JSON.stringify({ message: 'Upload ' + path, branch: SYNC.branch, sha, content: await b64OfBlob(blob) }) });
+    if (p.status === 409 && tries < 3) { await new Promise(r => setTimeout(r, 1500)); return ghPut(path, blob, st, quiet, tries + 1); }
     if (!p.ok) { st.textContent = ghWhy(p.status); return false; }
     return true;
   } catch (e) { st.textContent = 'Network error – not uploaded.'; return false; }
@@ -1700,6 +1662,9 @@ else {
   ['keydown', 'click', 'pointerdown'].forEach(ev => addEventListener(ev, () => { if (!document.body.classList.contains('started')) startTV(); else if (!document.fullscreenElement) goFull(); }));
   const syncAll = async () => { await pull(); await pullStair(); };
   goFull(); syncAll().then(prefetchAudio); setInterval(syncAll, 90000);
+  let verSig = null;
+  const checkVersion = async () => { try { const r = await fetch(location.pathname + '?_=' + Date.now(), { cache: 'no-store' }); if (!r.ok) return; const sig = (r.headers.get('etag') || r.headers.get('last-modified') || '') + '|' + (r.headers.get('content-length') || ''); if (verSig === null) verSig = sig; else if (sig !== verSig && !busy && !ann && !interRunning) location.reload(); } catch (e) {} };
+  checkVersion(); setInterval(checkVersion, 300000);
 }
 renderLogo(); renderImage(); requestWake();
 tick(); setInterval(tick, 1000); scheduleInter();
