@@ -53,7 +53,9 @@ main{flex:1;min-height:0;position:relative;overflow:hidden}
 .plabel{display:flex;align-items:center;justify-content:center;text-align:center;font:700 2vh/1.15 var(--display);letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--red);border-radius:1.2vh;padding:0 1.4vw;min-width:9vw}
 .pchip{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border:.25vh solid var(--line);border-radius:1.2vh}
 .pchip .pn{font:600 1.9vh/1.1 var(--display);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-.pchip .pt{font:700 3.5vh/1.15 var(--display);color:var(--red);font-variant-numeric:tabular-nums}
+.pchip .pt{font:700 3.2vh/1.1 var(--display);color:var(--red);font-variant-numeric:tabular-nums}
+.pchip .pj{font:600 1.55vh/1.1 var(--body);color:var(--muted);font-variant-numeric:tabular-nums}
+.pchip.next .pj{color:#fff}
 .pchip.next{background:var(--red);border-color:var(--red)}
 .pchip.next .pn,.pchip.next .pt{color:#fff}
 .pchip.past{opacity:.5}
@@ -192,7 +194,7 @@ summary{cursor:pointer;font:700 18px var(--display);color:var(--red);padding:6px
 input,select,textarea{font:inherit;font-size:15px;padding:6px 8px;border:1px solid #b9b9b9;border-radius:6px;max-width:100%}
 textarea{width:100%;min-height:80px}
 input[type=range]{padding:0}
-.prow{display:grid;grid-template-columns:auto 120px 130px 90px 1fr;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+.prow{display:grid;grid-template-columns:auto 120px 130px 90px 150px 1fr;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
 .prow .aud{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px;color:#444}
 .edwrap{overflow-x:auto}
 table.ed{border-collapse:collapse;font-size:14px;min-width:900px}
@@ -307,7 +309,8 @@ body.started #start{display:none}
     <summary>1. Prayer announcement times</summary>
     <div class="row"><label><input type="checkbox" data-k="autoTimes"> <b>Calculate times automatically for North Nazimabad, Karachi</b> (Karachi method, same as Google – updates every day)</label>
       <label>Asr <select data-k="asrMethod"><option value="hanafi">Hanafi (used in Pakistan)</option><option value="standard">Standard (Shafi'i)</option></select></label></div>
-    <p class="hint">With automatic times on, each announcement plays at the azan time. Use “± min” to move one prayer later or earlier (for example +15 to announce at jamat time). Untick to type times by hand.</p>
+    <p class="hint"><b>Two announcements per prayer:</b> the azan at azan time, then a short spoken jamat reminder at jamat time. The jamat time and place are read from today’s master plan break rows (e.g. “Zuhr Break — Jamat 12:40 PM, Prayer Room”); if the plan has none, the “Jamat” time below is used. Clear a Jamat box to switch that reminder off.</p>
+    <p class="hint">With automatic times on, each azan plays at the azan time. Use “± min” to move one prayer later or earlier (for example +15 to announce at jamat time). Untick to type times by hand.</p>
     <p class="hint">Set the time you want each announcement to play (for example the jamat time). Tick “On” to enable it. The enabled times also appear in the strip at the bottom of the timetable. Each recording is optional – if none is uploaded the computer voice is used. A recording of a real person is strongly recommended.</p>
     <div id="prayerList"></div>
     <div class="row">
@@ -315,6 +318,7 @@ body.started #start{display:none}
       <select id="testPrayer"></select>
       <button class="b s" id="btnOneOff">Schedule test in 1 minute</button>
       <button class="b s" id="btnOneOffCancel">Cancel test</button>
+      <button class="b s" id="btnJamatTest">▶ Test jamat reminder</button>
     </div>
     <div id="oneOffStatus" class="hint"></div>
     <div class="row"><button class="b s" id="btnClearLog">Clear today’s “already announced” log</button></div>
@@ -442,7 +446,7 @@ body.started #start{display:none}
     <div class="row"><input type="date" id="planDate"><label class="b s">Upload master plan CSV<input type="file" accept=".csv,text/csv" id="planFile" hidden></label><a class="b s" href="master-plan-template.csv" download>Download template</a></div>
     <div id="planNow" class="hint" style="font-weight:700"></div>
     <div id="planList" class="hint"></div>
-    <p class="hint"><b>Publish:</b> sends everything to GitHub; TVs pick it up within 2 minutes. The token is stored only in this browser.</p>
+    <p class="hint"><b>Publish:</b> sends everything to GitHub; TVs pick it up within about 5 minutes. Pictures, videos and plans are sent automatically once the token is saved here. The token is stored only in this browser.</p>
     <div class="row"><input id="ghToken" type="password" placeholder="GitHub token (fine-grained, Contents: read/write)" style="min-width:320px"><button class="b primary" id="btnPublish">Publish to TV</button><button class="b s" id="btnPull">Load from cloud</button></div>
     <div id="pubStatus" class="hint"></div>
   </details>
@@ -573,6 +577,8 @@ const DEFAULTS = {
   ttsUr: 'توجہ فرمائیں۔ {prayer} کی نماز کا وقت ہو گیا ہے۔ براہ کرم نماز کے لیے تشریف لے جائیں۔',
   urNames: { Fajr: 'فجر', Zuhr: 'ظہر', Asr: 'عصر', Maghrib: 'مغرب', Isha: 'عشاء' },
   autoTimes: true, asrMethod: 'hanafi',
+  jamatText: 'Attention please. {prayer} jamat is starting now. Please proceed for {prayer} prayer. {place}',
+  jamatUr: '{prayer} کی جماعت کھڑی ہو رہی ہے۔ براہ کرم نماز کے لیے تشریف لے جائیں۔',
   plans: {}, videoOn: false, videos: [], officeMode: 'both', azanMode: 'off', imageSec: 8, slideFx: 'curtain', picFit: 'blur', audioV: 0,
   voiceName: 'auto', rate: 0.88, pitch: 1,
   audioNames: {}, imageName: '', oneOff: null, fired: {}
@@ -715,7 +721,30 @@ function ptime(p, date) {
   const m = ((calcTimes(date || new Date())[p.id] + (Number(p.offset) || 0)) % 1440 + 1440) % 1440;
   return `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
 }
-const PR = date => S.prayers.map(p => Object.assign({}, p, { time: ptime(p, date) })); // prayers with today's real times
+const DEF_JAMAT = { zuhr: '12:40', asr: '17:20', maghrib: '18:10', isha: '19:55' };
+const placeOf = s => { const seg = String(s || '').split(/[,–—-]/).pop().trim(); return seg && !/\d/.test(seg) && seg !== String(s).trim() ? seg : ''; }; // "… Jamat 12:40 PM, Prayer Room" -> "Prayer Room"
+const NAME_RX = { fajr: /fajr/i, zuhr: /zuhr|zohr|dhuhr|zuhar/i, asr: /\basr/i, maghrib: /maghrib|\bmag\b/i, isha: /isha/i };
+/* Reads the jamat from a break row of today's plan, e.g. "Zuhr Break — Jamat 12:40 PM, Prayer Room"
+   or "Maghrib Break (6:10-6:30)" (no jamat written: the break start is used). */
+function planJamat(p, date) {
+  const pl = PLAN(); if (!pl || planStale || planKey !== dateStr(date) || !Array.isArray(pl.rows) || !NAME_RX[p.id]) return null;
+  for (const r of pl.rows) {
+    if (r.kind !== 'break' || !NAME_RX[p.id].test(r.note || '')) continue;
+    const j = /jamat[^0-9]*(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)/i.exec(r.note || '');
+    let m = j ? parseT(j[1]) : NaN; if (isNaN(m)) { const rg = rangeOf(r.time); if (rg) m = rg[0]; }
+    if (!isNaN(m) && m >= 0) return { time: `${pad(Math.floor(m / 60) % 24)}:${pad(m % 60)}`, place: j ? placeOf(r.note) : '' };
+  }
+  return null;
+}
+function jamatOf(p, date) {
+  date = date || new Date();
+  const own = p.jamat !== undefined ? p.jamat : (DEF_JAMAT[p.id] || '');
+  if (own === '') return null; // cleared in Settings = no jamat reminder for this prayer
+  const fromPlan = planJamat(p, date);
+  const place = placeOf(p.note);
+  return fromPlan ? { time: fromPlan.time, place: fromPlan.place || place, plan: true } : (/^\d\d:\d\d$/.test(own) ? { time: own, place } : null);
+}
+const PR = date => S.prayers.map(p => Object.assign({}, p, { time: ptime(p, date), jam: jamatOf(p, date) })); // prayers with today's real times
 
 /* ================= stage rendering ================= */
 let pages = [], pageIdx = 0, pageTimer = null, imgUrl = null;
@@ -790,7 +819,7 @@ function renderPrayerStrip(now) {
   box.style.display = 'flex';
   const nxt = list.find(p => toM(p.time) > nm) || list[0];
   box.innerHTML = '<div class="plabel">Prayer<br>Times</div>' + list.map(p =>
-    `<div class="pchip${p === nxt ? ' next' : ''}${toM(p.time) <= nm && p !== nxt ? ' past' : ''}"><span class="pn">${esc(p.name)}</span><span class="pt">${fmt12(p.time)}</span></div>`).join('');
+    `<div class="pchip${p === nxt ? ' next' : ''}${toM(p.time) <= nm && p !== nxt ? ' past' : ''}"><span class="pn">${esc(p.name)}</span><span class="pt">${fmt12(p.time)}</span>${p.jam && p.enabled ? `<span class="pj">Jamat ${fmt12(p.jam.time)}</span>` : ''}</div>`).join('');
 }
 const rangeOf = t => {
   const p = String(t || '').split(/\s*[-–—]\s*/); if (p.length < 2) return null;
@@ -1013,7 +1042,9 @@ async function processQueue() {
 }
 function showOverlay(ev) {
   abortInter();
-  $('#pName').innerHTML = esc(ev.name) + ' Prayer Time<div dir="rtl" lang="ur" style="font-size:.62em;margin-top:.15em">' + esc(urName(ev.name)) + ' کی نماز کا وقت</div>';
+  $('#pName').innerHTML = ev.jamat
+    ? esc(ev.name) + ' Jamat<div dir="rtl" lang="ur" style="font-size:.62em;margin-top:.15em">' + esc(urName(ev.name)) + ' کی جماعت</div>'
+    : esc(ev.name) + ' Prayer Time<div dir="rtl" lang="ur" style="font-size:.62em;margin-top:.15em">' + esc(urName(ev.name)) + ' کی نماز کا وقت</div>';
   $('#pNote').textContent = ev.note || '';
   $('#pTest').classList.toggle('on', !!ev.test);
   $('#pWarn').textContent = '';
@@ -1058,7 +1089,28 @@ async function azanFallback(ev) {
   }
   return false;
 }
+async function jamatOnce(ev) {
+  const c = getCtx();
+  if (c.state !== 'running') { try { await Promise.race([c.resume(), new Promise(r => setTimeout(r, 400))]); } catch (e) {} }
+  if (S.chime && c.state === 'running') await chime();
+  if (ann.cancelled) return;
+  if (c.state === 'running') {
+    const one = (await loadBuffer(ev.audioId)) || (await loadBuffer('default'));
+    if (one) { await playBuffer(one); return; }
+    let played = false;
+    for (const l of ['en', 'ur']) {
+      const b = (await loadBuffer(ev.audioId + '-' + l)) || (await loadBuffer('default-' + l));
+      if (b && !ann.cancelled) { await playBuffer(b); played = true; }
+    }
+    if (played) return;
+  }
+  const en = (S.jamatText || DEFAULTS.jamatText).replace(/\{prayer\}/gi, ev.name).replace(/\{place\}/gi, ev.place ? 'Jamat at the ' + ev.place + '.' : '').replace(/\s+/g, ' ').trim();
+  await speak(en);
+  const uv = urVoice();
+  if (uv && !ann.cancelled) await speakWith((S.jamatUr || DEFAULTS.jamatUr).replace(/\{prayer\}/gi, urName(ev.name)), uv);
+}
 async function announceOnce(ev) {
+  if (ev.jamat) return jamatOnce(ev);
   const c = getCtx();
   if (c.state !== 'running') { try { await Promise.race([c.resume(), new Promise(r => setTimeout(r, 400))]); } catch (e) {} }
   $('#pWarn').textContent = '';
@@ -1107,6 +1159,12 @@ function abortInter() {
   interAbort = true; if (interWake) interWake(); $$('#inter video').forEach(v => v.pause());
   $('#inter').classList.remove('vis', 'show');
 }
+const imgReady = im => new Promise(res => {
+  if (im.complete) { res(im.naturalWidth > 0); return; }
+  const t = setTimeout(() => res(im.naturalWidth > 0), 10000);
+  im.addEventListener('load', () => { clearTimeout(t); res(true); }, { once: true });
+  im.addEventListener('error', () => { clearTimeout(t); res(false); }, { once: true });
+});
 async function runInter(force) {
   clearTimeout(interTimer);
   if (interRunning) return;
@@ -1122,9 +1180,12 @@ async function runInter(force) {
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   o.classList.add('vis');
   try {
+  let prev = null;
   for (let i = 0; i < els.length && !interAbort; i++) {
-    if (i > 0) els[i - 1].classList.remove('on');
-    els[i].classList.add('on');
+    const im = els[i].querySelector('img.vid');
+    if (im && !(await imgReady(im))) { console.warn('Slide skipped, picture missing:', im.src); continue; }
+    if (prev) prev.classList.remove('on');
+    els[i].classList.add('on'); prev = els[i];
     const vd = slides[i].video && els[i].querySelector('video');
     if (vd) { const wake = () => interWake && interWake(); vd.onended = wake; vd.onerror = wake; vd.currentTime = 0; vd.play().catch(() => { vd.muted = true; vd.play().catch(wake); }); }
     await interSleep(clamp(slides[i].sec, 3, 60) * 1000);
@@ -1144,7 +1205,10 @@ async function runInter(force) {
 function eventsFor(now) {
   const list = [], d = dateStr(now);
   for (const p of PR(now)) if (p.enabled && /^\d\d:\d\d$/.test(p.time))
+  {
     list.push({ id: p.id, name: p.name, note: p.note, time: p.time, audioId: p.id, key: `${d}|${p.id}|${p.time}` });
+    if (p.jam && p.jam.time !== p.time) list.push({ id: p.id + '-jamat', name: p.name, note: p.jam.place, place: p.jam.place, time: p.jam.time, audioId: p.id, jamat: true, key: `${d}|${p.id}-jamat|${p.jam.time}` });
+  }
   if (S.oneOff && S.oneOff.date === d) {
     const p = S.prayers.find(x => x.id === S.oneOff.prayerId) || S.prayers[0];
     list.push({ id: 'oneoff', name: p.name, note: p.note, time: S.oneOff.time, audioId: p.id, test: true, key: `${d}|oneoff|${S.oneOff.time}` });
@@ -1178,7 +1242,7 @@ function nextEvent(now) {
 }
 function updateNext(now) {
   const e = nextEvent(now); let txt;
-  if (e) txt = `Next: ${e.test ? 'TEST – ' : ''}${e.name} · ${fmt12(e.time)} · in ${dur(e.at - now)}`;
+  if (e) txt = `Next: ${e.test ? 'TEST – ' : ''}${e.name}${e.jamat ? ' Jamat' : ' Azan'} · ${fmt12(e.time)} · in ${dur(e.at - now)}`;
   else {
     const en = PR(new Date(now.getTime() + 864e5)).filter(p => p.enabled && /^\d\d:\d\d$/.test(p.time)).sort((a, b) => a.time.localeCompare(b.time))[0];
     txt = en ? `Next: ${en.name} · ${fmt12(en.time)} tomorrow` : 'No prayer announcements scheduled';
@@ -1239,6 +1303,7 @@ function renderPrayers() {
       <input data-f="name" value="${esc(p.name)}" aria-label="Prayer name">
       <input type="time" data-f="time" value="${esc(ptime(p))}" aria-label="Time" ${isAuto(p) ? 'disabled title="Calculated automatically"' : ''}>
       <label title="Minutes added to the calculated time (e.g. 15 = announce 15 minutes after azan time)">± min <input type="number" data-f="offset" min="-120" max="120" step="1" value="${Number(p.offset) || 0}" style="width:56px" ${isAuto(p) ? '' : 'disabled'}></label>
+      <label title="Jamat reminder time. Today's master plan wins when it lists a jamat. Clear it to switch the jamat reminder off.">Jamat <input type="time" data-f="jamat" value="${esc(p.jamat !== undefined ? p.jamat : (DEF_JAMAT[p.id] || ''))}"></label>
       <input data-f="note" value="${esc(p.note)}" placeholder="Shown under the title, e.g. Jamat 12:40 PM – Prayer Room">
       <div class="aud"><span data-astat="${esc(p.id)}"></span>
         <label class="b s">Upload recording<input type="file" accept="audio/*" data-f="audio" hidden></label>
@@ -1368,6 +1433,11 @@ function wireUI() {
     save(); renderOneOffStatus(); toast('Test scheduled for ' + fmt12(S.oneOff.time) + '. Wait for it.');
   };
   $('#btnOneOffCancel').onclick = () => { S.oneOff = null; save(); renderOneOffStatus(); };
+  $('#btnJamatTest').onclick = async () => {
+    await enableAudio(true);
+    const p = S.prayers.find(x => x.id === $('#testPrayer').value) || S.prayers[1], j = jamatOf(p);
+    enqueue({ id: 'test-jamat', name: p.name, note: j ? j.place : '', place: j ? j.place : '', audioId: p.id, jamat: true, test: true, key: null });
+  };
   $('#btnClearLog').onclick = () => { S.fired = {}; save(); toast('Log cleared. Today’s announcements may play again.'); };
 
   // voice
@@ -1458,7 +1528,10 @@ function wireUI() {
 const API = `https://api.github.com/repos/${SYNC.owner}/${SYNC.repo}/contents/${SYNC.file}`;
 const LOCAL_ONLY = ['fired', 'oneOff', 'audioNames', 'imageName', 'mode_local'];
 async function fetchData(repo) {
-  const t = Math.floor(Date.now() / 60000);
+  let tok = ''; try { tok = ADMIN ? (($('#ghToken') && $('#ghToken').value.trim()) || localStorage.getItem('iotaToken') || '') : ''; } catch (e) {}
+  if (tok) { // with the token the GitHub API returns the latest version, not a cached copy
+    try { const r = await fetch(`https://api.github.com/repos/${SYNC.owner}/${repo}/contents/${SYNC.file}?ref=${SYNC.branch}`, { headers: { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github.raw+json' }, cache: 'no-store' }); if (r.ok) return await r.json(); } catch (e) {}
+  }
   try { const r = await fetch(`https://raw.githubusercontent.com/${SYNC.owner}/${repo}/${SYNC.branch}/${SYNC.file}?t=${Date.now()}`, { cache: 'no-store' }); if (r.ok) return await r.json(); } catch (e) {}
   try { const r = await fetch(`https://api.github.com/repos/${SYNC.owner}/${repo}/contents/${SYNC.file}?ref=${SYNC.branch}&t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw+json' }, cache: 'no-store' }); if (r.ok) return await r.json(); } catch (e) {}
   return null;
@@ -1472,7 +1545,7 @@ function stamp(ok) {
   if (ok) lastOk = hm;
   e.textContent = ok ? 'Synced ' + hm : 'SYNC FAILED (last OK ' + lastOk + ')';
 }
-const TT_KEYS = ['plans', 'rows', 'subjects', 'teachers', 'classColors', 'groups', 'floorsText', 'dayLabel', 'footerNote', 'title', 'prayers', 'autoTimes', 'asrMethod', 'ttsText', 'ttsUr', 'urNames'];
+const TT_KEYS = ['plans', 'rows', 'subjects', 'teachers', 'classColors', 'groups', 'floorsText', 'dayLabel', 'footerNote', 'title', 'prayers', 'autoTimes', 'asrMethod', 'jamatText', 'jamatUr', 'ttsText', 'ttsUr', 'urNames'];
 async function pullStair() {   /* office site: take the timetable from the stairway site, so it is only uploaded once */
   if (!IS_OFFICE_SITE || ADMIN || S.officeMode === 'slides') return;
   try {
@@ -1491,35 +1564,69 @@ async function pull() {
     if (IS_OFFICE_SITE && (d.officeMode || S.officeMode) !== 'slides') TT_KEYS.forEach(k => delete d[k]);
     const keep = { fired: S.fired, oneOff: S.oneOff, audioNames: S.audioNames, imageName: S.imageName };
     if (JSON.stringify(Object.assign({}, S, keep)) === JSON.stringify(Object.assign({}, S, d, keep))) return true;
-    Object.assign(S, d, keep); S.ver = DEFAULTS.ver; delete S.videoV; S.videos = (S.videos || []).filter(v => v.id !== 'legacy'); save(); calcOffice(); buildSecMap(); renderStage(); renderPrayerStrip(); scheduleInter(); prefetchAudio(); return true;
+    Object.assign(S, d, keep); S.ver = DEFAULTS.ver; delete S.videoV; { const dm = new Set(S.delMedia || []); S.videos = (S.videos || []).filter(v => v.id !== 'legacy' && !dm.has(v.id)); } save(); calcOffice(); buildSecMap(); renderStage(); renderPrayerStrip(); scheduleInter(); prefetchAudio(); return true;
   } catch (e) { return false; }
 }
+function prunePlans() { // keep today, future dates and only the newest past plan
+  const today = dateStr(new Date()); Object.keys(S.plans || {}).filter(k => k < today).sort().slice(0, -1).forEach(k => delete S.plans[k]);
+}
+/* Merge what another device (or an older copy in this browser) published. Anything removed on ANY device stays removed. */
 function mergeCloud(o, c) {
-  const dm = S.delMedia || [], dp = S.delPlans || [], have = new Set((S.videos || []).map(v => v.id));
-  (c.videos || []).forEach(v => { if (v.id !== 'legacy' && !have.has(v.id) && !dm.includes(v.id)) (S.videos = S.videos || []).push(v); });
-  Object.keys(c.plans || {}).forEach(k => { if (!(S.plans || {})[k] && !dp.includes(k)) (S.plans = S.plans || {})[k] = c.plans[k]; });
+  S.plans = S.plans || {}; S.videos = S.videos || [];
+  const dm = [...new Set([...(c.delMedia || []), ...(S.delMedia || [])])].slice(-500);
+  const dp = [...new Set([...(c.delPlans || []), ...(S.delPlans || [])])].filter(k => !S.plans[k]).slice(-200);
+  S.delMedia = dm; S.delPlans = dp;
+  const have = new Set(S.videos.map(v => v.id)), cv = (c.videos || []).filter(v => v.id !== 'legacy');
+  cv.forEach((v, j) => { // an item added on another device goes in at the same place as there
+    if (have.has(v.id) || dm.includes(v.id)) return;
+    let at = 0; for (let k = j - 1; k >= 0; k--) { const p = S.videos.findIndex(x => x.id === cv[k].id); if (p > -1) { at = p + 1; break; } }
+    S.videos.splice(at, 0, v); have.add(v.id);
+  });
+  S.videos = S.videos.filter(v => v.id !== 'legacy' && !dm.includes(v.id));
+  Object.keys(c.plans || {}).forEach(k => { if (!S.plans[k] && !dp.includes(k)) S.plans[k] = c.plans[k]; });
+  prunePlans();
   S.subjects = Object.assign({}, c.subjects || {}, S.subjects || {}); S.teachers = Object.assign({}, c.teachers || {}, S.teachers || {}); o.subjects = S.subjects; o.teachers = S.teachers;
   delete S.videoV; save(); o.videos = S.videos; o.plans = S.plans; o.videoOn = S.videoOn; o.delMedia = S.delMedia; o.delPlans = S.delPlans; delete o.videoV;
   renderPlans(); renderVideos();
 }
 let pubQ = Promise.resolve();
+let apT = null, apWait = [];
+function autoPublish(msg, delay = 0, el) {
+  const st = el || $('#mediaStatus'), tok = $('#ghToken').value.trim();
+  if (!tok) { st.textContent = msg + ' Now click “Publish to TV” (section 0) to send it to the screens.'; return Promise.resolve(false); }
+  clearTimeout(apT);
+  return new Promise(res => {
+    apWait.push(res);
+    apT = setTimeout(async () => {
+      const w = apWait; apWait = [];
+      st.textContent = msg + ' Sending to the TV…';
+      const ok = await publish();
+      st.textContent = ok ? msg + ' Sent to the TV – screens update within about 5 minutes.' : msg + ' NOT sent: ' + $('#pubStatus').textContent;
+      w.forEach(f => f(ok));
+    }, delay);
+  });
+}
 function publish() { pubQ = pubQ.then(publishNow, publishNow); return pubQ; }
 async function publishNow() {
   const st = $('#pubStatus'), tok = $('#ghToken').value.trim();
-  if (/YOUR-GITHUB/.test(SYNC.owner)) { st.textContent = 'Open index.html in GitHub and replace thomashaden66 with your real username first.'; return; }
-  if (!tok) { st.textContent = 'Paste the GitHub token first.'; return; }
+  if (/YOUR-GITHUB/.test(SYNC.owner)) { st.textContent = 'Open index.html in GitHub and replace thomashaden66 with your real username first.'; return false; }
+  if (!tok) { st.textContent = 'Paste the GitHub token first.'; return false; }
   try { localStorage.setItem('iotaToken', tok); } catch (e) {}
-  const today = dateStr(new Date()); Object.keys(S.plans || {}).filter(k => k < today).sort().slice(0, -1).forEach(k => delete S.plans[k]);
+  prunePlans();
   const o = structuredClone(S); LOCAL_ONLY.forEach(k => delete o[k]);
   const h = { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json' };
   try {
     st.textContent = 'Publishing…';
-    const g = await fetch(`${API}?ref=${SYNC.branch}`, { headers: h, cache: 'no-store' });
-    let sha; if (g.ok) { const gj = await g.json(); sha = gj.sha; try { mergeCloud(o, JSON.parse(decodeURIComponent(escape(atob(String(gj.content).replace(/\s/g, '')))))); } catch (e) {} }
-    const body = { message: 'Signage update ' + new Date().toISOString(), branch: SYNC.branch, sha, content: btoa(unescape(encodeURIComponent(JSON.stringify(o)))) };
-    const p = await fetch(API, { method: 'PUT', headers: h, body: JSON.stringify(body) });
-    st.textContent = p.ok ? 'Published at ' + new Date().toLocaleTimeString() + '. TVs update within 2 minutes.' : ghWhy(p.status);
-  } catch (e) { st.textContent = 'Network error – not published.'; }
+    for (let tries = 0; ; tries++) {
+      const g = await fetch(`${API}?ref=${SYNC.branch}`, { headers: h, cache: 'no-store' });
+      let sha; if (g.ok) { const gj = await g.json(); sha = gj.sha; try { mergeCloud(o, JSON.parse(decodeURIComponent(escape(atob(String(gj.content).replace(/\s/g, '')))))); } catch (e) {} }
+      const body = { message: 'Signage update ' + new Date().toISOString(), branch: SYNC.branch, sha, content: btoa(unescape(encodeURIComponent(JSON.stringify(o)))) };
+      const p = await fetch(API, { method: 'PUT', headers: h, body: JSON.stringify(body) });
+      if (p.status === 409 && tries < 3) { await new Promise(r => setTimeout(r, 1500)); continue; } // someone else saved at the same moment: merge again
+      st.textContent = p.ok ? 'Published at ' + new Date().toLocaleTimeString() + '. TVs update within about 5 minutes.' : ghWhy(p.status);
+      return p.ok;
+    }
+  } catch (e) { st.textContent = 'Network error – not published.'; return false; }
 }
 function parseCSV(t) {
   const out = []; let row = [], f = '', q = false;
@@ -1574,7 +1681,7 @@ function wireSync() {
     toast(`Plan saved for ${d} using ${how}.` + (tok ? ' Publishing to the TV…' : ' Now click “Publish to TV”.') + warn);
     if (tok) publish();
   };
-  $('#planList').onclick = e => { const d = e.target.dataset.d; if (d) { delete S.plans[d]; (S.delPlans = S.delPlans || []).push(d); save(); renderPlans(); renderStage(); } };
+  $('#planList').onclick = e => { const d = e.target.dataset.d; if (d) { delete S.plans[d]; (S.delPlans = S.delPlans || []).push(d); save(); renderPlans(); renderStage(); autoPublish('Plan for ' + d + ' removed.', 0, $('#pubStatus')); } };
   try { $('#ghToken').value = localStorage.getItem('iotaToken') || ''; } catch (e) {}
   $('#btnPublish').onclick = publish;
   $('#btnPull').onclick = async () => { toast((await pull()) ? 'Loaded from cloud.' : 'Could not load from cloud.'); refreshAll(); renderPlans(); renderVideos(); };
@@ -1590,7 +1697,7 @@ One line per class cell and one per break row. Quote any field containing a comm
 const ghWhy = c => c === 401 ? 'GitHub rejected the token (wrong, expired or revoked). Make a new token and paste it in section 0.' : c === 403 ? 'The token has no permission. It needs Contents: Read and write on this repository.' : c === 404 ? 'GitHub cannot find the repository or the “data” branch. Check the username, repository name, and that branch “data” exists.' : 'Failed (' + c + ').';
 const b64OfBlob = b => new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.readAsDataURL(b); });
 function shrink(file, max = 1800) {
-  return new Promise((res, rej) => { const i = new Image(); i.onload = () => { const k = Math.min(1, max / Math.max(i.width, i.height)), c = document.createElement('canvas'); c.width = i.width * k; c.height = i.height * k; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(i, 0, 0, c.width, c.height); c.toBlob(res, 'image/jpeg', 0.88); }; i.onerror = rej; i.src = URL.createObjectURL(file); });
+  return new Promise((res, rej) => { const i = new Image(), u = URL.createObjectURL(file); i.onerror = () => { URL.revokeObjectURL(u); rej(new Error('unreadable')); }; i.onload = () => { URL.revokeObjectURL(u); const k = Math.min(1, max / Math.max(i.width, i.height)), c = document.createElement('canvas'); c.width = i.width * k; c.height = i.height * k; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(i, 0, 0, c.width, c.height); c.toBlob(b => b ? res(b) : rej(new Error('unreadable')), 'image/jpeg', 0.88); }; i.src = u; });
 }
 async function ghPut(path, blob, st, quiet, tries = 0) {
   const tok = $('#ghToken').value.trim();
@@ -1620,7 +1727,7 @@ const FX_OPTS = [['', 'Default animation'], ['curtain', 'Curtain'], ['zoom', 'Zo
 const FIT_OPTS = [['', 'Default fit'], ['cover', 'Fill screen (crop)'], ['stretch', 'Stretch to fill'], ['blur', 'Fit + blurred sides'], ['contain', 'Fit + black bars']];
 function renderVideos() {
   const L = S.videos || [];
-  $('#videoList').innerHTML = L.length ? L.map((v, i) => `<div class="row"><label><input type="checkbox" data-vi="${i}" data-a="on" ${v.on ? 'checked' : ''}> <input data-vi="${i}" data-a="name" value="${esc(v.name)}" style="min-width:180px"> ${v.type === 'image' ? '🖼' : '🎬'}</label>${v.type === 'image' ? ` <select data-vi="${i}" data-a="fx">${FX_OPTS.map(o => `<option value="${o[0]}" ${(v.fx || '') === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select> <input type="number" min="3" max="60" data-vi="${i}" data-a="sec" value="${v.sec || ''}" placeholder="sec" title="Seconds on screen (empty = default)" style="width:60px">` : ''} <select data-vi="${i}" data-a="fit">${FIT_OPTS.filter(o => v.type === 'image' || o[0] !== 'blur').map(o => `<option value="${o[0]}" ${(v.fit || '') === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select><button class="b s" data-vi="${i}" data-a="up">↑</button><button class="b s" data-vi="${i}" data-a="down">↓</button><button class="b s" data-vi="${i}" data-a="rm">Remove</button></div>`).join('') : '<p class="hint">No videos yet.</p>';
+  $('#videoList').innerHTML = L.length ? L.map((v, i) => `<div class="row">${v.type === 'image' ? `<img src="${rawUrl(v.file)}?v=${v.v || 0}" alt="" loading="lazy" style="width:72px;height:46px;object-fit:cover;border:1px solid #ccc;border-radius:4px" onerror="this.outerHTML='<b style=&quot;color:#b00505&quot;>⚠ picture missing – remove it and upload again</b>'">` : ''}<label><input type="checkbox" data-vi="${i}" data-a="on" ${v.on ? 'checked' : ''}> <input data-vi="${i}" data-a="name" value="${esc(v.name)}" style="min-width:180px"> ${v.type === 'image' ? '🖼' : '🎬'}</label>${v.type === 'image' ? ` <select data-vi="${i}" data-a="fx">${FX_OPTS.map(o => `<option value="${o[0]}" ${(v.fx || '') === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select> <input type="number" min="3" max="60" data-vi="${i}" data-a="sec" value="${v.sec || ''}" placeholder="sec" title="Seconds on screen (empty = default)" style="width:60px">` : ''} <select data-vi="${i}" data-a="fit">${FIT_OPTS.filter(o => v.type === 'image' || o[0] !== 'blur').map(o => `<option value="${o[0]}" ${(v.fit || '') === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select><button class="b s" data-vi="${i}" data-a="up">↑</button><button class="b s" data-vi="${i}" data-a="down">↓</button><button class="b s" data-vi="${i}" data-a="rm">Remove</button></div>`).join('') : '<p class="hint">No pictures or videos yet.</p>';
 }
 async function readPlanAI(blob, key) {
   const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
@@ -1648,22 +1755,24 @@ function wireMedia() {
       }
       const path = `plans/${d}.jpg`; if (!(await ghPut(path, img, st))) return;
       S.plans[d] = { image: path, v: Date.now() }; S.delPlans = (S.delPlans || []).filter(x => x !== d); save(); renderPlans(); renderStage();
-      st.textContent = 'Photo uploaded for ' + d + '. Click Publish to TV.';
+      autoPublish('Photo uploaded for ' + d + '.', 0, st);
     } catch (err) { st.textContent = 'Could not use that photo.'; }
   };
   delete S.videoV; S.videos = (S.videos || []).filter(v => v.id !== 'legacy'); save();
   $('#videoFile').onchange = async e => {
-    const files = [...e.target.files], st = $('#mediaStatus'); e.target.value = '';
+    const files = [...e.target.files].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })), st = $('#mediaStatus'); e.target.value = '';
+    let added = 0, failed = false;
     for (let n = 0; n < files.length; n++) {
       const f = files[n], img = /^image\//.test(f.type), id = 'm' + Date.now() + n, file = `media/${id}.${img ? 'jpg' : 'mp4'}`;
       if (!img && f.size > 25e6) { st.textContent = f.name + ' is over 25 MB, skipped.'; continue; }
       let body = f; try { if (img) body = await shrink(f, 1920); } catch (err) { st.textContent = 'Could not read ' + f.name; continue; }
       st.textContent = `Uploading ${n + 1} of ${files.length}: ${f.name}`;
-      if (!(await ghPut(file, body, st, true))) return;
+      if (!(await ghPut(file, body, st, true))) { failed = true; break; }
       (S.videos = S.videos || []).push({ id, type: img ? 'image' : 'video', name: f.name.replace(/\.[^.]+$/, ''), file, on: true, v: Date.now() });
-      S.videoOn = true; save(); renderVideos();
+      S.videoOn = true; save(); renderVideos(); added++;
     }
-    syncInputs(); st.textContent = 'Added. Click Publish to TV.';
+    syncInputs();
+    if (added) { const why = failed ? st.textContent : ''; await autoPublish(`Added ${added} item${added > 1 ? 's' : ''}.`); if (failed) st.textContent += ' Some files were not uploaded: ' + why; }
   };
   $('#videoList').onclick = async e => {
     const i = +e.target.dataset.vi, a = e.target.dataset.a, L = S.videos || []; if (isNaN(i) || !L[i]) return;
@@ -1671,16 +1780,17 @@ function wireMedia() {
     else if (a === 'down' && i < L.length - 1) [L[i + 1], L[i]] = [L[i], L[i + 1]];
     else if (a === 'rm') {
       if (!confirm('Remove “' + L[i].name + '”?')) return;
-      const v = L.splice(i, 1)[0]; (S.delMedia = S.delMedia || []).push(v.id); save(); renderVideos(); const st = $('#mediaStatus');
-      const ok = await ghDelete(v.file); st.textContent = ok ? 'Removed. Click Publish to TV.' : 'Removed from the list. Click Publish to TV. (The file stayed on GitHub, which is harmless.)'; return;
+      const v = L.splice(i, 1)[0]; (S.delMedia = S.delMedia || []).push(v.id); save(); renderVideos();
+      if (await autoPublish('Removed “' + v.name + '”.')) ghDelete(v.file); // delete the file only once the TVs no longer list it
+      return;
     } else return;
-    save(); renderVideos();
+    save(); renderVideos(); autoPublish('Order saved.', 1200);
   };
-  $('#videoList').onchange = e => { const i = +e.target.dataset.vi, a = e.target.dataset.a, v = (S.videos || [])[i]; if (!v) return; if (a === 'on') v.on = e.target.checked; if (a === 'name') v.name = e.target.value; if (a === 'fx') v.fx = e.target.value; if (a === 'fit') v.fit = e.target.value; if (a === 'sec') v.sec = +e.target.value || 0; save(); };
+  $('#videoList').onchange = e => { const i = +e.target.dataset.vi, a = e.target.dataset.a, v = (S.videos || [])[i]; if (!v) return; if (a === 'on') v.on = e.target.checked; if (a === 'name') v.name = e.target.value; if (a === 'fx') v.fx = e.target.value; if (a === 'fit') v.fit = e.target.value; if (a === 'sec') v.sec = +e.target.value || 0; save(); autoPublish('Saved.', 1500); };
   renderVideos();
   $('#audFile').onchange = async e => {
     const f = e.target.files[0], st = $('#mediaStatus'), id = $('#audSel').value, lg = $('#audLang').value; e.target.value = ''; if (!f) return;
-    if (await ghPut(`audio/${id.startsWith('azan') ? id : id + '-' + lg}.mp3`, f, st)) { S.audioV = Date.now(); save(); st.textContent = `Uploaded ${id}. Click Publish to TV.`; }
+    if (await ghPut(`audio/${id.startsWith('azan') ? id : id + '-' + lg}.mp3`, f, st)) { S.audioV = Date.now(); save(); Object.keys(bufCache).forEach(k => delete bufCache[k]); autoPublish(`Uploaded ${id}.`); }
   };
 }
 function runDiag() {
@@ -1705,7 +1815,11 @@ calcOffice();
 buildSecMap();
 initBindings(); wireUI(); wireSync(); wireMedia(); refreshAll();
 if (/[?&]diag\b/.test(location.search)) runDiag();
-if (ADMIN) { document.body.classList.add('started'); if (!hadSaved) pull().then(() => { refreshAll(); renderPlans(); renderVideos(); }); }
+if (ADMIN) {
+  document.body.classList.add('started');
+  if (!hadSaved) pull().then(() => { refreshAll(); renderPlans(); renderVideos(); });
+  else fetchData(SYNC.repo).then(c => { if (c) { mergeCloud({}, c); renderStage(); } }); // pick up pictures/plans changed on another computer
+}
 else {
   document.body.classList.add('tv');
   ['keydown', 'click', 'pointerdown'].forEach(ev => addEventListener(ev, () => { if (!document.body.classList.contains('started')) startTV(); else if (!document.fullscreenElement) goFull(); }));
