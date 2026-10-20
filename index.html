@@ -515,7 +515,7 @@ body.started #start{display:none}
 /* One file for BOTH screens. Any web address containing a word in OFFICE_WORDS is the office slideshow site. */
 const OFFICE_WORDS = ['iwadmin'];
 const IS_OFFICE_SITE = OFFICE_WORDS.some(w => location.hostname.indexOf(w) > -1) || /[?&]screen=office/.test(location.search);
-const SYNC = { owner: 'thomashaden66', repo: IS_OFFICE_SITE ? 'iota-signage-office' : 'iota-signage', branch: 'data', file: 'signage-data.json' };
+const SYNC = { owner: 'muhammmadrayyaan-sudo', repo: IS_OFFICE_SITE ? 'iota-signage-office' : 'iota-signage', branch: 'data', file: 'signage-data.json' };
 const SLIDES_ONLY = IS_OFFICE_SITE;
 if (!window.structuredClone) window.structuredClone = o => JSON.parse(JSON.stringify(o));
 window.addEventListener('error', e => { let b = document.getElementById('err'); if (!b) { b = document.createElement('div'); b.id = 'err'; b.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:999;background:#900;color:#fff;font:2.2vh monospace;padding:6px'; document.body.appendChild(b); } b.textContent = 'Error: ' + e.message + ' (line ' + e.lineno + ')'; });
@@ -570,7 +570,7 @@ const DEFAULTS = {
   repeats: 5, gap: 3, minDisplay: 60, volume: 1, boost: 2, chime: true, blink: 'normal',
   interOn: true, interBar: true, interEvery: 120, interLogo: true, interLogoSec: 7, interNoticeSec: 9,
   notices: [
-    { on: true, title: 'Fee Reminder', text: 'Monthly fee vouchers are due by the 10th of every month.' },
+    { on: true, title: 'Fee Reminder', text: 'Monthly fees are due by the 10th.' },
     { on: true, title: 'Reminder', text: 'Please switch off mobile phones during class.' }
   ],
   ttsText: 'Attention please. It is now time for {prayer} prayer. Please proceed for {prayer} prayer. {note}',
