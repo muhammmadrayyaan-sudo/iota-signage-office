@@ -250,6 +250,22 @@ body.started #start{display:none}
 .slide > video.vfit-cover{object-fit:cover}
 .slide > video.vfit-stretch{object-fit:fill}
 .slide > video.vfit-contain{object-fit:contain}
+
+
+.card.act{color:#fff !important;border-left-color:rgba(255,255,255,.55) !important;box-shadow:none}
+.card.act .cj,.card.act .cth,.card.act .cs span,.card.act .own{color:#fff !important}
+.card.act .cs b,.card.act .pill{background:#fff !important;color:var(--ac) !important}
+.card.act{animation:actBlink 2s ease-in-out infinite}
+.card.act-test{--ac:#c40000;background:#c40000 !important;animation:actBlink 2s ease-in-out infinite,actGlow 2s ease-in-out infinite}
+.card.act-practice{--ac:#15803d;background:#15803d !important}
+.card.act-counsel{--ac:#0369a1;background:#0369a1 !important}
+.card.act-extra{--ac:#6b21a8;background:#6b21a8 !important}
+.card.act-recovery{--ac:#c2410c;background:#c2410c !important}
+.card.act-activity{--ac:#a16207;background:#a16207 !important}
+@keyframes actBlink{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes actGlow{0%,100%{box-shadow:0 0 0 0 rgba(196,0,0,0)}50%{box-shadow:0 0 2.4vh .6vh rgba(196,0,0,.8)}}
+.card.act.now{outline:.5vh solid #ffd400;outline-offset:.1vh}
+.card.act.past{animation:none;opacity:.38}
 </style>
 </head>
 <body>
@@ -749,7 +765,7 @@ const PR = date => S.prayers.map(p => Object.assign({}, p, { time: ptime(p, date
 /* ================= stage rendering ================= */
 let pages = [], pageIdx = 0, pageTimer = null, imgUrl = null;
 const subjName = c => S.subjects[c] || c || '';
-const teachName = c => S.teachers[c] || c || '';
+const teachName = c => { const f = S.teachers[c]; if (!f) return c || ''; const w = f.replace(/\./g,' ').split(/\s+/).filter(x => x && !/^(m|muhammad|mohammad|muhammed)$/i.test(x)); return w.length ? 'Sir ' + w[0] : f; };
 
 function buildPages() {
   const groups = [];
@@ -864,14 +880,14 @@ function buildItems() {
   return items.sort((a, b) => a.start - b.start);
 }
 function cardHtml(r, slotTime, nowM) {
-  const i = info(r), n = (r.note || '').trim(), nl = n.toLowerCase(), tst = nl.includes('test');
+  const i = info(r), n = (r.note || '').trim(), nl = n.toLowerCase(), tst = nl.includes('test'), ext = nl.includes('extra'), prc = nl.includes('practice'), at = (n + ' ' + subjName(r.subj) + ' ' + (r.subj || '')).toLowerCase(), ak = /test|exam|quiz/.test(at) ? 'test' : /practice/.test(at) ? 'practice' : /counsel/.test(at) ? 'counsel' : /extra/.test(at) ? 'extra' : /recovery/.test(at) ? 'recovery' : /activit|seminar|workshop/.test(at) ? 'activity' : '';
   const rg = rangeOf(r.time), st = rg ? (nowM >= rg[1] ? ' past' : (nowM >= rg[0] ? ' now' : '')) : '';
   const own = (r.time || '').trim() !== slotTime ? `<span class="own">${esc(fmtRange(r.time))}</span>` : '';
-  const pill = n ? `<span class="pill ${nl === 'extra' ? 'extra' : nl === 'recovery' ? 'recovery' : tst ? 'test' : ''}">${esc(n)}</span>` : '';
+  const pill = n ? `<span class="pill ${tst ? 'test' : ext ? 'extra' : prc ? 'practice' : nl === 'recovery' ? 'recovery' : ''}">${esc(n)}</span>` : '';
   const th = teachName(r.teacher);
-  return `<div class="card${st}${tst ? ' tst' : ''}" style="--c:${i.color};--on:${inkOn(i.color)};--tint:${i.color}26;--tint2:${i.color}59">` +
-    `<div class="cs"><b>${esc(i.cls)}</b><span>${esc(r.sec)}</span>${own}</div><div class="cj">${esc(subjName(r.subj))}</div>` +
-    `<div class="cth">${esc(th)}${th && n ? ' ' : ''}${pill}</div></div>`;
+  return `<div class="card${st}${tst ? ' tst' : ''}${ak ? ' act act-' + ak : ''}" style="--c:${i.color};--on:${inkOn(i.color)};--tint:${i.color}26;--tint2:${i.color}59">` +
+    `<div class="cs"><b>${esc(i.cls)}</b><span>${esc(r.sec)}</span>${own}</div><div class="cj">${esc(subjName(r.subj).replace(/^Mathematics$/, 'Maths'))}${th ? ' - ' + esc(th) : ''}</div>` +
+    (pill ? `<div class="cth">${pill}</div>` : '') + `</div>`;
 }
 function renderGrid() {
   const box = $('#gridWrap'), d = new Date(), nowM = d.getHours() * 60 + d.getMinutes();
@@ -880,12 +896,17 @@ function renderGrid() {
   if (extra.length) floors.push({ name: 'Other', rooms: extra });
   const rooms = floors.flatMap(f => f.rooms), items = buildItems();
   if (!items.length || !rooms.length) { box.innerHTML = '<div class="empty">No timetable rows yet – open Settings → Edit timetable.</div>'; return; }
-  const rowsTpl = 'auto auto ' + items.map(it => it.kind === 'break' ? 'auto' : 'minmax(0,1fr)').join(' ');
+  let cut = items.findIndex(it => !(it.range && nowM >= it.range[1])); if (cut < 0) cut = items.length;
+  let nCls = items.slice(cut).filter(it => it.kind !== 'break').length, from = cut;
+  while (from > 0 && nCls < 4) { from--; if (items[from].kind !== 'break') nCls++; }
+  const vis = cut >= items.length ? [] : items.slice(from);
+  if (!vis.length) { box.innerHTML = '<div class="empty">All classes for today are over.</div>'; return; }
+  const rowsTpl = 'auto auto ' + vis.map(it => it.kind === 'break' ? 'auto' : 'minmax(0,1fr)').join(' ');
   let h = `<div class="g" style="grid-template-columns:10vw repeat(${rooms.length},minmax(0,1fr));grid-template-rows:${rowsTpl}">`;
   h += '<div class="gh gcorner" style="grid-row:span 2">Time</div>';
   floors.forEach(f => { h += `<div class="gh gfloor" style="grid-column:span ${f.rooms.length}">${esc(f.name)}</div>`; });
   rooms.forEach(rm => { h += `<div class="gh groom">${esc(rm)}</div>`; });
-  for (const it of items) {
+  for (const it of vis) {
     const rg = it.range, on = rg && nowM >= rg[0] && nowM < rg[1], past = rg && nowM >= rg[1];
     h += `<div class="gt${on ? ' on' : ''}${past ? ' past' : ''}">${esc(fmtRange(it.time))}${on ? '<small>NOW</small>' : ''}</div>`;
     if (it.kind === 'break') { h += `<div class="gb${on ? ' on' : ''}${past ? ' past' : ''}" style="grid-column:2 / -1">${esc(it.note)}</div>`; continue; }
