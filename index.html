@@ -1107,6 +1107,7 @@ async function azanFallback(ev) {
     if (!u && EMBED_AZAN[id]) u = azanUri(id);
     if (!u) continue;
     const ok = await new Promise(res => { const a = new Audio(u), t = setTimeout(() => res(false), 600000); a.volume = S.volume; const fin = v => { clearTimeout(t); res(v); }; a.onended = () => fin(true); a.onerror = () => fin(false); current = { stop() { a.pause(); fin(true); } }; a.play().catch(() => fin(false)); });
+    if (u && u.startsWith('blob:')) URL.revokeObjectURL(u);
     current = null; if (ok) return true;
   }
   return false;
@@ -1848,7 +1849,7 @@ else {
   const syncAll = async () => { await pull(); await pullStair(); };
   goFull(); syncAll().then(prefetchAudio); setInterval(syncAll, 90000);
   let verSig = null;
-  const checkVersion = async () => { try { const r = await fetch(location.pathname + '?_=' + Date.now(), { cache: 'no-store' }); if (!r.ok) return; const sig = (r.headers.get('etag') || r.headers.get('last-modified') || '') + '|' + (r.headers.get('content-length') || ''); if (verSig === null) verSig = sig; else if (sig !== verSig && !busy && !ann && !interRunning) location.reload(); } catch (e) {} };
+  const checkVersion = async () => { try { let r = await fetch(location.pathname + '?_=' + Date.now(), { method: 'HEAD', cache: 'no-store' }); if (!r.ok) return; const sig = (r.headers.get('etag') || r.headers.get('last-modified') || '') + '|' + (r.headers.get('content-length') || ''); if (verSig === null) verSig = sig; else if (sig !== verSig && !busy && !ann && !interRunning) location.reload(); } catch (e) {} };
   checkVersion(); setInterval(checkVersion, 300000);
 }
 renderLogo(); renderImage(); requestWake();
