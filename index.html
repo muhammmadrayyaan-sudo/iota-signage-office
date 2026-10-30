@@ -143,21 +143,22 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 #inter{position:fixed;top:0;right:0;bottom:0;left:0;z-index:20;background:#fff;display:none;opacity:0;transition:opacity 1s ease;overflow:hidden}
 #inter.show{display:block}
 #inter.vis{opacity:1}
+body.intervis .card{animation-play-state:paused!important}
 #inter{--bar:3.5vh}#inter.nobar{--bar:0vh}#inter.nobar::before,#inter.nobar::after{display:none}#inter::before,#inter::after{content:"";position:absolute;left:0;right:0;height:var(--bar);background:var(--red)}#inter::after{z-index:5}
 #inter::before{top:0}
 #inter::after{bottom:0}
 .slide{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 1s ease;padding:6vh 4vw}
 .slide.on{opacity:1}
 .lgs{display:flex;flex-direction:column;align-items:center;gap:3vh}
-.iwb{width:28vh;height:28vh;background:#9e0303;display:flex;align-items:center;justify-content:center;color:#fff;font:italic 900 15vh Georgia,"Times New Roman",serif;text-shadow:1vh 1vh 1.2vh rgba(0,0,0,.7);transform:scale(.75);opacity:0;transition:transform 1.4s cubic-bezier(.2,.8,.2,1),opacity 1.2s ease}
-.w1b{font:700 9vh var(--display);letter-spacing:.5em;color:var(--crimson);opacity:0;white-space:nowrap;transition:letter-spacing 2s cubic-bezier(.2,.8,.2,1),opacity 1.2s ease .3s}
-.w2b{font:italic 6vh var(--script);color:#111;opacity:0;transform:translateY(2vh);transition:opacity 1.2s ease 1s,transform 1.2s ease 1s}
-.lnb{height:.7vh;width:0;background:var(--red);border-radius:1vh;transition:width 1.8s ease .6s}
+.iwb{width:28vh;height:28vh;background:#9e0303;display:flex;align-items:center;justify-content:center;color:#fff;font:italic 900 15vh Georgia,"Times New Roman",serif;text-shadow:1vh 1vh 1.2vh rgba(0,0,0,.7);transform:scale(.75);opacity:0;transition:transform 1.4s cubic-bezier(.2,.8,.2,1),opacity 1.2s ease;will-change:transform,opacity}
+.w1b{font:700 9vh var(--display);letter-spacing:.22em;color:var(--crimson);opacity:0;white-space:nowrap;transform:scale(1.12);transition:transform 2s cubic-bezier(.2,.8,.2,1),opacity 1.2s ease .3s;will-change:transform,opacity}
+.w2b{font:italic 6vh var(--script);color:#111;opacity:0;transform:translateY(2vh);transition:opacity 1.2s ease 1s,transform 1.2s ease 1s;will-change:transform,opacity}
+.lnb{height:.7vh;width:40vh;background:var(--red);border-radius:1vh;transform:scaleX(0);transition:transform 1.8s ease .6s;will-change:transform}
 .slide.on .iwb{transform:none;opacity:1}
-.slide.on .w1b{letter-spacing:.22em;opacity:1}
+.slide.on .w1b{transform:none;opacity:1}
 .slide.on .w2b{opacity:1;transform:none}
-.slide.on .lnb{width:40vh}
-.biglogo{max-height:56vh;max-width:70vw;object-fit:contain;transform:scale(.88);opacity:0;transition:transform 1.6s cubic-bezier(.2,.8,.2,1),opacity 1.2s ease}
+.slide.on .lnb{transform:none}
+.biglogo{max-height:56vh;max-width:70vw;object-fit:contain;transform:scale(.88);opacity:0;transition:transform 1.6s cubic-bezier(.2,.8,.2,1),opacity 1.2s ease;will-change:transform,opacity}
 .slide.on .biglogo{transform:none;opacity:1}
 .slbrand{position:absolute;top:6.5vh;left:3vw;transform:scale(.8);transform-origin:left top}
 .nt{max-width:88vw;text-align:center}
@@ -222,7 +223,7 @@ body.started #start{display:none}
 .slide.on .fx-up .vid{transform:none;opacity:1;transition:transform 1.1s cubic-bezier(.2,.8,.2,1),opacity .9s}
 .fx-wipe .vid{clip-path:inset(0 100% 0 0);transition:clip-path 1.4s cubic-bezier(.7,0,.2,1)}
 .slide.on .fx-wipe .vid{clip-path:inset(0 0 0 0)}
-.fx .bg{position:absolute;top:-6%;left:-6%;width:112%;height:112%;object-fit:cover;filter:blur(3.2vh) brightness(.78)}
+.fx .bg{position:absolute;top:-6%;left:-6%;width:112%;height:112%;object-fit:cover;filter:blur(3.2vh) brightness(.78);transform:translateZ(0);will-change:transform}
 .slide .fx .vid{background:transparent}
 .slide .fit-cover .vid{object-fit:cover}.slide .fit-stretch .vid{object-fit:fill}.slide .fit-contain .vid,.slide .fit-blur .vid{object-fit:contain}
 .fx-slide .vid{transform:translateX(9%);opacity:0}
@@ -255,8 +256,8 @@ body.started #start{display:none}
 .card.act{color:#fff !important;border-left-color:rgba(255,255,255,.55) !important;box-shadow:none}
 .card.act .cj,.card.act .cth,.card.act .cs span,.card.act .own{color:#fff !important}
 .card.act .cs b,.card.act .pill{background:#fff !important;color:var(--ac) !important}
-.card.act{animation:actBlink 2s ease-in-out infinite}
-.card.act-test{--ac:#c40000;background:#c40000 !important;animation:actBlink 2s ease-in-out infinite,actGlow 2s ease-in-out infinite}
+.card.act{animation:actBlink 2s ease-in-out infinite;will-change:opacity;transform:translateZ(0)}
+.card.act-test{--ac:#c40000;background:#c40000 !important;box-shadow:0 0 2.4vh .6vh rgba(196,0,0,.8);animation:actBlink 2s ease-in-out infinite;will-change:opacity;transform:translateZ(0)}
 .card.act-practice{--ac:#15803d;background:#15803d !important}
 .card.act-counsel{--ac:#0369a1;background:#0369a1 !important}
 .card.act-extra{--ac:#6b21a8;background:#6b21a8 !important}
@@ -265,7 +266,7 @@ body.started #start{display:none}
 @keyframes actBlink{0%,100%{opacity:1}50%{opacity:.45}}
 @keyframes actGlow{0%,100%{box-shadow:0 0 0 0 rgba(196,0,0,0)}50%{box-shadow:0 0 2.4vh .6vh rgba(196,0,0,.8)}}
 .card.act.now{outline:.5vh solid #ffd400;outline-offset:.1vh}
-.card.act.past{animation:none;opacity:.38}
+.card.act.past{animation:none;opacity:.38;box-shadow:none;will-change:auto}
 </style>
 </head>
 <body>
@@ -1178,7 +1179,7 @@ function buildSlides() {
 function abortInter() {
   if (!interRunning) return;
   interAbort = true; if (interWake) interWake(); $$('#inter video').forEach(v => v.pause());
-  $('#inter').classList.remove('vis', 'show');
+  $('#inter').classList.remove('vis', 'show'); document.body.classList.remove('intervis');
 }
 const imgReady = im => new Promise(res => {
   if (im.complete) { res(im.naturalWidth > 0); return; }
@@ -1199,7 +1200,7 @@ async function runInter(force) {
   o.classList.toggle('nobar', S.interBar === false);
   o.classList.add('show');
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-  o.classList.add('vis');
+  o.classList.add('vis'); document.body.classList.add('intervis');
   try {
   let prev = null;
   for (let i = 0; i < els.length && !interAbort; i++) {
@@ -1214,11 +1215,11 @@ async function runInter(force) {
   }
   if (!interAbort && !OFFICE) {
     els.forEach(e => e.classList.remove('on'));
-    o.classList.remove('vis');
+    o.classList.remove('vis'); document.body.classList.remove('intervis');
     await interSleep(1100);
     if (!interAbort) o.classList.remove('show');
   }
-  } catch (e) { console.error(e); o.classList.remove('vis', 'show'); }
+  } catch (e) { console.error(e); o.classList.remove('vis', 'show'); document.body.classList.remove('intervis'); }
   finally { interRunning = false; scheduleInter(); }
 }
 
