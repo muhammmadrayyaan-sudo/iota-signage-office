@@ -973,7 +973,14 @@ async function chime() {
   await sleepCancelable(2300);
 }
 const EMBED_AZAN = { azan: 'azanData', 'azan-fajr': 'azanFajrData' }; // built-in recordings (Mishary Alafasy, voice only)
-const azanUri = id => 'data:audio/mpeg;base64,' + document.getElementById(EMBED_AZAN[id] || 'azanData').textContent.trim();
+const azanBlobCache = {};
+function azanBlob(id) { // decode the built-in recording once and reuse it
+  const key = EMBED_AZAN[id] || 'azanData';
+  if (!azanBlobCache[key]) { const b64 = document.getElementById(key).textContent.trim(), bin = atob(b64), arr = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i); azanBlobCache[key] = new Blob([arr], { type: 'audio/mpeg' }); }
+  return azanBlobCache[key];
+}
+const azanUrlCache = {};
+const azanUri = id => { const key = EMBED_AZAN[id] || 'azanData'; return azanUrlCache[key] || (azanUrlCache[key] = URL.createObjectURL(azanBlob(id))); };
 const bufCache = {};
 async function loadBuffer(id) {
   if (id in bufCache) return bufCache[id];
@@ -981,7 +988,7 @@ async function loadBuffer(id) {
   if (!blob) for (const u of [rawUrl('audio/' + id + '.mp3') + '?v=' + (S.audioV || 0), 'audio/' + id + '.mp3']) {
     try { const r = await fetch(u, { cache: 'no-cache' }); if (r.ok && /audio|octet/.test(r.headers.get('content-type') || '')) { blob = await r.blob(); break; } } catch (e) {}
   }
-  if (!blob && EMBED_AZAN[id]) { try { blob = await (await fetch(azanUri(id))).blob(); } catch (e) {} }
+  if (!blob && EMBED_AZAN[id]) { try { blob = azanBlob(id); } catch (e) {} }
   if (blob) {
     try { buf = await getCtx().decodeAudioData(await blob.arrayBuffer()); }
     catch (e) { toast('Could not read the recording for “' + id + '”. Try an MP3 or WAV file.'); }
@@ -1088,7 +1095,7 @@ async function runAnnouncement(ev) {
     if (ann.cancelled) break;
     $('#pCount').textContent = '';
     if (ann.cancelled) break;
-    await announceOnce(ev);
+    await Promise.race([announceOnce(ev), new Promise(r => setTimeout(r, 360000))]);
     if (ann.cancelled) break;
     if (i < n) await sleepCancelable(clamp(S.gap, 1, 15) * 1000);
   }
@@ -1100,14 +1107,25 @@ async function runAnnouncement(ev) {
   ann = null; hideOverlay();
 }
 async function azanFallback(ev) {
+  const tried = new Set();
   for (const id of ['azan-' + ev.audioId, 'azan']) {
-    const blob = await idbGet('audio:' + id); let u = blob ? URL.createObjectURL(blob) : null;
+    if (ann && ann.cancelled) return false;
+    const blob = await idbGet('audio:' + id); let u = blob ? URL.createObjectURL(blob) : null; const own = !!u;
     if (!u) { const cu = rawUrl('audio/' + id + '.mp3') + '?v=' + (S.audioV || 0); try { const r = await fetch(cu, { method: 'HEAD', cache: 'no-store' }); if (r.ok) u = cu; } catch (e) {} }
     if (!u) { try { const r = await fetch('audio/' + id + '.mp3', { method: 'HEAD', cache: 'no-store' }); if (r.ok) u = 'audio/' + id + '.mp3'; } catch (e) {} }
     if (!u && EMBED_AZAN[id]) u = azanUri(id);
-    if (!u) continue;
-    const ok = await new Promise(res => { const a = new Audio(u), t = setTimeout(() => res(false), 600000); a.volume = S.volume; const fin = v => { clearTimeout(t); res(v); }; a.onended = () => fin(true); a.onerror = () => fin(false); current = { stop() { a.pause(); fin(true); } }; a.play().catch(() => fin(false)); });
-    if (u && u.startsWith('blob:')) URL.revokeObjectURL(u);
+    if (!u || tried.has(u)) continue; tried.add(u);
+    const ok = await new Promise(res => {
+      const a = new Audio(u); a.volume = S.volume; let started = false, done = false;
+      const fin = v => { if (done) return; done = true; clearTimeout(tStart); clearTimeout(tMax); try { a.pause(); a.removeAttribute('src'); a.load(); } catch (e) {} res(v); };
+      const tStart = setTimeout(() => { if (!started) fin(false); }, 15000);   // never started playing: give up after 15 s
+      const tMax = setTimeout(() => fin(true), 300000);                          // azan is ~4 min: never hold the screen past 5 min
+      a.onplaying = () => { started = true; };
+      a.onended = () => fin(true); a.onerror = () => fin(false);
+      current = { stop() { fin(true); } };
+      try { const p = a.play(); if (p && p.catch) p.catch(() => fin(false)); } catch (e) { fin(false); }
+    });
+    if (own) URL.revokeObjectURL(u);
     current = null; if (ok) return true;
   }
   return false;
