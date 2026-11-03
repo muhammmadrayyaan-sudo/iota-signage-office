@@ -257,7 +257,11 @@ body.started #start{display:none}
 .card.act .cj,.card.act .cth,.card.act .cs span,.card.act .own{color:#fff !important}
 .card.act .cs b,.card.act .pill{background:#fff !important;color:var(--ac) !important}
 .card.act{animation:actBlink 2s ease-in-out infinite;will-change:opacity;transform:translateZ(0)}
-.card.act-test{--ac:#c40000;background:#c40000 !important;box-shadow:0 0 2.4vh .6vh rgba(196,0,0,.8);animation:actBlink 2s ease-in-out infinite;will-change:opacity;transform:translateZ(0)}
+.card.act-test{--ac:#c40000;background:#c40000;animation:testPulse 2s ease-in-out infinite;will-change:box-shadow;transform:translateZ(0)}
+@keyframes testPulse{0%,100%{background:#b80000;box-shadow:0 0 .8vh .1vh rgba(196,0,0,.45)}50%{background:#e01414;box-shadow:0 0 3vh 1vh rgba(255,40,40,.95)}}
+.card.act-test.past{animation:none;background:#c40000}
+.card.act-test .cth .pill.tbig{white-space:nowrap;max-width:100%;overflow:hidden;font:900 .95em var(--display);padding:.12em .7em;letter-spacing:.06em;box-shadow:0 .2vh .6vh rgba(0,0,0,.25)}
+.card.act-test .cth .pill.tbig i{font-style:normal;margin-left:.5em;padding-left:.5em;border-left:.15em solid currentColor}
 .card.act-practice{--ac:#15803d;background:#15803d !important}
 .card.act-counsel{--ac:#0369a1;background:#0369a1 !important}
 .card.act-extra{--ac:#6b21a8;background:#6b21a8 !important}
@@ -886,9 +890,16 @@ function cardHtml(r, slotTime, nowM, rgOver) {
   const own = (r.time || '').trim() !== slotTime ? `<span class="own">${esc(fmtRange(r.time))}</span>` : '';
   const pill = n ? `<span class="pill ${tst ? 'test' : ext ? 'extra' : prc ? 'practice' : nl === 'recovery' ? 'recovery' : ''}">${esc(n)}</span>` : '';
   const th = teachName(r.teacher);
+  let tpill = '';
+  if (ak === 'test') {
+    const lab = ((n + ' ' + subjName(r.subj)).match(/mid\s*exam|mcqs?\s*test|exam|quiz|test/i) || ['test'])[0].toUpperCase();
+    const tm = n.match(/\d{1,2}:\d{2}\s*[-–—]\s*\d{1,2}:\d{2}/), tr = rgOver || rangeOf(tm ? tm[0] : r.time);
+    const sub = !tr ? '' : (nowM >= tr[0] && nowM < tr[1]) ? 'NOW' : (nowM < tr[0] && tr[0] - nowM <= 60) ? 'IN ' + (tr[0] - nowM) + ' MIN' : '';
+    tpill = `<span class="pill test tbig">${esc(lab)}${sub ? `<i>${sub}</i>` : tm ? ' ' + esc(tm[0].replace(/\s+/g, '')) : ''}</span>`;
+  }
   return `<div class="card${st}${tst ? ' tst' : ''}${ak ? ' act act-' + ak : ''}" style="--c:${i.color};--on:${inkOn(i.color)};--tint:${i.color}26;--tint2:${i.color}59">` +
     `<div class="cs"><b>${esc(i.cls)}</b><span>${esc(r.sec)}</span>${own}</div><div class="cj">${esc(subjName(r.subj).replace(/^Mathematics$/, 'Maths'))}${th ? ' - ' + esc(th) : ''}</div>` +
-    (pill ? `<div class="cth">${pill}</div>` : '') + `</div>`;
+    ((tpill || pill) ? `<div class="cth">${tpill || pill}</div>` : '') + `</div>`;
 }
 function renderGrid() {
   const box = $('#gridWrap'), d = new Date(), nowM = d.getHours() * 60 + d.getMinutes();
