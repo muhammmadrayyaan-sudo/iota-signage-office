@@ -880,9 +880,9 @@ function buildItems() {
   });
   return items.sort((a, b) => a.start - b.start);
 }
-function cardHtml(r, slotTime, nowM) {
+function cardHtml(r, slotTime, nowM, rgOver) {
   const i = info(r), n = (r.note || '').trim(), nl = n.toLowerCase(), tst = nl.includes('test'), ext = nl.includes('extra'), prc = nl.includes('practice'), at = (n + ' ' + subjName(r.subj) + ' ' + (r.subj || '')).toLowerCase(), ak = /test|exam|quiz/.test(at) ? 'test' : /practice/.test(at) ? 'practice' : /counsel/.test(at) ? 'counsel' : /extra/.test(at) ? 'extra' : /recovery/.test(at) ? 'recovery' : /activit|seminar|workshop/.test(at) ? 'activity' : '';
-  const rg = rangeOf(r.time), st = rg ? (nowM >= rg[1] ? ' past' : (nowM >= rg[0] ? ' now' : '')) : '';
+  const rg = rgOver || rangeOf(r.time), st = rg ? (nowM >= rg[1] ? ' past' : (nowM >= rg[0] ? ' now' : '')) : '';
   const own = (r.time || '').trim() !== slotTime ? `<span class="own">${esc(fmtRange(r.time))}</span>` : '';
   const pill = n ? `<span class="pill ${tst ? 'test' : ext ? 'extra' : prc ? 'practice' : nl === 'recovery' ? 'recovery' : ''}">${esc(n)}</span>` : '';
   const th = teachName(r.teacher);
@@ -904,18 +904,59 @@ function renderGrid() {
   if (!vis.length) { box.innerHTML = '<div class="empty">All classes for today are over.</div>'; return; }
   const rowsTpl = 'auto auto ' + vis.map(it => it.kind === 'break' ? 'auto' : 'minmax(0,1fr)').join(' ');
   let h = `<div class="g" style="grid-template-columns:10vw repeat(${rooms.length},minmax(0,1fr));grid-template-rows:${rowsTpl}">`;
-  h += '<div class="gh gcorner" style="grid-row:span 2">Time</div>';
-  floors.forEach(f => { h += `<div class="gh gfloor" style="grid-column:span ${f.rooms.length}">${esc(f.name)}</div>`; });
-  rooms.forEach(rm => { h += `<div class="gh groom">${esc(rm)}</div>`; });
-  for (const it of vis) {
-    const rg = it.range, on = rg && nowM >= rg[0] && nowM < rg[1], past = rg && nowM >= rg[1];
-    h += `<div class="gt${on ? ' on' : ''}${past ? ' past' : ''}">${esc(fmtRange(it.time))}${on ? '<small>NOW</small>' : ''}</div>`;
-    if (it.kind === 'break') { h += `<div class="gb${on ? ' on' : ''}${past ? ' past' : ''}" style="grid-column:2 / -1">${esc(it.note)}</div>`; continue; }
-    rooms.forEach(rm => {
-      const rs = it.cells[rm.toUpperCase()];
-      h += `<div class="gc">${rs ? rs.map(r => cardHtml(r, it.time, nowM)).join('') : ''}</div>`;
+  h += '<div class="gh gcorner" style="grid-row:1 / span 2;grid-column:1">Time</div>';
+  let fc = 2;
+  floors.forEach(f => { h += `<div class="gh gfloor" style="grid-row:1;grid-column:${fc} / span ${f.rooms.length}">${esc(f.name)}</div>`; fc += f.rooms.length; });
+  rooms.forEach((rm, ci) => { h += `<div class="gh groom" style="grid-row:2;grid-column:${ci + 2}">${esc(rm)}</div>`; });
+  /* Merge: the same single class (same section, subject, teacher, note) in the same room in back-to-back
+     time slots is drawn as ONE tall block, like the paper master plan. A break between those slots does
+     not split it; the break line then skips that room. */
+  const one = (it, rm) => { const rs = it && it.kind !== 'break' ? it.cells[rm.toUpperCase()] : null; return rs && rs.length === 1 ? rs[0] : null; };
+  const sig = r => [r.sec, r.subj, r.teacher, r.note, r.cls].map(x => String(x || '').trim().toLowerCase()).join('|');
+  const taken = vis.map(() => new Array(rooms.length).fill(false)), spans = [];
+  vis.forEach((it, i) => {
+    if (it.kind === 'break' || !it.range) return;
+    rooms.forEach((rm, ci) => {
+      if (taken[i][ci]) return;
+      const r0 = one(it, rm); if (!r0) return;
+      let last = i;
+      for (let j = i + 1; j < vis.length; j++) {
+        const x = vis[j];
+        if (x.kind === 'break') continue;
+        const rj = one(x, rm);
+        if (rj && x.range && sig(rj) === sig(r0)) last = j; else break;
+      }
+      if (last === i) return;
+      for (let j = i; j <= last; j++) taken[j][ci] = true;
+      let range = [it.range[0], vis[last].range[1]];
+      const tm = String(r0.note || '').match(/\d{1,2}:\d{2}\s*[-–—]\s*\d{1,2}:\d{2}/), own = tm && rangeOf(tm[0]);
+      if (own && own[0] < range[1] && own[1] > range[0]) range = [Math.max(range[0], own[0]), Math.min(range[1], own[1])]; // its own time (e.g. exam 6:00-8:30) decides NOW/over
+      spans.push({ i, last, ci, r: r0, range });
     });
-  }
+  });
+  vis.forEach((it, i) => {
+    const row = i + 3, rg = it.range, on = rg && nowM >= rg[0] && nowM < rg[1], past = rg && nowM >= rg[1];
+    h += `<div class="gt${on ? ' on' : ''}${past ? ' past' : ''}" style="grid-row:${row};grid-column:1">${esc(fmtRange(it.time))}${on ? '<small>NOW</small>' : ''}</div>`;
+    if (it.kind === 'break') {
+      const segs = []; let a = -1;
+      for (let ci = 0; ci <= rooms.length; ci++) {
+        const free = ci < rooms.length && !taken[i][ci];
+        if (free && a < 0) a = ci;
+        if (!free && a >= 0) { segs.push([a, ci]); a = -1; }
+      }
+      const widest = segs.reduce((m, sg, k) => (sg[1] - sg[0] > segs[m][1] - segs[m][0] ? k : m), 0);
+      segs.forEach((sg, k) => { h += `<div class="gb${on ? ' on' : ''}${past ? ' past' : ''}" style="grid-row:${row};grid-column:${sg[0] + 2} / ${sg[1] + 2}">${k === widest ? esc(it.note) : ''}</div>`; });
+      return;
+    }
+    rooms.forEach((rm, ci) => {
+      if (taken[i][ci]) return;
+      const rs = it.cells[rm.toUpperCase()];
+      h += `<div class="gc" style="grid-row:${row};grid-column:${ci + 2}">${rs ? rs.map(r => cardHtml(r, it.time, nowM)).join('') : ''}</div>`;
+    });
+  });
+  spans.forEach(sp => {
+    h += `<div class="gc" style="grid-row:${sp.i + 3} / ${sp.last + 4};grid-column:${sp.ci + 2}">${cardHtml(sp.r, sp.r.time, nowM, sp.range)}</div>`;
+  });
   box.innerHTML = h + '</div>';
 }
 function renderStage() {
