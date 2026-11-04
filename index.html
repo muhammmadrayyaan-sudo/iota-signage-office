@@ -1915,6 +1915,7 @@ if (ADMIN) {
 }
 else {
   document.body.classList.add('tv');
+  document.body.classList.add('started'); // never wait on the start screen: after a reload/power cut the signage must show by itself (audio/fullscreen turn on at the first click)
   ['keydown', 'click', 'pointerdown'].forEach(ev => addEventListener(ev, () => { if (!document.body.classList.contains('started')) startTV(); else if (!document.fullscreenElement) goFull(); }));
   const syncAll = async () => { await pull(); await pullStair(); };
   goFull(); syncAll().then(prefetchAudio); setInterval(syncAll, 90000);
