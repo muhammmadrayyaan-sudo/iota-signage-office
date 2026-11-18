@@ -1,0 +1,224 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IOTA World – Hadith Slides</title><style>@font-face{font-family:Jost;font-weight:300;src:url(assets/jost-latin-300-normal.woff2)}@font-face{font-family:Jost;font-weight:400;src:url(assets/jost-latin-400-normal.woff2)}@font-face{font-family:Jost;font-weight:500;src:url(assets/jost-latin-500-normal.woff2)}@font-face{font-family:Jost;font-weight:600;src:url(assets/jost-latin-600-normal.woff2)}@font-face{font-family:Jost;font-weight:700;src:url(assets/jost-latin-700-normal.woff2)}@font-face{font-family:Jost;font-weight:800;src:url(assets/jost-latin-800-normal.woff2)}@font-face{font-family:Nastaliq;font-weight:400;src:url(assets/noto-nastaliq-urdu-arabic-400-normal.woff2)}@font-face{font-family:Nastaliq;font-weight:600;src:url(assets/noto-nastaliq-urdu-arabic-600-normal.woff2)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#000}
+.slide{position:relative;width:1920px;height:1080px;overflow:hidden;color:#fff;font-family:Jost,sans-serif}
+.red{--bg1:#C3304A;--bg2:#8E1426;--bg3:#4A0710;--acc:#F6C453;--ink:#4A0710}
+.blue{--bg1:#3C86C2;--bg2:#1F5B90;--bg3:#0B2746;--acc:#FFD36B;--ink:#0B2746}
+.navy{--bg1:#22477A;--bg2:#102B4D;--bg3:#050F20;--acc:#F2C14E;--ink:#050F20}
+.bg{position:absolute;top:0;right:0;bottom:0;left:0;background:radial-gradient(ellipse at 75% 30%,var(--bg1) 0%,var(--bg2) 45%,var(--bg3) 100%)}
+.sheen{position:absolute;top:-20%;right:-20%;bottom:-20%;left:-20%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.10) 50%,transparent 60%);display:none}
+@keyframes sheen{from{transform:translateX(-45%)}to{transform:translateX(45%)}}@-webkit-keyframes sheen{from{-webkit-transform:translateX(-45%)}to{-webkit-transform:translateX(45%)}}
+.mark{position:absolute;right:-120px;top:-80px;height:1150px;opacity:.06}
+.dots{position:absolute;top:0;right:0;bottom:0;left:0;background-image:radial-gradient(rgba(255,255,255,.12) 1.4px,transparent 1.6px);background-size:34px 34px;
+  opacity:.25}
+
+/* motion primitives */
+.up{-webkit-animation:up .9s cubic-bezier(.16,.84,.24,1) both;animation:up .9s cubic-bezier(.16,.84,.24,1) both;-webkit-animation-delay:var(--d,0s);animation-delay:var(--d,0s)}
+@keyframes up{from{opacity:0;transform:translateY(46px)}to{opacity:1;transform:none}}@-webkit-keyframes up{from{opacity:0;-webkit-transform:translateY(46px)}to{opacity:1;-webkit-transform:none}}
+.left-in{-webkit-animation:lin .9s cubic-bezier(.16,.84,.24,1) both;animation:lin .9s cubic-bezier(.16,.84,.24,1) both;-webkit-animation-delay:var(--d,0s);animation-delay:var(--d,0s)}
+@keyframes lin{from{opacity:0;transform:translateX(-70px)}to{opacity:1;transform:none}}@-webkit-keyframes lin{from{opacity:0;-webkit-transform:translateX(-70px)}to{opacity:1;-webkit-transform:none}}
+.right-in{-webkit-animation:rin 1s cubic-bezier(.16,.84,.24,1) both;animation:rin 1s cubic-bezier(.16,.84,.24,1) both;-webkit-animation-delay:var(--d,0s);animation-delay:var(--d,0s)}
+@keyframes rin{from{opacity:0;transform:translateX(90px)}to{opacity:1;transform:none}}@-webkit-keyframes rin{from{opacity:0;-webkit-transform:translateX(90px)}to{opacity:1;-webkit-transform:none}}
+.pop{-webkit-animation:pop .7s cubic-bezier(.3,1.6,.5,1) both;animation:pop .7s cubic-bezier(.3,1.6,.5,1) both;-webkit-animation-delay:var(--d,0s);animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:none}}@-webkit-keyframes pop{from{opacity:0;-webkit-transform:scale(.5)}to{opacity:1;-webkit-transform:none}}
+.fade{-webkit-animation:fade 1.2s ease both;animation:fade 1.2s ease both;-webkit-animation-delay:var(--d,0s);animation-delay:var(--d,0s)}
+@keyframes fade{from{opacity:0}to{opacity:1}}@-webkit-keyframes fade{from{opacity:0}to{opacity:1}}
+.kb{-webkit-animation:kb 9s ease-out both;animation:kb 9s ease-out both}
+@keyframes kb{from{transform:scale(1.16)}to{transform:scale(1.02)}}@-webkit-keyframes kb{from{-webkit-transform:scale(1.16)}to{-webkit-transform:scale(1.02)}}
+.float{-webkit-animation:float 4s ease-in-out infinite alternate;animation:float 4s ease-in-out infinite alternate;-webkit-animation-delay:var(--d,0s);animation-delay:var(--d,0s)}
+@keyframes float{from{transform:translateY(-10px)}to{transform:translateY(10px)}}@-webkit-keyframes float{from{-webkit-transform:translateY(-10px)}to{-webkit-transform:translateY(10px)}}
+.glow{box-shadow:0 0 40px rgba(255,211,107,.45)}
+@keyframes glow{from{box-shadow:0 0 0 0 rgba(255,211,107,.0),0 0 30px rgba(255,211,107,.35)}to{box-shadow:0 0 0 14px rgba(255,211,107,.12),0 0 70px rgba(255,211,107,.6)}}@-webkit-keyframes glow{from{box-shadow:0 0 0 0 rgba(255,211,107,.0),0 0 30px rgba(255,211,107,.35)}to{box-shadow:0 0 0 14px rgba(255,211,107,.12),0 0 70px rgba(255,211,107,.6)}}
+.wipe{transform-origin:0 50%;-webkit-animation:wipe 1s cubic-bezier(.6,0,.2,1) both;animation:wipe 1s cubic-bezier(.6,0,.2,1) both;-webkit-animation-delay:var(--d,0s);animation-delay:var(--d,0s)}
+@keyframes wipe{from{transform:scaleX(0)}to{transform:none}}@-webkit-keyframes wipe{from{-webkit-transform:scaleX(0)}to{-webkit-transform:none}}
+.shine{background:linear-gradient(100deg,var(--acc) 30%,#fff7d6 45%,var(--acc) 60%);background-size:300% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+@keyframes shine{from{background-position:120% 0}to{background-position:-120% 0}}@-webkit-keyframes shine{from{background-position:120% 0}to{background-position:-120% 0}}
+
+/* text */
+.kick{display:flex;align-items:center;gap:20px;font-size:25px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--acc)}
+.kick:before{content:"";width:60px;height:4px;background:var(--acc);border-radius:2px}
+h1{font-size:96px;line-height:.98;font-weight:700;letter-spacing:-.012em}
+h1 em{font-style:normal}
+.lead{font-size:33px;line-height:1.38;font-weight:400;color:rgba(255,255,255,.9)}
+.lead b{font-weight:600;color:#fff}
+.urdu{display:inline-block;white-space:nowrap;direction:rtl;font-family:Nastaliq;font-weight:600;font-size:44px;line-height:1.9;
+  padding:2px 32px 14px;border-radius:18px;background:rgba(0,0,0,.22);border-right:6px solid var(--acc);color:#fff}
+
+/* cards */
+.glass{background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.06));border:1.5px solid rgba(255,255,255,.22);
+  box-shadow:0 22px 50px rgba(0,0,0,.22);}
+.row{display:flex;align-items:center;gap:26px;padding:22px 30px;border-radius:24px}
+.ic{flex:none;width:86px;height:86px;border-radius:22px;background:var(--acc);color:var(--ink);display:grid;place-items:center;box-shadow:0 10px 24px rgba(0,0,0,.25)}
+.ic svg{width:48px;height:48px}
+.row h3{font-size:36px;font-weight:600;line-height:1.1}
+.row p{margin-top:5px;font-size:25px;line-height:1.3;color:rgba(255,255,255,.85)}
+.photo{position:absolute;overflow:hidden;border-radius:30px;box-shadow:0 30px 70px rgba(0,0,0,.4)}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* footer */
+.foot{position:absolute;left:0;right:0;bottom:0;height:112px;background:#fff;color:#4A0710;display:flex;align-items:center;padding:0 80px;gap:36px;z-index:20}
+.foot:before{content:"";position:absolute;left:0;right:0;top:0;height:7px;background:linear-gradient(90deg,#8E1426,#C3304A 40%,#2E6FA3)}
+.foot img{height:78px}
+.cta{flex:1;text-align:center;white-space:nowrap;font-size:25px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8E1426}
+.cta span{color:#1F5B90}
+.ph{text-align:right;font-size:22px;line-height:1.45;color:#333;white-space:nowrap}
+.ph b{color:#8E1426;font-weight:600}
+.logo-pill{position:absolute;right:56px;bottom:40px;z-index:20;padding:10px 22px;border-radius:18px;background:rgba(255,255,255,.96);box-shadow:0 10px 30px rgba(0,0,0,.25)}.logo-pill img{height:58px;display:block}
+.stage{position:absolute;top:0;right:0;bottom:0;left:0;transform:translateY(48px)}
+.prog{position:absolute;left:0;bottom:0;height:6px;background:var(--acc);z-index:21;-webkit-animation:prog 8s linear both;animation:prog 8s linear both;opacity:.9}
+@keyframes prog{from{width:0}to{width:100%}}@-webkit-keyframes prog{from{width:0}to{width:100%}}
+.hand{-webkit-animation:spin 8s linear both;animation:spin 8s linear both}@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(60deg)}}@-webkit-keyframes spin{from{-webkit-transform:rotate(0deg)}to{-webkit-transform:rotate(60deg)}}
+.light .bg{background:radial-gradient(ellipse at 30% 40%,#FFFFFF 0%,#FBF3EC 50%,#F1E1D6 100%)}
+.light{color:#2A0A10;--acc:#C3304A;--ink:#fff}
+.light .lead{color:#4a2a30}.light .lead b{color:#8E1426}
+.light .kick{color:#C3304A}.light .kick:before{background:#C3304A}
+.light .urdu{background:#8E1426;color:#fff;border-right-color:#F6C453}
+.light .prog{background:#C3304A}
+.light .shine{background:linear-gradient(100deg,#C3304A 30%,#F08A9A 45%,#C3304A 60%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text}
+.fstep{display:flex;align-items:center;gap:24px;padding:20px 28px;border-radius:22px;background:#fff;box-shadow:0 14px 34px rgba(142,20,38,.12);border:1.5px solid rgba(142,20,38,.1)}
+.fstep .n{flex:none;width:62px;height:62px;border-radius:50%;background:#C3304A;color:#fff;display:grid;place-items:center;font-size:30px;font-weight:700}
+.fstep h3{font-size:32px;font-weight:600;color:#2A0A10}.fstep p{font-size:23px;color:#6a4a50;margin-top:2px}
+.typing{display:inline-block;overflow:hidden;white-space:nowrap;vertical-align:bottom;-webkit-animation:type 1.6s steps(12) both;animation:type 1.6s steps(12) both;-webkit-animation-delay:1.6s;animation-delay:1.6s}
+@keyframes type{from{width:0}to{width:12ch}}@-webkit-keyframes type{from{width:0}to{width:12ch}}
+.press{-webkit-animation:press .5s ease both;animation:press .5s ease both;-webkit-animation-delay:3.4s;animation-delay:3.4s}@keyframes press{50%{transform:scale(.94)}}@-webkit-keyframes press{50%{-webkit-transform:scale(.94)}}
+.done{-webkit-animation:done .6s cubic-bezier(.3,1.6,.5,1) both;animation:done .6s cubic-bezier(.3,1.6,.5,1) both;-webkit-animation-delay:3.9s;animation-delay:3.9s}@keyframes done{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}@-webkit-keyframes done{from{opacity:0;-webkit-transform:scale(.6)}to{opacity:1;-webkit-transform:none}}
+
+html,body{width:100%;height:100%;background:#000;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:0 0}
+.slide{position:absolute;top:0;right:0;bottom:0;left:0;display:none;opacity:0;transition:opacity .8s ease}
+.slide.show{display:block}.slide.on{opacity:1}
+.prog{animation-duration:var(--dur,10s)}
+
+
+.frame{top:72px;left:72px;right:72px;bottom:72px;border-radius:34px;opacity:.5}
+.frame:after{top:10px;left:10px;right:10px;bottom:10px;border-radius:26px;opacity:.5}
+.logo-pill{right:100px;bottom:100px}
+.emb{position:absolute;right:112px;top:100px;z-index:20;height:110px;width:64px;-webkit-perspective:700px;perspective:700px}
+.emb-in{width:100%;height:100%;display:flex;align-items:center;justify-content:center;-webkit-animation:embFlip 7s ease-in-out infinite;animation:embFlip 7s ease-in-out infinite;-webkit-animation-delay:1.2s;animation-delay:1.2s}
+.emb-in img{height:110px;display:block}
+@keyframes embFlip{0%,72%{transform:rotateY(0)}86%{transform:rotateY(360deg)}100%{transform:rotateY(360deg)}}
+@-webkit-keyframes embFlip{0%,72%{-webkit-transform:rotateY(0)}86%{-webkit-transform:rotateY(360deg)}100%{-webkit-transform:rotateY(360deg)}}
+</style><style>
+@font-face{font-family:Amiri;font-weight:400;src:url(assets/amiri-arabic-400-normal.woff2)}
+@font-face{font-family:Amiri;font-weight:700;src:url(assets/amiri-arabic-700-normal.woff2)}
+.geo{position:absolute;top:0;right:0;bottom:0;left:0;background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='%23FFFFFF' stroke-width='1.6'><path d='M60 14 L73 47 L106 60 L73 73 L60 106 L47 73 L14 60 L47 47 Z'/><path d='M27 27 L60 40 L93 27 L80 60 L93 93 L60 80 L27 93 L40 60 Z'/><circle cx='60' cy='60' r='12'/><path d='M0 0 L14 14 M120 0 L106 14 M0 120 L14 106 M120 120 L106 106'/></g></svg>");background-size:120px 120px;opacity:.07}
+.light .geo{opacity:.10;filter:invert(1) sepia(1) saturate(4) hue-rotate(310deg)}
+.glowc{position:absolute;left:50%;top:50%;width:1300px;height:1300px;margin:-650px 0 0 -650px;border-radius:50%;background:radial-gradient(circle,rgba(255,211,107,.18),rgba(255,211,107,0) 60%)}
+.light .glowc{background:radial-gradient(circle,rgba(195,48,74,.10),rgba(195,48,74,0) 60%)}
+.frame{position:absolute;top:44px;left:44px;right:44px;bottom:44px;border:2px solid var(--acc);border-radius:28px;opacity:.55}
+.frame:after{content:"";position:absolute;top:12px;left:12px;right:12px;bottom:12px;border:1px solid var(--acc);border-radius:20px;opacity:.6}
+.corner{position:absolute;width:120px;height:120px}
+.corner svg{width:100%;height:100%}
+.c1{top:24px;left:24px}.c2{top:24px;right:24px;transform:scaleX(-1)}.c3{bottom:24px;left:24px;transform:scaleY(-1)}.c4{bottom:24px;right:24px;transform:scale(-1,-1)}
+.arch{position:absolute;left:50%;top:150px;width:1240px;height:520px;margin-left:-620px}
+.arch svg{width:100%;height:100%}
+.hwrap{position:absolute;left:170px;right:170px;top:90px;bottom:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.badge{width:118px;height:118px;border-radius:50%;background:var(--acc);color:var(--ink);display:grid;place-items:center;box-shadow:0 0 0 12px rgba(255,211,107,.16),0 18px 40px rgba(0,0,0,.3)}
+.light .badge{color:#fff;box-shadow:0 0 0 12px rgba(195,48,74,.12),0 18px 40px rgba(142,20,38,.2)}
+.badge svg{width:62px;height:62px}
+.saw{margin-top:26px;font-size:24px;letter-spacing:.3em;text-transform:uppercase;color:var(--acc);font-weight:600}
+.light .saw{color:#C3304A}
+.ar{font-family:Amiri,serif;font-weight:700;font-size:80px;line-height:1.7;direction:rtl;color:#fff;margin-top:14px;text-shadow:0 6px 30px rgba(0,0,0,.25)}
+.light .ar{color:#8E1426;text-shadow:none}
+.orn{display:flex;align-items:center;gap:18px;margin-top:22px;color:var(--acc)}
+.orn i{display:block;width:150px;height:2px;background:currentColor;opacity:.8}
+.orn b{display:block;width:16px;height:16px;transform:rotate(45deg);border:2px solid currentColor}
+.light .orn{color:#C3304A}
+.en{font-size:52px;line-height:1.3;font-weight:500;max-width:1450px;margin-top:24px}
+.en b{color:var(--acc);font-weight:700}
+.light .en{color:#2A0A10}.light .en b{color:#C3304A}
+.ref{display:inline-flex;align-items:center;gap:16px;margin-top:36px;padding:14px 34px;border-radius:40px;font-size:28px;font-weight:600;letter-spacing:.06em;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.28)}
+.ref i{width:12px;height:12px;border-radius:50%;background:var(--acc);display:inline-block}
+.light .ref{background:#8E1426;color:#fff;border-color:#8E1426}
+.spark{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--acc);opacity:0;-webkit-animation:spark 7s ease-in-out infinite;animation:spark 7s ease-in-out infinite}
+@keyframes spark{0%{opacity:0;transform:translateY(0)}30%{opacity:.8}100%{opacity:0;transform:translateY(-260px)}}
+@-webkit-keyframes spark{0%{opacity:0;-webkit-transform:translateY(0)}30%{opacity:.8}100%{opacity:0;-webkit-transform:translateY(-260px)}}
+</style>
+</head><body><div id="stage"><section class="slide red"><div class="bg"></div><div class="geo"></div><div class="glowc"></div><i class="spark" style="left:607px;top:903px;animation-delay:3.8s;-webkit-animation-delay:2.6s"></i><i class="spark" style="left:1356px;top:842px;animation-delay:4.4s;-webkit-animation-delay:0.5s"></i><i class="spark" style="left:146px;top:840px;animation-delay:1.8s;-webkit-animation-delay:1.6s"></i><i class="spark" style="left:1588px;top:840px;animation-delay:3.8s;-webkit-animation-delay:3.8s"></i><i class="spark" style="left:933px;top:927px;animation-delay:6.0s;-webkit-animation-delay:1.6s"></i>
+<div class="arch fade" style="--d:.2s"><svg viewBox="0 0 1240 520" preserveAspectRatio="none"><path d="M20 520 V230 C20 110 300 30 620 10 C940 30 1220 110 1220 230 V520" fill="rgba(255,255,255,.05)" stroke="var(--acc)" stroke-width="2" stroke-opacity=".45"/></svg></div>
+<div class="frame"></div>
+<div class="stage" style="transform:none"><div class="hwrap">
+  <div class="badge pop" style="--d:.3s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5C6.5 4 9.5 4 12 5.5v14c-2.5-1.5-5.5-1.5-8 0z"/><path d="M20 5.5C17.5 4 14.5 4 12 5.5v14c2.5-1.5 5.5-1.5 8 0z"/></svg></div>
+  <div class="saw fade" style="--d:.6s">The Prophet <span style="font-family:Amiri;font-size:40px;letter-spacing:0;vertical-align:-6px">&#xFDFA;</span> said</div>
+  <div class="ar up" style="--d:.9s">مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا<br>سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ</div>
+  <div class="orn fade" style="--d:1.5s"><i class="wipe" style="--d:1.5s"></i><b></b><i class="wipe" style="--d:1.5s;transform-origin:100% 50%"></i></div>
+  <div class="en up" style="--d:1.8s">&ldquo;Whoever follows a path seeking <b>knowledge</b>, Allah makes easy for him a path to <b>Jannah</b>.&rdquo;</div>
+  <div class="ref pop" style="--d:2.5s"><i></i>Sahih Muslim 2699</div>
+</div></div><div class="prog"></div><div class="emb"><div class="emb-in"><img src="assets/shield.png" alt=""></div></div></section>
+<section class="slide navy"><div class="bg"></div><div class="geo"></div><div class="glowc"></div><i class="spark" style="left:1611px;top:895px;animation-delay:3.1s;-webkit-animation-delay:6.5s"></i><i class="spark" style="left:868px;top:649px;animation-delay:0.3s;-webkit-animation-delay:3.5s"></i><i class="spark" style="left:648px;top:944px;animation-delay:3.1s;-webkit-animation-delay:4.4s"></i><i class="spark" style="left:736px;top:815px;animation-delay:3.6s;-webkit-animation-delay:2.7s"></i><i class="spark" style="left:838px;top:873px;animation-delay:4.1s;-webkit-animation-delay:4.1s"></i>
+<div class="arch fade" style="--d:.2s"><svg viewBox="0 0 1240 520" preserveAspectRatio="none"><path d="M20 520 V230 C20 110 300 30 620 10 C940 30 1220 110 1220 230 V520" fill="rgba(255,255,255,.05)" stroke="var(--acc)" stroke-width="2" stroke-opacity=".45"/></svg></div>
+<div class="frame"></div>
+<div class="stage" style="transform:none"><div class="hwrap">
+  <div class="badge pop" style="--d:.3s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4v-4h4v-4h4V8h4V4"/><path d="M4 20V16"/></svg></div>
+  <div class="saw fade" style="--d:.6s">The Prophet <span style="font-family:Amiri;font-size:40px;letter-spacing:0;vertical-align:-6px">&#xFDFA;</span> said</div>
+  <div class="ar up" style="--d:.9s">أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ</div>
+  <div class="orn fade" style="--d:1.5s"><i class="wipe" style="--d:1.5s"></i><b></b><i class="wipe" style="--d:1.5s;transform-origin:100% 50%"></i></div>
+  <div class="en up" style="--d:1.8s">&ldquo;The most beloved deeds to Allah are those done <b>consistently</b>, even if they are small.&rdquo;</div>
+  <div class="ref pop" style="--d:2.5s"><i></i>Sahih al-Bukhari 6464 &middot; Sahih Muslim 783</div>
+</div></div><div class="prog"></div><div class="emb"><div class="emb-in"><img src="assets/shield.png" alt=""></div></div></section>
+<section class="slide light"><div class="bg"></div><div class="geo"></div><div class="glowc"></div><i class="spark" style="left:1428px;top:847px;animation-delay:0.6s;-webkit-animation-delay:5.6s"></i><i class="spark" style="left:960px;top:677px;animation-delay:0.1s;-webkit-animation-delay:3.0s"></i><i class="spark" style="left:970px;top:660px;animation-delay:0.3s;-webkit-animation-delay:4.3s"></i><i class="spark" style="left:212px;top:793px;animation-delay:5.0s;-webkit-animation-delay:2.3s"></i><i class="spark" style="left:691px;top:858px;animation-delay:1.7s;-webkit-animation-delay:0.3s"></i>
+<div class="arch fade" style="--d:.2s"><svg viewBox="0 0 1240 520" preserveAspectRatio="none"><path d="M20 520 V230 C20 110 300 30 620 10 C940 30 1220 110 1220 230 V520" fill="rgba(255,255,255,.05)" stroke="var(--acc)" stroke-width="2" stroke-opacity=".45"/></svg></div>
+<div class="frame"></div>
+<div class="stage" style="transform:none"><div class="hwrap">
+  <div class="badge pop" style="--d:.3s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></div>
+  <div class="saw fade" style="--d:.6s">The Prophet <span style="font-family:Amiri;font-size:40px;letter-spacing:0;vertical-align:-6px">&#xFDFA;</span> said</div>
+  <div class="ar up" style="--d:.9s">نِعْمَتَانِ مَغْبُونٌ فِيهِمَا كَثِيرٌ مِنَ النَّاسِ<br>الصِّحَّةُ وَالْفَرَاغُ</div>
+  <div class="orn fade" style="--d:1.5s"><i class="wipe" style="--d:1.5s"></i><b></b><i class="wipe" style="--d:1.5s;transform-origin:100% 50%"></i></div>
+  <div class="en up" style="--d:1.8s">&ldquo;There are two blessings that many people waste: <b>health</b> and <b>free time</b>.&rdquo;</div>
+  <div class="ref pop" style="--d:2.5s"><i></i>Sahih al-Bukhari 6412</div>
+</div></div><div class="prog"></div><div class="emb"><div class="emb-in"><img src="assets/shield.png" alt=""></div></div></section>
+<section class="slide blue"><div class="bg"></div><div class="geo"></div><div class="glowc"></div><i class="spark" style="left:1514px;top:886px;animation-delay:0.7s;-webkit-animation-delay:6.8s"></i><i class="spark" style="left:1781px;top:859px;animation-delay:1.9s;-webkit-animation-delay:4.4s"></i><i class="spark" style="left:1585px;top:721px;animation-delay:6.6s;-webkit-animation-delay:3.1s"></i><i class="spark" style="left:648px;top:866px;animation-delay:2.1s;-webkit-animation-delay:2.4s"></i><i class="spark" style="left:1734px;top:812px;animation-delay:6.9s;-webkit-animation-delay:2.2s"></i>
+<div class="arch fade" style="--d:.2s"><svg viewBox="0 0 1240 520" preserveAspectRatio="none"><path d="M20 520 V230 C20 110 300 30 620 10 C940 30 1220 110 1220 230 V520" fill="rgba(255,255,255,.05)" stroke="var(--acc)" stroke-width="2" stroke-opacity=".45"/></svg></div>
+<div class="frame"></div>
+<div class="stage" style="transform:none"><div class="hwrap">
+  <div class="badge pop" style="--d:.3s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17c4 0 5-10 9-10s5 10 9 10"/><circle cx="12" cy="7" r="1.6"/></svg></div>
+  <div class="saw fade" style="--d:.6s">The Prophet <span style="font-family:Amiri;font-size:40px;letter-spacing:0;vertical-align:-6px">&#xFDFA;</span> said</div>
+  <div class="ar up" style="--d:.9s">يَسِّرُوا وَلاَ تُعَسِّرُوا</div>
+  <div class="orn fade" style="--d:1.5s"><i class="wipe" style="--d:1.5s"></i><b></b><i class="wipe" style="--d:1.5s;transform-origin:100% 50%"></i></div>
+  <div class="en up" style="--d:1.8s">&ldquo;Make things <b>easy</b>, and do not make them difficult.&rdquo;</div>
+  <div class="ref pop" style="--d:2.5s"><i></i>Sahih al-Bukhari 69 &middot; Sahih Muslim 1734</div>
+</div></div><div class="prog"></div><div class="emb"><div class="emb-in"><img src="assets/shield.png" alt=""></div></div></section>
+<section class="slide red"><div class="bg"></div><div class="geo"></div><div class="glowc"></div><i class="spark" style="left:1351px;top:763px;animation-delay:1.2s;-webkit-animation-delay:1.3s"></i><i class="spark" style="left:1672px;top:789px;animation-delay:5.9s;-webkit-animation-delay:1.8s"></i><i class="spark" style="left:1732px;top:793px;animation-delay:0.7s;-webkit-animation-delay:5.7s"></i><i class="spark" style="left:1285px;top:950px;animation-delay:5.1s;-webkit-animation-delay:2.2s"></i><i class="spark" style="left:575px;top:934px;animation-delay:5.6s;-webkit-animation-delay:1.7s"></i>
+<div class="arch fade" style="--d:.2s"><svg viewBox="0 0 1240 520" preserveAspectRatio="none"><path d="M20 520 V230 C20 110 300 30 620 10 C940 30 1220 110 1220 230 V520" fill="rgba(255,255,255,.05)" stroke="var(--acc)" stroke-width="2" stroke-opacity=".45"/></svg></div>
+<div class="frame"></div>
+<div class="stage" style="transform:none"><div class="hwrap">
+  <div class="badge pop" style="--d:.3s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.6 6 6.4.6-4.9 4.2 1.5 6.3L12 16.3 6.4 19.6l1.5-6.3L3 9.1l6.4-.6z"/></svg></div>
+  <div class="saw fade" style="--d:.6s">The Prophet <span style="font-family:Amiri;font-size:40px;letter-spacing:0;vertical-align:-6px">&#xFDFA;</span> said</div>
+  <div class="ar up" style="--d:.9s">إِنَّ اللَّهَ كَتَبَ الإِحْسَانَ عَلَى كُلِّ شَيْءٍ</div>
+  <div class="orn fade" style="--d:1.5s"><i class="wipe" style="--d:1.5s"></i><b></b><i class="wipe" style="--d:1.5s;transform-origin:100% 50%"></i></div>
+  <div class="en up" style="--d:1.8s">&ldquo;Indeed, Allah has prescribed <b>excellence (ihsan)</b> in everything.&rdquo;</div>
+  <div class="ref pop" style="--d:2.5s"><i></i>Sahih Muslim 1955</div>
+</div></div><div class="prog"></div><div class="emb"><div class="emb-in"><img src="assets/shield.png" alt=""></div></div></section>
+<section class="slide navy"><div class="bg"></div><div class="geo"></div><div class="glowc"></div><i class="spark" style="left:189px;top:871px;animation-delay:6.7s;-webkit-animation-delay:2.2s"></i><i class="spark" style="left:1297px;top:693px;animation-delay:6.0s;-webkit-animation-delay:2.4s"></i><i class="spark" style="left:1434px;top:643px;animation-delay:5.6s;-webkit-animation-delay:2.4s"></i><i class="spark" style="left:385px;top:815px;animation-delay:2.0s;-webkit-animation-delay:5.6s"></i><i class="spark" style="left:675px;top:837px;animation-delay:2.4s;-webkit-animation-delay:2.9s"></i>
+<div class="arch fade" style="--d:.2s"><svg viewBox="0 0 1240 520" preserveAspectRatio="none"><path d="M20 520 V230 C20 110 300 30 620 10 C940 30 1220 110 1220 230 V520" fill="rgba(255,255,255,.05)" stroke="var(--acc)" stroke-width="2" stroke-opacity=".45"/></svg></div>
+<div class="frame"></div>
+<div class="stage" style="transform:none"><div class="hwrap">
+  <div class="badge pop" style="--d:.3s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0114 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></div>
+  <div class="saw fade" style="--d:.6s">The Prophet <span style="font-family:Amiri;font-size:40px;letter-spacing:0;vertical-align:-6px">&#xFDFA;</span> said</div>
+  <div class="ar up" style="--d:.9s">مَنْ دَلَّ عَلَى خَيْرٍ فَلَهُ مِثْلُ أَجْرِ فَاعِلِهِ</div>
+  <div class="orn fade" style="--d:1.5s"><i class="wipe" style="--d:1.5s"></i><b></b><i class="wipe" style="--d:1.5s;transform-origin:100% 50%"></i></div>
+  <div class="en up" style="--d:1.8s">&ldquo;Whoever guides someone to <b>good</b> will have a reward like the one who does it.&rdquo;</div>
+  <div class="ref pop" style="--d:2.5s"><i></i>Sahih Muslim 1893</div>
+</div></div><div class="prog"></div><div class="emb"><div class="emb-in"><img src="assets/shield.png" alt=""></div></div></section>
+</div>
+<script>
+var DUR = 10000; // time per slide (ms)
+var stage = document.getElementById('stage');
+function fit(){var s=Math.min(innerWidth/1920,innerHeight/1080);
+  stage.style.transform='scale('+s+') translate(-50%,-50%)';
+  var t='translate('+(-960*s)+'px,'+(-540*s)+'px) scale('+s+')';stage.style.webkitTransform=t;stage.style.transform=t;}
+addEventListener('resize',fit); fit();
+document.documentElement.style.setProperty('--dur', DUR/1000+'s');
+var slides=[].slice.call(document.querySelectorAll('.slide')), cur=-1;
+function go(n){
+  var prev=slides[cur], next=slides[n];
+  next.classList.add('show'); void next.offsetWidth; next.classList.add('on');
+  if(prev){prev.classList.remove('on'); setTimeout(function(){prev.classList.remove('show');},850);}
+  cur=n;
+}
+var ONCE=/[?&]once/.test(location.search),started=false;function start(){if(started)return;started=true;go(0);var iv=setInterval(function(){if(ONCE&&cur===slides.length-1){clearInterval(iv);try{parent.postMessage('slidesDone','*');}catch(e){}return;}go((cur+1)%slides.length);},DUR);}
+if(document.readyState==='complete')start();else{addEventListener('load',start);setTimeout(start,6000);}
+</script></body></html>

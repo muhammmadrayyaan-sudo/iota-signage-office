@@ -89,6 +89,7 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .pill.test{background:#fde2e2;color:#a30404}
 .pill.recovery{background:#dff3e2;color:#1c6a2b}
 .empty{padding:6vh;font-size:4vh;color:#777;text-align:center}
+.empty.bye{padding:7vh 4vh;color:#2A0A10}.bye1{font:700 7vh/1.1 var(--display);color:var(--red)}.bye2{margin-top:2.2vh;font-size:4.2vh;font-weight:600}.bye3{margin-top:1.4vh;font-size:3.2vh;color:#666}
 
 /* ---------- room grid (one screen) ---------- */
 #gridWrap{display:none;margin:.9vh 1.6vw;height:calc(100% - 1.8vh);background:#fff;border-radius:1.2vh;box-shadow:0 .4vh 1.6vh rgba(120,20,30,.14);overflow:hidden}
@@ -271,6 +272,49 @@ body.started #start{display:none}
 @keyframes actGlow{0%,100%{box-shadow:0 0 0 0 rgba(196,0,0,0)}50%{box-shadow:0 0 2.4vh .6vh rgba(196,0,0,.8)}}
 .card.act.now{outline:.5vh solid #ffd400;outline-offset:.1vh}
 .card.act.past{animation:none;opacity:.38;box-shadow:none;will-change:auto}
+.webslide{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+
+/* ===== study-tip avatar: rises from behind the red bar into the header, never over the timetable ===== */
+header.top{position:relative;z-index:1}.banner{position:relative;z-index:3}
+#avWrap{position:absolute;top:0;width:12vh;overflow:hidden;z-index:2;pointer-events:none;display:none}
+body.tv #avWrap{display:block}
+#av{position:absolute;left:0;bottom:-1vh;width:12vh;height:16vh;-webkit-transform:translateY(110%);transform:translateY(110%)}
+#av.in{-webkit-animation:avUp .9s cubic-bezier(.3,1.5,.5,1) both;animation:avUp .9s cubic-bezier(.3,1.5,.5,1) both}
+#av.out{-webkit-animation:avDown .6s ease-in both;animation:avDown .6s ease-in both}
+@keyframes avUp{0%{transform:translateY(110%)}60%{transform:translateY(-6%)}100%{transform:translateY(0)}}
+@-webkit-keyframes avUp{0%{-webkit-transform:translateY(110%)}60%{-webkit-transform:translateY(-6%)}100%{-webkit-transform:translateY(0)}}
+@keyframes avDown{0%{transform:translateY(0)}25%{transform:translateY(-5%)}100%{transform:translateY(110%)}}
+@-webkit-keyframes avDown{0%{-webkit-transform:translateY(0)}25%{-webkit-transform:translateY(-5%)}100%{-webkit-transform:translateY(110%)}}
+#av svg{width:100%;height:100%;overflow:visible}
+#av .lid{transform-box:fill-box;-webkit-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:scaleY(0);transform:scaleY(0);-webkit-animation:avBlink 4s infinite;animation:avBlink 4s infinite}
+@keyframes avBlink{0%,93%,100%{transform:scaleY(0)}96%{transform:scaleY(1)}}
+@-webkit-keyframes avBlink{0%,93%,100%{-webkit-transform:scaleY(0)}96%{-webkit-transform:scaleY(1)}}
+#av .arm{transform-box:fill-box;-webkit-transform-origin:15% 95%;transform-origin:15% 95%;-webkit-transform:rotate(60deg);transform:rotate(60deg)}
+#av.wave .arm{-webkit-animation:avWave .4s ease-in-out 6 alternate;animation:avWave .4s ease-in-out 6 alternate}
+@keyframes avWave{from{transform:rotate(-8deg)}to{transform:rotate(18deg)}}
+@-webkit-keyframes avWave{from{-webkit-transform:rotate(-8deg)}to{-webkit-transform:rotate(18deg)}}
+#avBurst{position:absolute;z-index:4;pointer-events:none;width:0;height:0}
+#avBurst i{position:absolute;left:0;top:0;width:1.1vh;height:1.1vh;background:#F2B705;opacity:0;-webkit-transform:rotate(45deg);transform:rotate(45deg)}
+#avBurst.go i{-webkit-animation:avStar .9s ease-out both;animation:avStar .9s ease-out both}
+@keyframes avStar{0%{opacity:1;transform:translate(0,0) rotate(45deg) scale(.4)}100%{opacity:0;transform:translate(var(--x),var(--y)) rotate(45deg) scale(1.2)}}
+@-webkit-keyframes avStar{0%{opacity:1;-webkit-transform:translate(0,0) rotate(45deg) scale(.4)}100%{opacity:0;-webkit-transform:translate(var(--x),var(--y)) rotate(45deg) scale(1.2)}}
+#avPortal{position:absolute;z-index:4;width:16vh;height:3.2vh;margin-left:-8vh;margin-top:-1.6vh;border-radius:50%;pointer-events:none;
+  background:radial-gradient(ellipse,#FFF6C8 0%,#F2B705 45%,rgba(242,183,5,0) 72%);box-shadow:0 0 3vh 1vh rgba(242,183,5,.55);opacity:0;-webkit-transform:scaleX(0);transform:scaleX(0)}
+#avPortal.open{-webkit-animation:avPortal 2.6s ease-out both;animation:avPortal 2.6s ease-out both}
+#avPortal.close{-webkit-animation:avPortalC .7s ease-in both;animation:avPortalC .7s ease-in both}
+@keyframes avPortal{0%{opacity:0;transform:scaleX(0)}25%{opacity:1;transform:scaleX(1.15)}40%{transform:scaleX(1)}100%{opacity:.55;transform:scaleX(1)}}
+@-webkit-keyframes avPortal{0%{opacity:0;-webkit-transform:scaleX(0)}25%{opacity:1;-webkit-transform:scaleX(1.15)}40%{-webkit-transform:scaleX(1)}100%{opacity:.55;-webkit-transform:scaleX(1)}}
+@keyframes avPortalC{0%{opacity:.8;transform:scaleX(1)}100%{opacity:0;transform:scaleX(0)}}
+@-webkit-keyframes avPortalC{0%{opacity:.8;-webkit-transform:scaleX(1)}100%{opacity:0;-webkit-transform:scaleX(0)}}
+#avBubble{position:absolute;z-index:5;max-width:44vw;padding:1.3vh 2.2vh;border-radius:2.2vh;background:#fff;border:.4vh solid #C3304A;box-shadow:0 1vh 3vh rgba(0,0,0,.22);
+  color:#2A0A10;font:600 2.6vh/1.25 var(--display);display:flex;align-items:center;gap:1.4vh;pointer-events:none;
+  opacity:0;-webkit-transform:scale(.4);transform:scale(.4);-webkit-transform-origin:100% 50%;transform-origin:100% 50%;-webkit-transition:opacity .3s,-webkit-transform .45s cubic-bezier(.3,1.6,.5,1);transition:opacity .3s,transform .45s cubic-bezier(.3,1.6,.5,1)}
+#avBubble.on{opacity:1;-webkit-transform:none;transform:none}
+#avBubble b{flex:none;background:#F2B705;color:#4A0710;padding:.5vh 1vh;border-radius:.8vh;font-size:1.7vh;letter-spacing:.14em}
+#avBubble:after{content:"";position:absolute;right:-2vh;top:50%;margin-top:-1.1vh;border:1.1vh solid transparent;border-left:1.6vh solid #C3304A}
+body.avslide #avWrap{position:fixed;z-index:30}body.avslide #avBurst,body.avslide #avPortal,body.avslide #avBubble{position:fixed;z-index:31}
+body:not(.tv) #avBubble,body:not(.tv) #avPortal,body:not(.tv) #avBurst{display:none}
+/* ===== end avatar ===== */
 </style>
 </head>
 <body>
@@ -281,6 +325,19 @@ body.started #start{display:none}
     <div class="ttl"><h1 id="title"></h1></div>
     <div class="clk"><div id="clock"></div><div id="date"></div></div>
   </header>
+  <div id="avWrap"><div id="av"><svg viewBox="0 0 240 320"><g>
+<path d="M40 320c0-56 32-96 80-96s80 40 80 96z" fill="#13315C"/><path d="M100 226l20 32 20-32z" fill="#fff"/><path d="M114 242h12l-2 46h-8z" fill="#C3304A"/>
+<g class="arm"><path d="M58 250c-14-18-20-40-16-62" stroke="#13315C" stroke-width="26" stroke-linecap="round" fill="none"/><circle cx="42" cy="180" r="15" fill="#EDB98C"/><path d="M34 168v-10M41 165v-12M48 166v-10" stroke="#EDB98C" stroke-width="6" stroke-linecap="round"/></g>
+<rect x="104" y="198" width="32" height="32" rx="10" fill="#E3A87C"/>
+<ellipse cx="56" cy="144" rx="10" ry="16" fill="#E3A87C"/><ellipse cx="184" cy="144" rx="10" ry="16" fill="#E3A87C"/><ellipse cx="120" cy="140" rx="64" ry="70" fill="#EDB98C"/>
+<path d="M58 118c2-40 30-60 62-60s60 20 62 60c-10-14-20-20-34-22q-28 14-60 2c-14 4-22 10-30 20z" fill="#2B1B14"/>
+<path d="M64 96c4-30 28-46 56-46s52 16 56 46q-56-18-112 0z" fill="#FFFDF7" stroke="#B9B9B9" stroke-width="2.5"/>
+<ellipse cx="96" cy="146" rx="9" ry="11" fill="#2A0A10"/><ellipse cx="144" cy="146" rx="9" ry="11" fill="#2A0A10"/><circle cx="99" cy="142" r="3.5" fill="#fff"/><circle cx="147" cy="142" r="3.5" fill="#fff"/>
+<ellipse class="lid" cx="96" cy="146" rx="11" ry="13" fill="#EDB98C"/><ellipse class="lid" cx="144" cy="146" rx="11" ry="13" fill="#EDB98C"/>
+<path d="M84 126q12-6 24 0M132 126q12-6 24 0" fill="none" stroke="#2B1B14" stroke-width="4" stroke-linecap="round"/>
+<path d="M104 174q16 14 32 0" fill="none" stroke="#8E1426" stroke-width="4" stroke-linecap="round"/>
+<ellipse cx="82" cy="166" rx="9" ry="5" fill="#E07A6A" opacity=".35"/><ellipse cx="158" cy="166" rx="9" ry="5" fill="#E07A6A" opacity=".35"/>
+</g></svg></div></div><div id="avBurst"></div><div id="avPortal"></div><div id="avBubble"><b>STUDY TIP</b><span id="avTxt"></span></div>
   <div class="banner">
     <span id="dayLabel"></span>
     <span id="next"></span>
@@ -534,12 +591,27 @@ body.started #start{display:none}
    real GitHub username (keep the quotes). Nothing else here.
    ============================================================ */
 /* One file for BOTH screens. Any web address containing a word in OFFICE_WORDS is the office slideshow site. */
-const OFFICE_WORDS = ['iwadmin'];
-const IS_OFFICE_SITE = OFFICE_WORDS.some(w => location.hostname.indexOf(w) > -1) || /[?&]screen=office/.test(location.search);
-const SYNC = { owner: 'muhammmadrayyaan-sudo', repo: IS_OFFICE_SITE ? 'iota-signage-office' : 'iota-signage', branch: 'data', file: 'signage-data.json' };
+const OFFICE_WORDS = ['iwadmin', 'iwcampus2', 'iota2'];
+const IS_CAMPUS2 = (location.hostname.indexOf('iwcampus2') > -1 || location.hostname.indexOf('iota2') > -1) || /[?&]screen=campus2/.test(location.search); /* Campus 2 site: own data, own timetable */
+const IS_OFFICE_SITE = OFFICE_WORDS.some(w => location.hostname.indexOf(w) > -1) || /[?&]screen=(office|campus2)/.test(location.search);
+const SYNC = { owner: 'muhammmadrayyaan-sudo', repo: IS_CAMPUS2 ? 'Iota-signage-campus-2' : IS_OFFICE_SITE ? 'iota-signage-office' : 'iota-signage', branch: 'data', file: 'signage-data.json' };
 const SLIDES_ONLY = IS_OFFICE_SITE;
 if (!window.structuredClone) window.structuredClone = o => JSON.parse(JSON.stringify(o));
-window.addEventListener('error', e => { let b = document.getElementById('err'); if (!b) { b = document.createElement('div'); b.id = 'err'; b.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:999;background:#900;color:#fff;font:2.2vh monospace;padding:6px'; document.body.appendChild(b); } b.textContent = 'Error: ' + e.message + ' (line ' + e.lineno + ')'; });
+window.__isAdmin = /[?&]admin\b/.test(location.search);
+window.__safeReload = function (why) { /* reload only if the site is reachable and we have not just reloaded (prevents loops and blank error pages) */
+  try { const last = +localStorage.getItem('iwReloadAt') || 0; if (Date.now() - last < 10 * 60 * 1000) return; } catch (e) {}
+  fetch(location.pathname + '?ping=' + Date.now(), { method: 'HEAD', cache: 'no-store' }).then(r => { if (!r.ok) return; try { localStorage.setItem('iwReloadAt', Date.now()); localStorage.setItem('iwReloadWhy', why + ' @ ' + new Date().toLocaleString()); } catch (e) {} location.reload(); }).catch(() => {});
+};
+(function () { let errs = [];
+  window.addEventListener('error', e => {
+    if (!e || !e.message) return; // a picture/sound that failed to load is not a page error
+    console.error('Signage error:', e.message, e.lineno);
+    if (window.__isAdmin) { let b = document.getElementById('err'); if (!b) { b = document.createElement('div'); b.id = 'err'; b.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:999;background:#900;color:#fff;font:2.2vh monospace;padding:6px'; b.onclick = () => b.remove(); document.body.appendChild(b); } b.textContent = 'Error: ' + e.message + ' (line ' + e.lineno + ') – click to hide'; return; }
+    const now = Date.now(); errs = errs.filter(t => now - t < 5 * 60 * 1000); errs.push(now);
+    if (errs.length >= 3) window.__safeReload('repeated errors');
+  });
+  window.addEventListener('unhandledrejection', e => { console.warn('Signage promise error:', e && e.reason); if (e && e.preventDefault) e.preventDefault(); });
+})();
 (() => {
 'use strict';
 
@@ -607,7 +679,7 @@ const DEFAULTS = {
 
 const ADMIN = /[?&]admin\b/.test(location.search);
 let OFFICE = false;
-const calcOffice = () => { OFFICE = IS_OFFICE_SITE && !ADMIN && S.officeMode === 'slides'; };
+const calcOffice = () => { OFFICE = IS_OFFICE_SITE && !ADMIN && (S.officeMode === 'slides' || (IS_CAMPUS2 && !pvDate && !((S.plans || {})[dateStr(new Date())]))); };
 let S;
 function load() {
   let s = {};
@@ -770,7 +842,7 @@ const PR = date => S.prayers.map(p => Object.assign({}, p, { time: ptime(p, date
 /* ================= stage rendering ================= */
 let pages = [], pageIdx = 0, pageTimer = null, imgUrl = null;
 const subjName = c => S.subjects[c] || c || '';
-const teachName = c => { const f = S.teachers[c]; if (!f) return c || ''; const w = f.replace(/\./g,' ').split(/\s+/).filter(x => x && !/^(m|muhammad|mohammad|muhammed)$/i.test(x)); return w.length ? 'Sir ' + w[0] : f; };
+const teachName = c => { const f = S.teachers[c]; if (!f) return c || ''; { const mt = String(f).trim().match(/^(miss|ms\.?|mrs\.?|madam)\s+(\S+)/i); if (mt) return 'Miss ' + mt[2]; } if (/^dr\b/i.test(f.trim())) { const d = f.replace(/^dr\.?\s*/i, '').split(/\s+/)[0]; return d ? 'Dr. ' + d : f; } const words = n => String(n).replace(/\./g,' ').split(/\s+/).filter(x => x && !/^(m|muhammad|mohammad|muhammed|sir|syed|sayed)$/i.test(x)); const w = words(f); if (!w.length) return f; const dup = Object.keys(S.teachers).some(k => k !== c && String(S.teachers[k]).trim() !== String(f).trim() && !/^dr\b/i.test(String(S.teachers[k]).trim()) && (words(S.teachers[k])[0] || '').toLowerCase() === w[0].toLowerCase()); return 'Sir ' + (dup && w[1] ? (/^(ul|ud|al|bin)$/i.test(w[1]) && w[2] ? w.slice(0, 3).join(' ') : w[0] + ' ' + w[1]) : w[0]); };
 
 function buildPages() {
   const groups = [];
@@ -912,7 +984,7 @@ function renderGrid() {
   let nCls = items.slice(cut).filter(it => it.kind !== 'break').length, from = cut;
   while (from > 0 && nCls < 4) { from--; if (items[from].kind !== 'break') nCls++; }
   const vis = cut >= items.length ? [] : items.slice(from);
-  if (!vis.length) { box.innerHTML = '<div class="empty">All classes for today are over.</div>'; return; }
+  if (!vis.length) { box.innerHTML = '<div class="empty bye"><div class="bye1">Assalamu Alaikum</div><div class="bye2">Classes are over for today.</div><div class="bye3">Have a safe journey home. See you tomorrow, In shaa Allah!</div></div>'; return; }
   const rowsTpl = 'auto auto ' + vis.map(it => it.kind === 'break' ? 'auto' : 'minmax(0,1fr)').join(' ');
   let h = `<div class="g" style="grid-template-columns:10vw repeat(${rooms.length},minmax(0,1fr));grid-template-rows:${rowsTpl}">`;
   h += '<div class="gh gcorner" style="grid-row:1 / span 2;grid-column:1">Time</div>';
@@ -1037,7 +1109,7 @@ const bufCache = {};
 async function loadBuffer(id) {
   if (id in bufCache) return bufCache[id];
   let blob = await idbGet('audio:' + id); let buf = null;
-  if (!blob) for (const u of [rawUrl('audio/' + id + '.mp3') + '?v=' + (S.audioV || 0), 'audio/' + id + '.mp3']) {
+  if (!blob && S.audioV) for (const u of [rawUrl('audio/' + id + '.mp3') + '?v=' + (S.audioV || 0), 'audio/' + id + '.mp3']) {
     try { const r = await fetch(u, { cache: 'no-cache' }); if (r.ok && /audio|octet/.test(r.headers.get('content-type') || '')) { blob = await r.blob(); break; } } catch (e) {}
   }
   if (!blob && EMBED_AZAN[id]) { try { blob = azanBlob(id); } catch (e) {} }
@@ -1163,8 +1235,8 @@ async function azanFallback(ev) {
   for (const id of ['azan-' + ev.audioId, 'azan']) {
     if (ann && ann.cancelled) return false;
     const blob = await idbGet('audio:' + id); let u = blob ? URL.createObjectURL(blob) : null; const own = !!u;
-    if (!u) { const cu = rawUrl('audio/' + id + '.mp3') + '?v=' + (S.audioV || 0); try { const r = await fetch(cu, { method: 'HEAD', cache: 'no-store' }); if (r.ok) u = cu; } catch (e) {} }
-    if (!u) { try { const r = await fetch('audio/' + id + '.mp3', { method: 'HEAD', cache: 'no-store' }); if (r.ok) u = 'audio/' + id + '.mp3'; } catch (e) {} }
+    if (!u && S.audioV) { const cu = rawUrl('audio/' + id + '.mp3') + '?v=' + (S.audioV || 0); try { const r = await fetch(cu, { method: 'HEAD', cache: 'no-store' }); if (r.ok) u = cu; } catch (e) {} }
+    if (!u && S.audioV) { try { const r = await fetch('audio/' + id + '.mp3', { method: 'HEAD', cache: 'no-store' }); if (r.ok) u = 'audio/' + id + '.mp3'; } catch (e) {} }
     if (!u && EMBED_AZAN[id]) u = azanUri(id);
     if (!u || tried.has(u)) continue; tried.add(u);
     const ok = await new Promise(res => {
@@ -1232,12 +1304,15 @@ function logoSlideHtml() {
   if (customLogo && (bigUrl || logoUrl)) return `<img class="biglogo" src="${bigUrl || logoUrl}" alt="IOTA World">`;
   return `<img class="biglogo" src="${LOGO_H}" alt="IOTA World">`;
 }
+let webTurn = 0;
 function buildSlides() {
   const out = [];
+  const webs = (S.videos || []).filter(v => v.on && v.type === 'web'), pickWeb = (!OFFICE && webs.length > 1) ? webs[webTurn++ % webs.length].id : null;
   if (S.interLogo) out.push({ html: logoSlideHtml(), sec: S.interLogoSec });
   const FX = ['curtain', 'zoom', 'zoomout', 'slide', 'left', 'up', 'down', 'wipe', 'flip', 'fade'];
   if (S.videoOn) (S.videos || []).filter(v => v.on).forEach((v, i) => {
     const pick = v.fx || S.slideFx || 'curtain', fx = pick === 'mix' ? FX[i % FX.length] : pick, fit = v.fit || S.picFit || 'blur', u = `${rawUrl(v.file)}?v=${v.v || 0}`;
+    if (v.type === 'web') { if (pickWeb && v.id !== pickWeb) return; out.push({ web: true, sec: v.sec || 80, html: `<iframe class="webslide" data-src="${v.file}?once=1&r=${Date.now()}" scrolling="no" allow="autoplay"></iframe>` }); return; }
     out.push(v.type === 'image'
       ? { sec: v.sec || S.imageSec || 8, html: `<div class="fx fx-${fx} fit-${fit}">${(fit === 'blur' || fit === 'cover') ? `<img class="bg" src="${u}" alt="">` : ''}<img class="vid" src="${u}" alt="">${fx === 'curtain' ? '<i class="cur l"></i><i class="cur r"></i>' : ''}</div>` }
       : { video: true, sec: 45, html: `<video class="vid vfit-${fit === 'blur' ? 'contain' : fit}" playsinline preload="auto" src="${u}"></video>` });
@@ -1247,6 +1322,8 @@ function buildSlides() {
     out.push({ html: `<div class="slbrand brand">${brand}</div><div class="nt"><div class="ntt">${esc(n.title)}</div><div class="ntb">${esc(n.text)}</div></div>`, sec: S.interNoticeSec }));
   return out;
 }
+let activeWeb = null;
+addEventListener('message', e => { if (e && e.data === 'slidesDone' && activeWeb && e.source === activeWeb && interWake) { activeWeb = null; setTimeout(() => { if (interWake) interWake(); }, 900); } });
 function abortInter() {
   if (!interRunning) return;
   interAbort = true; if (interWake) interWake(); $$('#inter video').forEach(v => v.pause());
@@ -1280,9 +1357,16 @@ async function runInter(force) {
     if (prev) prev.classList.remove('on');
     els[i].classList.add('on'); prev = els[i];
     const vd = slides[i].video && els[i].querySelector('video');
+    if (slides[i].web) { /* animated slides page: if it has not loaded within 12 s (no internet), skip it instead of showing a blank screen */
+      const fr = els[i].querySelector('iframe'); let okWeb = false;
+      if (fr && !fr.getAttribute('src')) fr.src = fr.dataset.src; activeWeb = fr ? fr.contentWindow : null; // load only when it is on screen
+      for (let w = 0; w < 24 && !interAbort; w++) { try { const d = fr.contentDocument; if (d && d.querySelector('.slide.on')) { okWeb = true; break; } } catch (e) {} await interSleep(500); }
+      if (!okWeb) { console.warn('Animated slides did not load, skipped'); try { fr.src = 'about:blank'; } catch (e) {} continue; }
+    }
     if (vd) { const wake = () => interWake && interWake(); vd.onended = wake; vd.onerror = wake; vd.currentTime = 0; vd.play().catch(() => { vd.muted = true; vd.play().catch(wake); }); }
-    await interSleep(clamp(slides[i].sec, 3, 60) * 1000);
+    await interSleep(clamp(slides[i].sec, 3, slides[i].html.indexOf('webslide') > -1 ? 600 : 60) * 1000);
     if (vd) vd.pause();
+    if (slides[i].web) { activeWeb = null; const fr = els[i].querySelector('iframe'); if (fr) setTimeout(() => { try { fr.src = 'about:blank'; } catch (e) {} }, 900); }
   }
   if (!interAbort && !OFFICE) {
     els.forEach(e => e.classList.remove('on'));
@@ -1349,7 +1433,7 @@ function tick() {
   $('#clock').textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   $('#date').textContent = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   tickOverlayClock(); updateNext(now); updateChip(); checkEvents(now);
-  if (dateStr(now) !== dayKey) { dayKey = dateStr(now); renderStage(); renderPlans(); }
+  if (dateStr(now) !== dayKey) { dayKey = dateStr(now); const was = OFFICE; calcOffice(); renderStage(); renderPlans(); if (OFFICE !== was) { abortInter(); scheduleInter(); } }
   if (now.getMinutes() !== lastMin) { lastMin = now.getMinutes(); renderPrayerStrip(now); if (S.mode === 'table') showPage(false); else if (S.mode === 'grid') renderGrid(); }
 }
 
@@ -1640,7 +1724,7 @@ function stamp(ok) {
 }
 const TT_KEYS = ['plans', 'rows', 'subjects', 'teachers', 'classColors', 'groups', 'floorsText', 'dayLabel', 'footerNote', 'title', 'prayers', 'autoTimes', 'asrMethod', 'jamatText', 'jamatUr', 'ttsText', 'ttsUr', 'urNames'];
 async function pullStair() {   /* office site: take the timetable from the stairway site, so it is only uploaded once */
-  if (!IS_OFFICE_SITE || ADMIN || S.officeMode === 'slides') return;
+  if (!IS_OFFICE_SITE || IS_CAMPUS2 || ADMIN || S.officeMode === 'slides') return;
   try {
     const d = await fetchData('iota-signage'); if (!d) return; const keep = {};
     TT_KEYS.forEach(k => { if (d[k] !== undefined) keep[k] = d[k]; });
@@ -1654,7 +1738,7 @@ async function pull() {
   try {
     const d = await fetchData(SYNC.repo); if (!d) { stamp(false); return false; } stamp(true);
     LOCAL_ONLY.forEach(k => delete d[k]);
-    if (IS_OFFICE_SITE && (d.officeMode || S.officeMode) !== 'slides') TT_KEYS.forEach(k => delete d[k]);
+    if (IS_OFFICE_SITE && !IS_CAMPUS2 && (d.officeMode || S.officeMode) !== 'slides') TT_KEYS.forEach(k => delete d[k]);
     const keep = { fired: S.fired, oneOff: S.oneOff, audioNames: S.audioNames, imageName: S.imageName };
     if (JSON.stringify(Object.assign({}, S, keep)) === JSON.stringify(Object.assign({}, S, d, keep))) return true;
     Object.assign(S, d, keep); S.ver = DEFAULTS.ver; delete S.videoV; { const dm = new Set(S.delMedia || []); S.videos = (S.videos || []).filter(v => v.id !== 'legacy' && !dm.has(v.id)); } save(); calcOffice(); buildSecMap(); renderStage(); renderPrayerStrip(); scheduleInter(); prefetchAudio(); return true;
@@ -1924,7 +2008,62 @@ else {
   checkVersion(); setInterval(checkVersion, 300000);
 }
 renderLogo(); renderImage(); requestWake();
-tick(); setInterval(tick, 1000); scheduleInter();
+
+/* ================= study-tip avatar ================= */
+const AV_TIPS = ["Start your study with Bismillah and a clear goal for the session.", "Read the chapter before class. You will understand the lecture much better.", "Write down one thing you learned in every class today.", "Cover your notes and explain the topic out loud. Then check what you missed.", "Mix your practice: solve different types of questions in one sitting.", "Review new topics after 1 day, 1 week and 1 month to lock them in.", "Learn formulas by using them in questions, not just by reading them.", "Draw diagrams and flowcharts. Pictures are easier to remember.", "Study in the same quiet spot every day. Your brain gets into focus faster.", "Set a small target, like 10 MCQs, and finish it before taking a break.", "Stuck on a question for 10 minutes? Mark it and move on, then come back.", "Read every exam question twice before you start writing.", "In MCQs, cross out the options you know are wrong first.", "Leave 10 minutes at the end of every paper to check your answers.", "Keep a mistakes notebook and read it before every test.", "Use your free periods to revise, not to scroll.", "Come to class on time. The first 5 minutes often explain the whole topic.", "Sit near the front. You will focus better and remember more.", "Help a classmate with a topic. Teaching is the best revision.", "Pack your bag the night before so the morning is stress-free.", "Eat a proper breakfast. Your brain needs fuel to focus.", "Take a short walk or stretch between study sessions.", "Get 7 to 8 hours of sleep. Tired minds forget faster.", "Respect your teachers and your classmates. Good manners open doors.", "Plan your week on paper: which subject, which day, which time.", "Big syllabus? Break it into small parts and tick them off one by one.", "Compare yourself with who you were yesterday, not with others.", "Confused in class? Write your question down and ask after the lecture.", "Revise numericals by solving them again, not by reading the solution.", "Consistency beats intensity. One hour every day beats seven hours once."];
+let avK = Math.floor(Math.random() * AV_TIPS.length), avBusy = false;
+function avMode() { // 'tt' = timetable, 'slide' = IOTA slides/notices, 'block' = Sunnah slides or a slide change in progress
+  if (!$('#inter').classList.contains('show')) return 'tt';
+  const on = $('#interBody .slide.on'); if (!on) return 'block';
+  const f = on.querySelector('iframe'); if (f && /sunnah/.test(f.dataset.src || f.getAttribute('src') || '')) return 'block';
+  return 'slide';
+}
+function avBlocked() { return ADMIN || !!ann || busy || avMode() === 'block'; }
+function avPlace() {
+  if (document.body.classList.contains('avslide')) {
+    const W = innerWidth, H = innerHeight, w = $('#avWrap'), aw = w.offsetWidth, x = W - aw - W * 0.15, barTop = H - H * 0.035, ah = H * 0.17;
+    w.style.left = x + 'px'; w.style.top = (barTop - ah) + 'px'; w.style.height = (ah + H * 0.01) + 'px';
+    const b = $('#avBurst'); b.style.left = (x + aw / 2) + 'px'; b.style.top = (barTop - ah + aw * 0.1) + 'px';
+    const p = $('#avPortal'); p.style.left = (x + aw / 2) + 'px'; p.style.top = barTop + 'px';
+    const bb = $('#avBubble'); bb.style.right = (W - x + 14) + 'px'; bb.style.top = (barTop - ah * 0.55) + 'px'; bb.style.marginTop = '-' + (bb.offsetHeight / 2 || 30) + 'px';
+    return;
+  }
+  $('#avWrap').style.top = '0';
+  const w = $('#avWrap'), bn = $('.banner').getBoundingClientRect(), st = $('#stage').getBoundingClientRect(), tt = $('#title').getBoundingClientRect(), ck = $('.clk').getBoundingClientRect(), hd = $('header.top').getBoundingClientRect(), aw = w.offsetWidth;
+  let x = (tt.right + ck.left) / 2 - aw / 2; if (ck.left - tt.right < aw + 10) x = ck.left - aw - 8;
+  const cx = x - st.left + aw / 2, barTop = bn.top - st.top;
+  w.style.left = (x - st.left) + 'px'; w.style.height = (barTop + bn.height * 0.5) + 'px';
+  const b = $('#avBurst'); b.style.left = cx + 'px'; b.style.top = (barTop - aw * 0.55) + 'px';
+  const p = $('#avPortal'); p.style.left = cx + 'px'; p.style.top = barTop + 'px';
+  const bb = $('#avBubble'); bb.style.right = (st.right - x + 14) + 'px'; bb.style.top = (hd.top - st.top + hd.height / 2) + 'px'; bb.style.marginTop = '-' + (bb.offsetHeight / 2 || 30) + 'px';
+}
+function avShow() {
+  if (avBusy || avBlocked()) return; avBusy = true;
+  const mode0 = avMode(); document.body.classList.toggle('avslide', mode0 === 'slide');
+  const av = $('#av'), bub = $('#avBubble'), burst = $('#avBurst'), portal = $('#avPortal');
+  $('#avTxt').textContent = AV_TIPS[avK++ % AV_TIPS.length];
+  try { avPlace(); } catch (e) { avBusy = false; return; }
+  burst.innerHTML = [[-6,-5],[6,-5],[-8,1],[8,1],[0,-8],[-4,-8],[4,-8],[-9,-3],[9,-3]].map(p => `<i style="--x:${p[0]}vh;--y:${p[1]}vh"></i>`).join('');
+  portal.classList.remove('close'); portal.classList.add('open');              // 1. gold portal opens on the red bar
+  setTimeout(() => { av.classList.remove('out'); av.classList.add('in'); }, 700);   // 2. he springs out of it
+  setTimeout(() => { burst.classList.add('go'); av.classList.add('wave'); }, 1200);  // 3. star burst + wave
+  setTimeout(() => { try { avPlace(); } catch (e) {} bub.classList.add('on'); }, 1700); // 4. speech bubble with the tip
+  let t = 0; const done = () => { bub.classList.remove('on'); av.classList.remove('in', 'wave'); av.classList.add('out'); burst.classList.remove('go'); setTimeout(() => { portal.classList.remove('open'); portal.classList.add('close'); }, 450); setTimeout(() => { av.classList.remove('out'); portal.classList.remove('close'); document.body.classList.remove('avslide'); avBusy = false; }, 1300); };
+  (function watch() { t += 500; if (avBlocked() || avMode() !== mode0 || t >= 11000) { done(); return; } setTimeout(watch, 500); })();
+}
+if (!ADMIN) setTimeout(function avLoop() { let shown = false; try { if (!avBusy && !avBlocked()) { avShow(); shown = avBusy; } } catch (e) {} setTimeout(avLoop, shown ? 2 * 60 * 1000 : 15 * 1000); }, 60 * 1000);
+let lastTickOk = Date.now(); const bootAt = Date.now();
+tick(); setInterval(() => { tick(); lastTickOk = Date.now(); }, 1000); scheduleInter();
+if (!ADMIN) {
+  setInterval(() => {
+    const n = new Date(), up = Date.now() - bootAt;
+    if (Date.now() - lastTickOk > 90000) window.__safeReload('clock stopped'); // the page froze or keeps failing
+    else if (n.getHours() === 3 && up > 3600000 && !ann && !busy) window.__safeReload('nightly refresh'); // clears TV browser memory every night
+    else if (up > 8 * 3600000 && !ann && !busy && !IS_CAMPUS2_PRAYER_SOON()) window.__safeReload('8-hour refresh');
+  }, 30000);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+function IS_CAMPUS2_PRAYER_SOON() { try { const n = new Date(), m = n.getHours() * 60 + n.getMinutes(); return PR(n).some(p => [p.time, p.jam].some(t => { const x = String(t || '').match(/(\d+):(\d+)/); if (!x) return false; const d = (+x[1]) * 60 + (+x[2]) - m; return d >= -5 && d <= 15; })); } catch (e) { return false; } }
 if (ADMIN) toast(hadSaved ? 'Welcome back. Click “Enable audio” once so announcements can play.' : 'Demo loaded with sample data. Click “Enable audio”, then open Settings to set prayer times.');
 })();
 </script>
