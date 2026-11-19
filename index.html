@@ -1322,7 +1322,8 @@ function buildSlides() {
     out.push({ html: `<div class="slbrand brand">${brand}</div><div class="nt"><div class="ntt">${esc(n.title)}</div><div class="ntb">${esc(n.text)}</div></div>`, sec: S.interNoticeSec }));
   return out;
 }
-let activeWeb = null;
+let activeWeb = null, webFails = 0;
+addEventListener('online', () => setTimeout(() => { if (!ADMIN && !busy && !ann) window.__safeReload('internet came back'); }, 8000)); // reload once the network returns, so nothing stays half-loaded
 addEventListener('message', e => { if (e && e.data === 'slidesDone' && activeWeb && e.source === activeWeb && interWake) { activeWeb = null; setTimeout(() => { if (interWake) interWake(); }, 900); } });
 function abortInter() {
   if (!interRunning) return;
@@ -1348,34 +1349,39 @@ async function runInter(force) {
   o.classList.toggle('nobar', S.interBar === false);
   o.classList.add('show');
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-  o.classList.add('vis'); document.body.classList.add('intervis');
-  try {
+  /* The overlay only becomes visible once a slide is actually ready, so a slow or missing internet never shows a blank white screen. */
   let prev = null;
+  try {
   for (let i = 0; i < els.length && !interAbort; i++) {
     const im = els[i].querySelector('img.vid');
     if (im && !(await imgReady(im))) { console.warn('Slide skipped, picture missing:', im.src); continue; }
-    if (prev) prev.classList.remove('on');
+    if (slides[i].web) { /* animated slides page: load it while hidden and show it only once it has fully loaded (pictures and fonts too); otherwise skip it */
+      const fr = els[i].querySelector('iframe'); let okWeb = false;
+      if (fr && !fr.getAttribute('src')) fr.src = fr.dataset.src;
+      for (let w = 0; w < 30 && !interAbort; w++) { try { const d = fr.contentDocument; if (d && d.readyState === 'complete' && d.querySelector('.slide.on')) { okWeb = true; break; } } catch (e) {} await interSleep(500); }
+      if (!okWeb) {
+        console.warn('Animated slides did not load, skipped'); try { fr.src = 'about:blank'; } catch (e) {}
+        if (++webFails >= 3 && !ADMIN && navigator.onLine !== false) window.__safeReload('animated slides kept failing'); // a fresh page clears stuck connections
+        continue;
+      }
+      webFails = 0; activeWeb = fr.contentWindow;
+    }
+    if (prev) prev.classList.remove('on'); else { o.classList.add('vis'); document.body.classList.add('intervis'); }
     els[i].classList.add('on'); prev = els[i];
     const vd = slides[i].video && els[i].querySelector('video');
-    if (slides[i].web) { /* animated slides page: if it has not loaded within 12 s (no internet), skip it instead of showing a blank screen */
-      const fr = els[i].querySelector('iframe'); let okWeb = false;
-      if (fr && !fr.getAttribute('src')) fr.src = fr.dataset.src; activeWeb = fr ? fr.contentWindow : null; // load only when it is on screen
-      for (let w = 0; w < 24 && !interAbort; w++) { try { const d = fr.contentDocument; if (d && d.querySelector('.slide.on')) { okWeb = true; break; } } catch (e) {} await interSleep(500); }
-      if (!okWeb) { console.warn('Animated slides did not load, skipped'); try { fr.src = 'about:blank'; } catch (e) {} continue; }
-    }
     if (vd) { const wake = () => interWake && interWake(); vd.onended = wake; vd.onerror = wake; vd.currentTime = 0; vd.play().catch(() => { vd.muted = true; vd.play().catch(wake); }); }
     await interSleep(clamp(slides[i].sec, 3, slides[i].html.indexOf('webslide') > -1 ? 600 : 60) * 1000);
     if (vd) vd.pause();
     if (slides[i].web) { activeWeb = null; const fr = els[i].querySelector('iframe'); if (fr) setTimeout(() => { try { fr.src = 'about:blank'; } catch (e) {} }, 900); }
   }
-  if (!interAbort && !OFFICE) {
+  if (!interAbort && (!OFFICE || !prev)) {
     els.forEach(e => e.classList.remove('on'));
     o.classList.remove('vis'); document.body.classList.remove('intervis');
     await interSleep(1100);
     if (!interAbort) o.classList.remove('show');
   }
   } catch (e) { console.error(e); o.classList.remove('vis', 'show'); document.body.classList.remove('intervis'); }
-  finally { interRunning = false; scheduleInter(); }
+  finally { interRunning = false; if (OFFICE && !prev && !interAbort) { clearTimeout(interTimer); interTimer = setTimeout(() => runInter(OFFICE), 20000); } else scheduleInter(); } // nothing could be shown: show the timetable and try again in 20 s
 }
 
 /* ================= scheduler ================= */
