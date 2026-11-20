@@ -1290,7 +1290,7 @@ function stopAnnouncement() {
 }
 
 /* ================= intermission slides ================= */
-let interTimer = null, interRunning = false, interAbort = false, interWake = null;
+let interTimer = null, interRunning = false, interAbort = false, interWake = null, avNextAt = 0; // avNextAt: when the screen will next change (for the study-tip avatar)
 const interSleep = ms => new Promise(res => {
   const t = setTimeout(() => { interWake = null; res(); }, ms);
   interWake = () => { clearTimeout(t); interWake = null; res(); };
@@ -1298,7 +1298,8 @@ const interSleep = ms => new Promise(res => {
 function scheduleInter() {
   clearTimeout(interTimer);
   if (!S.interOn && !OFFICE) return;
-  interTimer = setTimeout(() => runInter(OFFICE), OFFICE ? 500 : clamp(S.interEvery, 20, 1800) * 1000);
+  const d = OFFICE ? 500 : clamp(S.interEvery, 20, 1800) * 1000; avNextAt = Date.now() + d;
+  interTimer = setTimeout(() => runInter(OFFICE), d);
 }
 function logoSlideHtml() {
   if (customLogo && (bigUrl || logoUrl)) return `<img class="biglogo" src="${bigUrl || logoUrl}" alt="IOTA World">`;
@@ -1338,7 +1339,7 @@ const imgReady = im => new Promise(res => {
 async function runInter(force) {
   clearTimeout(interTimer);
   if (interRunning) return;
-  if (busy || ann || (!force && $('#drawer').classList.contains('open'))) { interTimer = setTimeout(() => runInter(false), 15000); return; }
+  if (busy || ann || (!force && $('#drawer').classList.contains('open'))) { avNextAt = Date.now() + 15000; interTimer = setTimeout(() => runInter(false), 15000); return; }
   const slides = buildSlides();
   if (!slides.length) { scheduleInter(); return; }
   interRunning = true; interAbort = false;
@@ -1368,7 +1369,7 @@ async function runInter(force) {
     els[i].classList.add('on'); prev = els[i];
     const vd = slides[i].video && els[i].querySelector('video');
     if (vd) { const wake = () => interWake && interWake(); vd.onended = wake; vd.onerror = wake; vd.currentTime = 0; vd.play().catch(() => { vd.muted = true; vd.play().catch(wake); }); }
-    await interSleep(clamp(slides[i].sec, 3, slides[i].html.indexOf('webslide') > -1 ? 600 : 60) * 1000);
+    { const ms = clamp(slides[i].sec, 3, slides[i].html.indexOf('webslide') > -1 ? 600 : 60) * 1000; avNextAt = Date.now() + ms; await interSleep(ms); }
     if (vd) vd.pause();
     if (slides[i].web) { activeWeb = null; const fr = els[i].querySelector('iframe'); if (fr) setTimeout(() => { try { fr.src = 'about:blank'; } catch (e) {} }, 900); }
   }
@@ -1379,7 +1380,7 @@ async function runInter(force) {
     if (!interAbort) o.classList.remove('show');
   }
   } catch (e) { console.error(e); o.classList.remove('vis', 'show'); document.body.classList.remove('intervis'); }
-  finally { interRunning = false; if (OFFICE && !prev && !interAbort) { clearTimeout(interTimer); interTimer = setTimeout(() => runInter(OFFICE), 20000); } else scheduleInter(); } // nothing could be shown: show the timetable and try again in 20 s
+  finally { interRunning = false; if (OFFICE && !prev && !interAbort) { clearTimeout(interTimer); avNextAt = Date.now() + 20000; interTimer = setTimeout(() => runInter(OFFICE), 20000); } else scheduleInter(); } // nothing could be shown: show the timetable and try again in 20 s
 }
 
 /* ================= scheduler ================= */
@@ -2022,6 +2023,13 @@ function avMode() { // 'tt' = timetable, 'slide' = IOTA slides/notices, 'block' 
   const f = on.querySelector('iframe'); if (f && /sunnah/.test(f.dataset.src || f.getAttribute('src') || '')) return 'block';
   return 'slide';
 }
+function avRoom() { /* ms until the screen changes; the avatar only comes out if he can finish his tip */
+  let left = avNextAt - Date.now();
+  try { const on = $('#interBody .slide.on'), f = on && avMode() === 'slide' ? on.querySelector('iframe') : null;
+    if (f && f.contentWindow) { const d = f.contentDocument, all = [].slice.call(d.querySelectorAll('.slide')), k = all.indexOf(d.querySelector('.slide.on')), dur = +f.contentWindow.DUR || 10000;
+      if (k > -1) left = Math.min(left, (all.length - 1 - k) * dur + dur * 0.5); } } catch (e) {}
+  return left;
+}
 function avBlocked() { return ADMIN || !!ann || busy || avMode() === 'block'; }
 function avPlace() {
   if (document.body.classList.contains('avslide')) {
@@ -2042,7 +2050,7 @@ function avPlace() {
   const bb = $('#avBubble'); bb.style.right = (st.right - x + 14) + 'px'; bb.style.top = (hd.top - st.top + hd.height / 2) + 'px'; bb.style.marginTop = '-' + (bb.offsetHeight / 2 || 30) + 'px';
 }
 function avShow() {
-  if (avBusy || avBlocked()) return; avBusy = true;
+  if (avBusy || avBlocked() || avRoom() < 14000) return; avBusy = true;
   const mode0 = avMode(); document.body.classList.toggle('avslide', mode0 === 'slide');
   const av = $('#av'), bub = $('#avBubble'), burst = $('#avBurst'), portal = $('#avPortal');
   $('#avTxt').textContent = AV_TIPS[avK++ % AV_TIPS.length];
