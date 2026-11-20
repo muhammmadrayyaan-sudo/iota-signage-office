@@ -1323,7 +1323,6 @@ function buildSlides() {
   return out;
 }
 let activeWeb = null, webFails = 0;
-addEventListener('online', () => setTimeout(() => { if (!ADMIN && !busy && !ann) window.__safeReload('internet came back'); }, 8000)); // reload once the network returns, so nothing stays half-loaded
 addEventListener('message', e => { if (e && e.data === 'slidesDone' && activeWeb && e.source === activeWeb && interWake) { activeWeb = null; setTimeout(() => { if (interWake) interWake(); }, 900); } });
 function abortInter() {
   if (!interRunning) return;
@@ -1358,10 +1357,9 @@ async function runInter(force) {
     if (slides[i].web) { /* animated slides page: load it while hidden and show it only once it has fully loaded (pictures and fonts too); otherwise skip it */
       const fr = els[i].querySelector('iframe'); let okWeb = false;
       if (fr && !fr.getAttribute('src')) fr.src = fr.dataset.src;
-      for (let w = 0; w < 30 && !interAbort; w++) { try { const d = fr.contentDocument; if (d && d.readyState === 'complete' && d.querySelector('.slide.on')) { okWeb = true; break; } } catch (e) {} await interSleep(500); }
+      for (let w = 0; w < 80 && !interAbort; w++) { try { const d = fr.contentDocument; if (d && d.querySelector('.slide.on')) { okWeb = true; break; } } catch (e) {} await interSleep(500); } // TVs on slow Wi-Fi get up to 40 s
       if (!okWeb) {
         console.warn('Animated slides did not load, skipped'); try { fr.src = 'about:blank'; } catch (e) {}
-        if (++webFails >= 3 && !ADMIN && navigator.onLine !== false) window.__safeReload('animated slides kept failing'); // a fresh page clears stuck connections
         continue;
       }
       webFails = 0; activeWeb = fr.contentWindow;
