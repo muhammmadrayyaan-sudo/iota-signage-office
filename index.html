@@ -87,6 +87,10 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .pill{display:inline-block;font:800 .6em var(--body);padding:.15em .75em;border-radius:2em;margin-left:.7em;vertical-align:middle;background:#eee;color:#444;letter-spacing:.04em;text-transform:uppercase}
 .pill.extra{background:#efe3fa;color:#5a2a86}
 .pill.test{background:#fde2e2;color:#a30404}
+.pill.moved{background:#ff8a00;color:#fff;font-weight:900;letter-spacing:.04em;white-space:nowrap}.pill.moved i{font-style:normal;margin-left:.4em}
+.card.moved{box-shadow:0 0 0 .35vh #ff8a00 inset;animation:movedGlow 2.2s ease-in-out infinite}.card.moved.past{animation:none}
+@keyframes movedGlow{0%,100%{box-shadow:0 0 0 .35vh #ff8a00 inset}50%{box-shadow:0 0 0 .35vh #ff8a00 inset,0 0 2vh .4vh rgba(255,138,0,.75)}}
+.mvNote{display:inline-block;background:#ff8a00;color:#fff;font-weight:900;padding:0 .6em;border-radius:.4em;margin-right:.4em;letter-spacing:.05em}
 .pill.recovery{background:#dff3e2;color:#1c6a2b}
 .empty{padding:6vh;font-size:4vh;color:#777;text-align:center}
 .empty.bye{padding:7vh 4vh;color:#2A0A10}.bye1{font:700 7vh/1.1 var(--display);color:var(--red)}.bye2{margin-top:2.2vh;font-size:4.2vh;font-weight:600}.bye3{margin-top:1.4vh;font-size:3.2vh;color:#666}
@@ -98,7 +102,7 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .gcorner{background:#fff;color:var(--red);border:.3vh solid var(--red)}
 .gfloor{background:var(--red);color:#fff}
 .groom{background:#f1ebeb;color:var(--red)}
-.gt{display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 calc(2.1vh*var(--scale)) var(--display);color:var(--red);background:#fff7f7;border-radius:.8vh;border-right:.5vh solid var(--red);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:center;padding:0 .3vw}
+.gt{display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 calc(2.1vh*var(--scale)*var(--fit,1)) var(--display);color:var(--red);background:#fff7f7;border-radius:.8vh;border-right:.5vh solid var(--red);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:center;padding:0 .3vw}
 .gt small{font:700 1.5vh var(--body);letter-spacing:.2em;margin-top:.3vh}
 .gt.on{background:var(--red);color:#fff}
 .gt.past{opacity:.45}
@@ -107,11 +111,11 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .gb.past{opacity:.45}
 .gc{display:flex;flex-direction:column;gap:.3vh;min-height:0;min-width:0}
 .card{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:.2vh .6vw;border-radius:.8vh;border-left:.8vh solid var(--c);background:var(--tint);color:var(--ink)}
-.card .cs{display:flex;align-items:baseline;gap:.5em;white-space:nowrap;font:800 calc(1.95vh*var(--scale))/1.1 var(--display)}
+.card .cs{display:flex;align-items:baseline;gap:.5em;white-space:nowrap;font:800 calc(1.95vh*var(--scale)*var(--fit,1))/1.1 var(--display)}
 .card .cs b{background:var(--c);color:var(--on);padding:.02em .45em;border-radius:.4em;letter-spacing:.04em}
 .card .cs .own{margin-left:auto;font:700 .72em var(--body);color:#1d4ed8}
-.card .cj{font:700 calc(1.9vh*var(--scale))/1.1 var(--display)}
-.card .cth{font:600 calc(1.6vh*var(--scale))/1.15 var(--body);color:#3a2e30}
+.card .cj{font:700 calc(1.9vh*var(--scale)*var(--fit,1))/1.1 var(--display)}
+.card .cth{font:600 calc(1.6vh*var(--scale)*var(--fit,1))/1.15 var(--body);color:#3a2e30}
 .card .cth .pill{font-size:.78em;margin-left:0;padding:.05em .7em}
 .card.tst{background:#fff;box-shadow:inset 0 0 0 .25vh #e3b4b4}
 .card.tst .cj{color:#b00505}
@@ -278,21 +282,24 @@ body.started #start{display:none}
 header.top{position:relative;z-index:1}.banner{position:relative;z-index:3}
 #avWrap{position:absolute;top:0;width:12vh;overflow:hidden;z-index:2;pointer-events:none;display:none}
 body.tv #avWrap{display:block}
-#av{position:absolute;left:0;bottom:-1vh;width:12vh;height:16vh;-webkit-transform:translateY(110%);transform:translateY(110%)}
+#av{position:absolute;left:0;bottom:-.5vh;width:12vh;height:12vh;-webkit-transform:translateY(110%);transform:translateY(110%)}
 #av.in{-webkit-animation:avUp .9s cubic-bezier(.3,1.5,.5,1) both;animation:avUp .9s cubic-bezier(.3,1.5,.5,1) both}
 #av.out{-webkit-animation:avDown .6s ease-in both;animation:avDown .6s ease-in both}
 @keyframes avUp{0%{transform:translateY(110%)}60%{transform:translateY(-6%)}100%{transform:translateY(0)}}
 @-webkit-keyframes avUp{0%{-webkit-transform:translateY(110%)}60%{-webkit-transform:translateY(-6%)}100%{-webkit-transform:translateY(0)}}
 @keyframes avDown{0%{transform:translateY(0)}25%{transform:translateY(-5%)}100%{transform:translateY(110%)}}
 @-webkit-keyframes avDown{0%{-webkit-transform:translateY(0)}25%{-webkit-transform:translateY(-5%)}100%{-webkit-transform:translateY(110%)}}
-#av svg{width:100%;height:100%;overflow:visible}
+#av img{display:block;width:100%;height:100%;-o-object-fit:contain;object-fit:contain;-webkit-transform-origin:50% 100%;transform-origin:50% 100%}
+#av.in img{-webkit-animation:avFloat 3.2s ease-in-out .9s infinite;animation:avFloat 3.2s ease-in-out .9s infinite}
+@keyframes avFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3%) rotate(-1.5deg)}}
+@-webkit-keyframes avFloat{0%,100%{-webkit-transform:translateY(0) rotate(0)}50%{-webkit-transform:translateY(-3%) rotate(-1.5deg)}}
 #av .lid{transform-box:fill-box;-webkit-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:scaleY(0);transform:scaleY(0);-webkit-animation:avBlink 4s infinite;animation:avBlink 4s infinite}
 @keyframes avBlink{0%,93%,100%{transform:scaleY(0)}96%{transform:scaleY(1)}}
 @-webkit-keyframes avBlink{0%,93%,100%{-webkit-transform:scaleY(0)}96%{-webkit-transform:scaleY(1)}}
 #av .arm{transform-box:fill-box;-webkit-transform-origin:15% 95%;transform-origin:15% 95%;-webkit-transform:rotate(60deg);transform:rotate(60deg)}
-#av.wave .arm{-webkit-animation:avWave .4s ease-in-out 6 alternate;animation:avWave .4s ease-in-out 6 alternate}
-@keyframes avWave{from{transform:rotate(-8deg)}to{transform:rotate(18deg)}}
-@-webkit-keyframes avWave{from{-webkit-transform:rotate(-8deg)}to{-webkit-transform:rotate(18deg)}}
+#av.wave img{-webkit-animation:avWave .35s ease-in-out 6 alternate;animation:avWave .35s ease-in-out 6 alternate}
+@keyframes avWave{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+@-webkit-keyframes avWave{from{-webkit-transform:rotate(-4deg)}to{-webkit-transform:rotate(4deg)}}
 #avBurst{position:absolute;z-index:4;pointer-events:none;width:0;height:0}
 #avBurst i{position:absolute;left:0;top:0;width:1.1vh;height:1.1vh;background:#F2B705;opacity:0;-webkit-transform:rotate(45deg);transform:rotate(45deg)}
 #avBurst.go i{-webkit-animation:avStar .9s ease-out both;animation:avStar .9s ease-out both}
@@ -312,7 +319,7 @@ body.tv #avWrap{display:block}
 #avBubble.on{opacity:1;-webkit-transform:none;transform:none}
 #avBubble b{flex:none;background:#F2B705;color:#4A0710;padding:.5vh 1vh;border-radius:.8vh;font-size:1.7vh;letter-spacing:.14em}
 #avBubble:after{content:"";position:absolute;right:-2vh;top:50%;margin-top:-1.1vh;border:1.1vh solid transparent;border-left:1.6vh solid #C3304A}
-body.avslide #avWrap{position:fixed;z-index:30}body.avslide #avBurst,body.avslide #avPortal,body.avslide #avBubble{position:fixed;z-index:31}
+body.avslide #avWrap{position:fixed;z-index:30;width:18vh}body.avslide #av{width:18vh;height:18vh}body.avslide #avBurst,body.avslide #avPortal,body.avslide #avBubble{position:fixed;z-index:31}
 body:not(.tv) #avBubble,body:not(.tv) #avPortal,body:not(.tv) #avBurst{display:none}
 /* ===== end avatar ===== */
 </style>
@@ -325,19 +332,7 @@ body:not(.tv) #avBubble,body:not(.tv) #avPortal,body:not(.tv) #avBurst{display:n
     <div class="ttl"><h1 id="title"></h1></div>
     <div class="clk"><div id="clock"></div><div id="date"></div></div>
   </header>
-  <div id="avWrap"><div id="av"><svg viewBox="0 0 240 320"><g>
-<path d="M40 320c0-56 32-96 80-96s80 40 80 96z" fill="#13315C"/><path d="M100 226l20 32 20-32z" fill="#fff"/><path d="M114 242h12l-2 46h-8z" fill="#C3304A"/>
-<g class="arm"><path d="M58 250c-14-18-20-40-16-62" stroke="#13315C" stroke-width="26" stroke-linecap="round" fill="none"/><circle cx="42" cy="180" r="15" fill="#EDB98C"/><path d="M34 168v-10M41 165v-12M48 166v-10" stroke="#EDB98C" stroke-width="6" stroke-linecap="round"/></g>
-<rect x="104" y="198" width="32" height="32" rx="10" fill="#E3A87C"/>
-<ellipse cx="56" cy="144" rx="10" ry="16" fill="#E3A87C"/><ellipse cx="184" cy="144" rx="10" ry="16" fill="#E3A87C"/><ellipse cx="120" cy="140" rx="64" ry="70" fill="#EDB98C"/>
-<path d="M58 118c2-40 30-60 62-60s60 20 62 60c-10-14-20-20-34-22q-28 14-60 2c-14 4-22 10-30 20z" fill="#2B1B14"/>
-<path d="M64 96c4-30 28-46 56-46s52 16 56 46q-56-18-112 0z" fill="#FFFDF7" stroke="#B9B9B9" stroke-width="2.5"/>
-<ellipse cx="96" cy="146" rx="9" ry="11" fill="#2A0A10"/><ellipse cx="144" cy="146" rx="9" ry="11" fill="#2A0A10"/><circle cx="99" cy="142" r="3.5" fill="#fff"/><circle cx="147" cy="142" r="3.5" fill="#fff"/>
-<ellipse class="lid" cx="96" cy="146" rx="11" ry="13" fill="#EDB98C"/><ellipse class="lid" cx="144" cy="146" rx="11" ry="13" fill="#EDB98C"/>
-<path d="M84 126q12-6 24 0M132 126q12-6 24 0" fill="none" stroke="#2B1B14" stroke-width="4" stroke-linecap="round"/>
-<path d="M104 174q16 14 32 0" fill="none" stroke="#8E1426" stroke-width="4" stroke-linecap="round"/>
-<ellipse cx="82" cy="166" rx="9" ry="5" fill="#E07A6A" opacity=".35"/><ellipse cx="158" cy="166" rx="9" ry="5" fill="#E07A6A" opacity=".35"/>
-</g></svg></div></div><div id="avBurst"></div><div id="avPortal"></div><div id="avBubble"><b>STUDY TIP</b><span id="avTxt"></span></div>
+  <div id="avWrap"><div id="av"><img src="assets/avatar.png" alt=""></div></div><div id="avBurst"></div><div id="avPortal"></div><div id="avBubble"><b>STUDY TIP</b><span id="avTxt"></span></div>
   <div class="banner">
     <span id="dayLabel"></span>
     <span id="next"></span>
@@ -842,7 +837,8 @@ const PR = date => S.prayers.map(p => Object.assign({}, p, { time: ptime(p, date
 /* ================= stage rendering ================= */
 let pages = [], pageIdx = 0, pageTimer = null, imgUrl = null;
 const subjName = c => S.subjects[c] || c || '';
-const teachName = c => { const f = S.teachers[c]; if (!f) return c || ''; { const mt = String(f).trim().match(/^(miss|ms\.?|mrs\.?|madam)\s+(\S+)/i); if (mt) return 'Miss ' + mt[2]; } if (/^dr\b/i.test(f.trim())) { const d = f.replace(/^dr\.?\s*/i, '').split(/\s+/)[0]; return d ? 'Dr. ' + d : f; } const words = n => String(n).replace(/\./g,' ').split(/\s+/).filter(x => x && !/^(m|muhammad|mohammad|muhammed|sir|syed|sayed)$/i.test(x)); const w = words(f); if (!w.length) return f; const dup = Object.keys(S.teachers).some(k => k !== c && String(S.teachers[k]).trim() !== String(f).trim() && !/^dr\b/i.test(String(S.teachers[k]).trim()) && (words(S.teachers[k])[0] || '').toLowerCase() === w[0].toLowerCase()); return 'Sir ' + (dup && w[1] ? (/^(ul|ud|al|bin)$/i.test(w[1]) && w[2] ? w.slice(0, 3).join(' ') : w[0] + ' ' + w[1]) : w[0]); };
+const T_SHORT = { ZK: 'Sir Zaki', ZAB: 'Sir Zain A.', MZ: 'Sir Zain Y.' }; /* approved short names; everyone else is 'Sir' + first name */
+const teachName = c => { if (T_SHORT[c]) return T_SHORT[c]; const f = S.teachers[c]; if (!f) return c || ''; { const mt = String(f).trim().match(/^(miss|ms\.?|mrs\.?|madam)\s+(\S+)/i); if (mt) return 'Miss ' + mt[2]; } if (/^dr\b/i.test(f.trim())) { const d = f.replace(/^dr\.?\s*/i, '').split(/\s+/)[0]; return d ? 'Dr. ' + d : f; } const words = n => String(n).replace(/\./g,' ').split(/\s+/).filter(x => x && !/^(m|muhammad|mohammad|muhammed|sir|syed|sayed)$/i.test(x)); const w = words(f); if (!w.length) return f; const dup = Object.keys(S.teachers).some(k => k !== c && String(S.teachers[k]).trim() !== String(f).trim() && !/^dr\b/i.test(String(S.teachers[k]).trim()) && (words(S.teachers[k])[0] || '').toLowerCase() === w[0].toLowerCase()); return 'Sir ' + (dup && w[1] ? (/^(ul|ud|al|bin)$/i.test(w[1]) && w[2] ? w.slice(0, 3).join(' ') : w[0] + ' ' + w[1]) : w[0]); };
 
 function buildPages() {
   const groups = [];
@@ -956,11 +952,15 @@ function buildItems() {
   });
   return items.sort((a, b) => a.start - b.start);
 }
+/* Room change: write it in the row's note, e.g. "from R3", "moved from R3", "room change R3" -> card shows R3 → R5 */
+const ROOM_RX = /(?:room\s*change[d]?|moved|shifted|from)\s*(?:from\s*)?(?:room\s*)?(R\s*\d+)/i;
+const roomFrom = r => { const m = (r.note || '').match(ROOM_RX); if (!m) return ''; const f = m[1].replace(/\s+/g, '').toUpperCase(); return f !== String(r.room || '').toUpperCase() ? f : ''; };
 function cardHtml(r, slotTime, nowM, rgOver) {
   const i = info(r), n = (r.note || '').trim(), nl = n.toLowerCase(), tst = nl.includes('test'), ext = nl.includes('extra'), prc = nl.includes('practice'), at = (n + ' ' + subjName(r.subj) + ' ' + (r.subj || '')).toLowerCase(), ak = /test|exam|quiz/.test(at) ? 'test' : /practice/.test(at) ? 'practice' : /counsel/.test(at) ? 'counsel' : /extra/.test(at) ? 'extra' : /recovery/.test(at) ? 'recovery' : /activit|seminar|workshop/.test(at) ? 'activity' : '';
   const rg = rgOver || rangeOf(r.time), st = rg ? (nowM >= rg[1] ? ' past' : (nowM >= rg[0] ? ' now' : '')) : '';
   const own = (r.time || '').trim() !== slotTime ? `<span class="own">${esc(fmtRange(r.time))}</span>` : '';
-  const pill = n ? `<span class="pill ${tst ? 'test' : ext ? 'extra' : prc ? 'practice' : nl === 'recovery' ? 'recovery' : ''}">${esc(n)}</span>` : '';
+  const rf = roomFrom(r), n2 = rf ? n.replace(ROOM_RX, '').replace(/^[\s,;·\-–—|]+|[\s,;·\-–—|]+$/g, '') : n;
+  const pill = n2 && !rf ? `<span class="pill ${tst ? 'test' : ext ? 'extra' : prc ? 'practice' : nl === 'recovery' ? 'recovery' : ''}">${esc(n2)}</span>` : (rf ? `<span class="pill moved">ROOM CHANGE <i>${esc(rf)} → ${esc(String(r.room).toUpperCase())}</i></span>${n2 ? ` <span class="pill">${esc(n2)}</span>` : ''}` : '');
   const th = teachName(r.teacher);
   let tpill = '';
   if (ak === 'test') {
@@ -969,8 +969,8 @@ function cardHtml(r, slotTime, nowM, rgOver) {
     const sub = !tr ? '' : (nowM >= tr[0] && nowM < tr[1]) ? 'NOW' : (nowM < tr[0] && tr[0] - nowM <= 60) ? 'IN ' + (tr[0] - nowM) + ' MIN' : '';
     tpill = `<span class="pill test tbig">${esc(lab)}${sub ? `<i>${sub}</i>` : tm ? ' ' + esc(tm[0].replace(/\s+/g, '')) : ''}</span>`;
   }
-  return `<div class="card${st}${tst ? ' tst' : ''}${ak ? ' act act-' + ak : ''}" style="--c:${i.color};--on:${inkOn(i.color)};--tint:${i.color}26;--tint2:${i.color}59">` +
-    `<div class="cs"><b>${esc(i.cls)}</b><span>${esc(r.sec)}</span>${own}</div><div class="cj">${esc(subjName(r.subj).replace(/^Mathematics$/, 'Maths'))}${th ? ' - ' + esc(th) : ''}</div>` +
+  return `<div class="card${st}${tst ? ' tst' : ''}${ak ? ' act act-' + ak : ''}${rf && !ak ? ' moved' : ''}" style="--c:${i.color};--on:${inkOn(i.color)};--tint:${i.color}26;--tint2:${i.color}59">` +
+    `<div class="cs"><b>${esc(i.cls)}</b><span>${esc(r.sec)}</span>${own}</div><div class="cj">${esc(subjName(r.subj).replace(/^Mathematics$/, 'Math'))}${th ? ' - ' + esc(th) : ''}</div>` +
     ((tpill || pill) ? `<div class="cth">${tpill || pill}</div>` : '') + `</div>`;
 }
 function renderGrid() {
@@ -1034,13 +1034,23 @@ function renderGrid() {
     rooms.forEach((rm, ci) => {
       if (taken[i][ci]) return;
       const rs = it.cells[rm.toUpperCase()];
-      h += `<div class="gc" style="grid-row:${row};grid-column:${ci + 2}">${rs ? rs.map(r => cardHtml(r, it.time, nowM)).join('') : ''}</div>`;
+      h += `<div class="gc${rs && rs.length > 1 ? ' multi' : ''}" style="grid-row:${row};grid-column:${ci + 2}">${rs ? rs.map(r => cardHtml(r, it.time, nowM)).join('') : ''}</div>`;
     });
   });
   spans.forEach(sp => {
     h += `<div class="gc" style="grid-row:${sp.i + 3} / ${sp.last + 4};grid-column:${sp.ci + 2}">${cardHtml(sp.r, sp.r.time, nowM, sp.range)}</div>`;
   });
   box.innerHTML = h + '</div>';
+  /* Text grows with the free space (fewer classes left = bigger text), then steps down only if something would be cut off */
+  const nRows = vis.filter(it => it.kind !== 'break').length;
+  let fit = Math.max(1, Math.min(1.35, 7 / Math.max(nRows, 1)));
+  /* a cell holding 2+ classes gets its own smaller text, so one crowded cell never shrinks the whole screen */
+  const over = () => [].some.call(box.querySelectorAll('.gc:not(.multi) .card'), c => c.scrollHeight > c.clientHeight + 1 || c.scrollWidth > c.clientWidth + 2)
+    || [].some.call(box.querySelectorAll('.gc:not(.multi) .card .cj'), e => e.getBoundingClientRect().height > parseFloat(getComputedStyle(e).fontSize) * 2.5) // max 2 lines per class name
+    || [].some.call(box.querySelectorAll('.gt'), e => e.scrollWidth > e.clientWidth + 1);
+  box.style.setProperty('--fit', fit.toFixed(2));
+  for (let k = 0; k < 14 && fit > 0.75 && over(); k++) { fit -= 0.05; box.style.setProperty('--fit', fit.toFixed(2)); }
+  [].forEach.call(box.querySelectorAll('.gc.multi'), g => { let f = 0.85; g.style.setProperty('--fit', (fit * f).toFixed(2)); const ov = () => g.scrollHeight > g.clientHeight + 1 || [].some.call(g.querySelectorAll('.card'), c => c.scrollHeight > c.clientHeight + 1); for (let k = 0; k < 10 && f > 0.45 && ov(); k++) { f -= 0.05; g.style.setProperty('--fit', (fit * f).toFixed(2)); } });
 }
 function renderStage() {
   buildSecMap();
@@ -1048,7 +1058,9 @@ function renderStage() {
   $('#title').textContent = S.title;
   const pl = PLAN(); { const w = $('#planWarn'); w.style.display = (planStale || !pl) ? 'block' : 'none'; w.textContent = pl ? '⚠ TODAY’S PLAN NOT UPDATED – showing ' + (pl.dayLabel || planKey) : '⚠ NO PLAN UPLOADED FOR TODAY'; } $('#dayLabel').textContent = (pl && pl.dayLabel) || (pl && planStale ? planKey : pl ? new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'}).toUpperCase().replace(/,/g,' |') : S.dayLabel);
   const n = planStale ? '' : ((pl && pl.footerNote != null) ? pl.footerNote : (S.footerNote || '')).trim();
-  $('#footNote').innerHTML = n ? `<b>Note:</b> ${esc(n)}` : '';
+  const mv = planStale || !pl ? [] : (pl.rows || []).filter(r => r.kind !== 'break' && roomFrom(r)).map(r => `${esc(info(r).cls)} ${esc(r.sec)}: ${esc(roomFrom(r))} → <b>${esc(String(r.room).toUpperCase())}</b>`);
+  const mvTxt = [...new Set(mv)].join(' · ');
+  $('#footNote').innerHTML = (mvTxt ? `<span class="mvNote">ROOM CHANGE</span> ${mvTxt}${n ? ' &nbsp;|&nbsp; ' : ''}` : '') + (n ? `<b>Note:</b> ${esc(n)}` : '');
   $('#legend').innerHTML = legendItems().map(g => `<span class="lg" style="--c:${g.color}"><i></i>${esc(g.label)}</span>`).join('');
   renderPrayerStrip();
   const photo = pl && pl.image && !(pl.rows && pl.rows.length);
@@ -2030,10 +2042,11 @@ function avRoom() { /* ms until the screen changes; the avatar only comes out if
       if (k > -1) left = Math.min(left, (all.length - 1 - k) * dur + dur * 0.5); } } catch (e) {}
   return left;
 }
-function avBlocked() { return ADMIN || !!ann || busy || avMode() === 'block'; }
+function avImgOk() { const i = document.querySelector('#av img'); return !!(i && i.complete && i.naturalWidth > 0); } // never pop up an empty/broken avatar
+function avBlocked() { return ADMIN || !!ann || busy || avMode() === 'block' || !avImgOk(); }
 function avPlace() {
   if (document.body.classList.contains('avslide')) {
-    const W = innerWidth, H = innerHeight, w = $('#avWrap'), aw = w.offsetWidth, x = W - aw - W * 0.15, barTop = H - H * 0.035, ah = H * 0.17;
+    const W = innerWidth, H = innerHeight, w = $('#avWrap'), aw = w.offsetWidth, x = W - aw - W * 0.15, barTop = H - H * 0.035, ah = H * 0.19;
     w.style.left = x + 'px'; w.style.top = (barTop - ah) + 'px'; w.style.height = (ah + H * 0.01) + 'px';
     const b = $('#avBurst'); b.style.left = (x + aw / 2) + 'px'; b.style.top = (barTop - ah + aw * 0.1) + 'px';
     const p = $('#avPortal'); p.style.left = (x + aw / 2) + 'px'; p.style.top = barTop + 'px';
