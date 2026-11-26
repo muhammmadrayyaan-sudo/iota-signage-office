@@ -1422,6 +1422,7 @@ function buildSlides() {
 let activeWeb = null, webFails = 0;
 let webHold = false; /* paused with the remote: the slides stay up until resumed */
 addEventListener('message', e => { if (e && activeWeb && e.source === activeWeb && (e.data === 'slidesHold' || e.data === 'slidesGo')) webHold = e.data === 'slidesHold'; });
+addEventListener('keydown', e => { if (activeWeb || ADMIN) return; const k = e.key; if (k !== 'ArrowRight' && k !== 'MediaTrackNext') return; e.preventDefault(); /* remote ▶ on the schedule: start the slides now; on a picture/notice: skip it */ if (interRunning) { if (interWake) interWake(); } else { clearTimeout(interTimer); runInter(OFFICE); } });
 addEventListener('keydown', e => { if (!activeWeb) return; const k = e.key, c = (k === 'ArrowRight' || k === 'MediaTrackNext') ? 'next' : (k === 'ArrowLeft' || k === 'MediaTrackPrevious') ? 'prev' : (k === ' ' || k === 'Enter' || k === 'MediaPlayPause' || k === 'p') ? 'pause' : ''; if (c) { e.preventDefault(); try { activeWeb.postMessage({ slideCmd: c }, '*'); } catch (er) {} } });
 addEventListener('message', e => { if (e && e.data === 'slidesDone' && activeWeb && e.source === activeWeb && interWake) { activeWeb = null; setTimeout(() => { if (interWake) interWake(); }, 900); } });
 function abortInter() {
