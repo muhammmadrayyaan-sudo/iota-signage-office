@@ -109,6 +109,10 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .gb{display:flex;align-items:center;justify-content:center;background:#f1ebeb;color:#5a4a4d;border-radius:.8vh;font:700 calc(2vh*var(--scale)) var(--display);padding:.5vh 1vw;text-align:center}
 .gb.on{background:#ffe0e0;color:var(--red);box-shadow:inset 0 0 0 .3vh var(--red)}
 .gb.past{opacity:.45}
+.gsec{display:flex;align-items:center;gap:.5em;padding:0 .7em;border-radius:.8vh;background:var(--c);color:var(--on);font:800 calc(2.3vh*var(--fit,1)) var(--display);min-height:0;overflow:hidden}.gsec b{background:rgba(255,255,255,.25);padding:0 .35em;border-radius:.4em}
+.gth{flex-direction:column;font-size:calc(1.9vh*var(--fit,1))}
+.gbv{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:1.5vh;padding:0}
+.rmb{background:#1c1416;color:#fff;padding:.05em .45em;border-radius:.35em;letter-spacing:.04em}
 .gc{display:flex;flex-direction:column;gap:.3vh;min-height:0;min-width:0}
 .card{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:.2vh .6vw;border-radius:.8vh;border-left:.8vh solid var(--c);background:var(--tint);color:var(--ink)}
 .card .cs{display:flex;align-items:baseline;gap:.5em;white-space:nowrap;font:800 calc(1.95vh*var(--scale)*var(--fit,1))/1.1 var(--display)}
@@ -973,6 +977,39 @@ function cardHtml(r, slotTime, nowM, rgOver) {
     `<div class="cs"><b>${esc(i.cls)}</b><span>${esc(r.sec)}</span>${own}</div><div class="cj">${esc(subjName(r.subj).replace(/^Mathematics$/, 'Math'))}${th ? ' - ' + esc(th) : ''}</div>` +
     ((tpill || pill) ? `<div class="cth">${tpill || pill}</div>` : '') + `</div>`;
 }
+/* Student & teacher view: one row per class section (find your class, read across), times across the top.
+   Each box shows subject - teacher and the ROOM, so nobody needs to know the room grid. */
+function renderByClass(box, vis, nowM) {
+  const GR = { XII: 0, XI: 1, X: 2, IX: 3 }, secs = new Map();
+  vis.forEach(it => { if (it.kind === 'break') return; Object.keys(it.cells).forEach(rm => it.cells[rm].forEach(r => {
+    const k = String(r.sec || '').trim().toUpperCase(); if (!k) return; if (!secs.has(k)) secs.set(k, info(r)); })); });
+  const list = [...secs.keys()].sort((a, b) => { const ga = GR[secs.get(a).cls] ?? 9, gb = GR[secs.get(b).cls] ?? 9; return ga - gb || a.localeCompare(b, 'en', { numeric: true }); });
+  const cols = vis.map(it => it.kind === 'break' ? '3.2vw' : 'minmax(0,1fr)').join(' ');
+  let h = `<div class="g gcls" style="grid-template-columns:11vw ${cols};grid-template-rows:auto repeat(${list.length},minmax(0,1fr))">`;
+  h += '<div class="gh gcorner" style="grid-row:1;grid-column:1">Class</div>';
+  vis.forEach((it, i) => {
+    const rg = it.range, on = rg && nowM >= rg[0] && nowM < rg[1];
+    if (it.kind === 'break') { h += `<div class="gb gbv${on ? ' on' : ''}" style="grid-row:1 / span ${list.length + 1};grid-column:${i + 2}"><span>${esc(it.note || 'Break')}</span></div>`; return; }
+    h += `<div class="gt gth${on ? ' on' : ''}" style="grid-row:1;grid-column:${i + 2}">${esc(fmtRange(it.time))}${on ? '<small>NOW</small>' : ''}</div>`;
+  });
+  list.forEach((k, ri) => {
+    const inf = secs.get(k), row = ri + 2;
+    h += `<div class="gsec" style="grid-row:${row};grid-column:1;--c:${inf.color};--on:${inkOn(inf.color)}"><b>${esc(inf.cls)}</b><span>${esc(k)}</span></div>`;
+    vis.forEach((it, i) => {
+      if (it.kind === 'break') return;
+      const rs = []; Object.keys(it.cells).forEach(rm => it.cells[rm].forEach(r => { if (String(r.sec || '').trim().toUpperCase() === k) rs.push(r); }));
+      const cards = rs.map(r => { const rm = String(r.room || '').toUpperCase(), rf = roomFrom(r);
+        return cardHtml(r, it.time, nowM).replace(/<div class="cs">[\s\S]*?<\/div>/, `<div class="cs"><b class="rmb">${rf ? esc(rf) + ' → ' : ''}${esc(rm)}</b></div>`); }).join('');
+      h += `<div class="gc${rs.length > 1 ? ' multi' : ''}" style="grid-row:${row};grid-column:${i + 2}">${cards}</div>`;
+    });
+  });
+  box.innerHTML = h + '</div>';
+  let fit = Math.max(0.8, Math.min(1.35, 14 / Math.max(list.length, 1)));
+  const over = () => [].some.call(box.querySelectorAll('.gc:not(.multi) .card'), c => c.scrollHeight > c.clientHeight + 1 || c.scrollWidth > c.clientWidth + 2);
+  box.style.setProperty('--fit', fit.toFixed(2));
+  for (let k = 0; k < 14 && fit > 0.6 && over(); k++) { fit -= 0.05; box.style.setProperty('--fit', fit.toFixed(2)); }
+  [].forEach.call(box.querySelectorAll('.gc.multi'), g => { let f = 0.85; g.style.setProperty('--fit', (fit * f).toFixed(2)); for (let q = 0; q < 12 && f > 0.4 && (g.scrollHeight > g.clientHeight + 1 || [].some.call(g.querySelectorAll(".card"), c => c.scrollHeight > c.clientHeight + 1)); q++) { f -= 0.05; g.style.setProperty('--fit', (fit * f).toFixed(2)); } });
+}
 function renderGrid() {
   const box = $('#gridWrap'), d = new Date(), nowM = d.getHours() * 60 + d.getMinutes();
   const floors = parseFloors(), known = new Set(floors.flatMap(f => f.rooms.map(x => x.toUpperCase()))), extra = [];
@@ -985,6 +1022,7 @@ function renderGrid() {
   while (from > 0 && nCls < 4) { from--; if (items[from].kind !== 'break') nCls++; }
   const vis = cut >= items.length ? [] : items.slice(from);
   if (!vis.length) { box.innerHTML = '<div class="empty bye"><div class="bye1">Assalamu Alaikum</div><div class="bye2">Classes are over for today.</div><div class="bye3">Have a safe journey home. See you tomorrow, In shaa Allah!</div></div>'; return; }
+  if (S.layout !== 'room') { renderByClass(box, vis, nowM); return; }
   const rowsTpl = 'auto auto ' + vis.map(it => it.kind === 'break' ? 'auto' : 'minmax(0,1fr)').join(' ');
   let h = `<div class="g" style="grid-template-columns:10vw repeat(${rooms.length},minmax(0,1fr));grid-template-rows:${rowsTpl}">`;
   h += '<div class="gh gcorner" style="grid-row:1 / span 2;grid-column:1">Time</div>';
