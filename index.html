@@ -114,6 +114,7 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .gbx.on{background:linear-gradient(180deg,#F6C453,#E8A93A);color:#2A0A10}
 .gc.span{z-index:1}
 .gcls .gc>.card{flex:1;justify-content:center}
+.gsec span{white-space:normal;word-break:break-word;line-height:1.05;min-width:0}.gsec.long{font-size:calc(1.8vh*var(--fit,1))}
 .gsec{display:flex;align-items:center;gap:.5em;padding:0 .7em;border-radius:.8vh;background:var(--c);color:var(--on);font:800 calc(2.3vh*var(--fit,1)) var(--display);min-height:0;overflow:hidden}.gsec b{background:rgba(255,255,255,.25);padding:0 .35em;border-radius:.4em}
 .gth{flex-direction:column;font-size:calc(1.9vh*var(--fit,1))}
 .gbv{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:1.5vh;padding:0}
@@ -1035,7 +1036,7 @@ function renderByClass(box, vis0, nowM) {
   });
   list.forEach((k, ri) => {
     const inf = secs.get(k), row = ri + 2;
-    h += `<div class="gsec" style="grid-row:${row};grid-column:1;--c:${inf.color};--on:${inkOn(inf.color)}"><b>${esc(inf.cls)}</b><span>${esc(k)}</span></div>`;
+    const kk = k.replace(/\//g, '/\u200B'); h += `<div class="gsec${k.length > 5 ? ' long' : ''}" style="grid-row:${row};grid-column:1;--c:${inf.color};--on:${inkOn(inf.color)}"><b>${esc(inf.cls)}</b><span>${esc(kk)}</span></div>`; // long names (IXG1/XG1) wrap instead of being cut
     const cellsOf = it => { const rs = []; if (it.kind === 'break') return rs; Object.keys(it.cells).forEach(rm => it.cells[rm].forEach(r => { if (String(r.sec || '').trim().toUpperCase() === k) rs.push(r); })); return rs; };
     const sig = r => [r.subj, r.teacher, r.note, r.room].map(x => String(x || '').trim().toLowerCase()).join('|');
     const card = (r, time, rg) => { const rm = String(r.room || '').toUpperCase(), rf = roomFrom(r);
