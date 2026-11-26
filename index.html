@@ -340,13 +340,15 @@ body.tv #avWrap{display:block}
 @-webkit-keyframes avRise{0%{opacity:0;-webkit-transform:translateY(100%) scale(.92)}60%{opacity:1}100%{opacity:1;-webkit-transform:translateY(0) scale(1)}}
 @keyframes avSink{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(80%) scale(.95)}}
 @-webkit-keyframes avSink{0%{opacity:1;-webkit-transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(80%) scale(.95)}}
+#av,#av img,#avBubble{will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}
 #av.in img,#av.wave img,#av.point img{-webkit-animation:avBreath 4.5s ease-in-out 1.1s infinite;animation:avBreath 4.5s ease-in-out 1.1s infinite}
-@keyframes avBreath{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2.5%) scale(1.015)}}
+@keyframes avBreath{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-2.5%,0)}}
 @-webkit-keyframes avBreath{0%,100%{-webkit-transform:translateY(0) scale(1)}50%{-webkit-transform:translateY(-2.5%) scale(1.015)}}
-#av:before{content:"";position:absolute;left:5%;right:5%;top:8%;bottom:0;border-radius:50% 50% 40% 40%;background:radial-gradient(circle at 50% 45%,rgba(246,196,83,.55),rgba(246,196,83,0) 68%);-webkit-filter:blur(.6vh);filter:blur(.6vh);z-index:-1;-webkit-animation:avHalo 4.5s ease-in-out infinite;animation:avHalo 4.5s ease-in-out infinite}
+#av:before{content:"";position:absolute;left:5%;right:5%;top:8%;bottom:0;border-radius:50% 50% 40% 40%;background:radial-gradient(circle at 50% 45%,rgba(246,196,83,.55),rgba(246,196,83,0) 68%);z-index:-1}
 @keyframes avHalo{0%,100%{opacity:.55;transform:scale(.95)}50%{opacity:.9;transform:scale(1.05)}}
 @-webkit-keyframes avHalo{0%,100%{opacity:.55;-webkit-transform:scale(.95)}50%{opacity:.9;-webkit-transform:scale(1.05)}}
 #avPortal.open{-webkit-animation:avGlow 2.2s ease-out both;animation:avGlow 2.2s ease-out both}
+#avPortal{box-shadow:none!important}
 @keyframes avGlow{0%{opacity:0;transform:scaleX(.3)}40%{opacity:.8;transform:scaleX(1)}100%{opacity:.45;transform:scaleX(1)}}
 @-webkit-keyframes avGlow{0%{opacity:0;-webkit-transform:scaleX(.3)}40%{opacity:.8;-webkit-transform:scaleX(1)}100%{opacity:.45;-webkit-transform:scaleX(1)}}
 #avBubble{position:absolute;z-index:5;max-width:44vw;padding:1.3vh 2.2vh;border-radius:2.2vh;background:#fff;border:.4vh solid #C3304A;box-shadow:0 1vh 3vh rgba(0,0,0,.22);
@@ -2163,7 +2165,7 @@ function avShow() {
   setTimeout(() => { av.classList.remove('out'); av.classList.add('in'); }, 700);   // 2. he springs out of it
   setTimeout(() => { burst.classList.add('go'); av.classList.add('wave'); }, 1200);  // 3. star burst + wave
   setTimeout(() => { try { avPlace(); } catch (e) {} bub.classList.add('on');               // 4. speech bubble: tip types itself out
-    let n = 0; tx.innerHTML = '<span class="cur"></span>'; const ty = setInterval(() => { n += 2; if (n >= tip.length || !bub.classList.contains('on')) { clearInterval(ty); tx.textContent = tip; return; } tx.innerHTML = esc(tip.slice(0, n)) + '<span class="cur"></span>'; }, 45);
+    let n = 0; tx.innerHTML = '<span class="cur"></span>'; const ty = setInterval(() => { n += 5; if (n >= tip.length || !bub.classList.contains('on')) { clearInterval(ty); tx.textContent = tip; return; } tx.innerHTML = esc(tip.slice(0, n)) + '<span class="cur"></span>'; }, 110);
   }, 1700);
   setTimeout(() => { av.classList.remove('wave'); av.classList.add('point'); pt.classList.add('on'); }, 3400); // 5. he leans in and points at the tip
   let t = 0; const done = () => { bub.classList.remove('on'); pt.classList.remove('on'); av.classList.remove('in', 'wave', 'point'); av.classList.add('out'); burst.classList.remove('go'); setTimeout(() => { portal.classList.remove('open'); portal.classList.add('close'); }, 450); setTimeout(() => { av.classList.remove('out'); portal.classList.remove('close'); document.body.classList.remove('avslide'); avBusy = false; }, 1300); };
