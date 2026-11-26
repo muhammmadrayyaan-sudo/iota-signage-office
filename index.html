@@ -295,6 +295,15 @@ body.tv #avWrap{display:block}
 @-webkit-keyframes avDown{0%{-webkit-transform:translateY(0)}25%{-webkit-transform:translateY(-5%)}100%{-webkit-transform:translateY(110%)}}
 #av img{display:block;width:100%;height:100%;-o-object-fit:contain;object-fit:contain;-webkit-transform-origin:50% 100%;transform-origin:50% 100%}
 #av.in img{-webkit-animation:avFloat 3.2s ease-in-out .9s infinite;animation:avFloat 3.2s ease-in-out .9s infinite}
+#av.point img{-webkit-animation:avPointA 1.6s ease-in-out infinite;animation:avPointA 1.6s ease-in-out infinite}
+@keyframes avPointA{0%,100%{transform:rotate(-7deg) translateX(-3%)}20%{transform:rotate(-9deg) translate(-5%,-6%)}40%{transform:rotate(-7deg) translateX(-3%)}60%{transform:rotate(-8deg) translate(-4%,-3%)}}
+@-webkit-keyframes avPointA{0%,100%{-webkit-transform:rotate(-7deg) translateX(-3%)}20%{-webkit-transform:rotate(-9deg) translate(-5%,-6%)}40%{-webkit-transform:rotate(-7deg) translateX(-3%)}}
+#avPoint{position:absolute;left:-6.5vh;top:38%;display:flex;gap:.2vh;font:900 3.4vh/1 sans-serif;color:#F6C453;text-shadow:0 0 1vh rgba(246,196,83,.8);opacity:0;transition:opacity .3s;z-index:6}
+#avPoint.on{opacity:1}#avPoint i{font-style:normal;-webkit-animation:avChev 1s ease-in-out infinite;animation:avChev 1s ease-in-out infinite}
+#avPoint i:nth-child(2){animation-delay:.15s}#avPoint i:nth-child(3){animation-delay:.3s}
+@keyframes avChev{0%,100%{opacity:.25;transform:translateX(0)}50%{opacity:1;transform:translateX(-.8vh)}}
+#av.in.pop{-webkit-animation:avUp .9s cubic-bezier(.3,1.5,.5,1) both,avHop .5s ease-out .9s 2;animation:avUp .9s cubic-bezier(.3,1.5,.5,1) both}
+#avTxt .cur{display:inline-block;width:.12em;height:1em;background:#C3304A;margin-left:.08em;vertical-align:-.1em;animation:avBlink .7s steps(1) infinite}@keyframes avBlink{50%{opacity:0}}
 @keyframes avFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3%) rotate(-1.5deg)}}
 @-webkit-keyframes avFloat{0%,100%{-webkit-transform:translateY(0) rotate(0)}50%{-webkit-transform:translateY(-3%) rotate(-1.5deg)}}
 #av .lid{transform-box:fill-box;-webkit-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:scaleY(0);transform:scaleY(0);-webkit-animation:avBlink 4s infinite;animation:avBlink 4s infinite}
@@ -336,7 +345,7 @@ body:not(.tv) #avBubble,body:not(.tv) #avPortal,body:not(.tv) #avBurst{display:n
     <div class="ttl"><h1 id="title"></h1></div>
     <div class="clk"><div id="clock"></div><div id="date"></div></div>
   </header>
-  <div id="avWrap"><div id="av"><img src="assets/avatar.png" alt=""></div></div><div id="avBurst"></div><div id="avPortal"></div><div id="avBubble"><b>STUDY TIP</b><span id="avTxt"></span></div>
+  <div id="avWrap"><div id="avPoint"><i>&#10094;</i><i>&#10094;</i><i>&#10094;</i></div><div id="av"><img src="assets/avatar.png" alt=""></div></div><div id="avBurst"></div><div id="avPortal"></div><div id="avBubble"><b>STUDY TIP</b><span id="avTxt"></span></div>
   <div class="banner">
     <span id="dayLabel"></span>
     <span id="next"></span>
@@ -2109,14 +2118,17 @@ function avShow() {
   if (avBusy || avBlocked() || avRoom() < 14000) return; avBusy = true;
   const mode0 = avMode(); document.body.classList.toggle('avslide', mode0 === 'slide');
   const av = $('#av'), bub = $('#avBubble'), burst = $('#avBurst'), portal = $('#avPortal');
-  $('#avTxt').textContent = AV_TIPS[avK++ % AV_TIPS.length];
+  const tip = AV_TIPS[avK++ % AV_TIPS.length], tx = $('#avTxt'), pt = $('#avPoint'); tx.textContent = tip;
   try { avPlace(); } catch (e) { avBusy = false; return; }
   burst.innerHTML = [[-6,-5],[6,-5],[-8,1],[8,1],[0,-8],[-4,-8],[4,-8],[-9,-3],[9,-3]].map(p => `<i style="--x:${p[0]}vh;--y:${p[1]}vh"></i>`).join('');
   portal.classList.remove('close'); portal.classList.add('open');              // 1. gold portal opens on the red bar
   setTimeout(() => { av.classList.remove('out'); av.classList.add('in'); }, 700);   // 2. he springs out of it
   setTimeout(() => { burst.classList.add('go'); av.classList.add('wave'); }, 1200);  // 3. star burst + wave
-  setTimeout(() => { try { avPlace(); } catch (e) {} bub.classList.add('on'); }, 1700); // 4. speech bubble with the tip
-  let t = 0; const done = () => { bub.classList.remove('on'); av.classList.remove('in', 'wave'); av.classList.add('out'); burst.classList.remove('go'); setTimeout(() => { portal.classList.remove('open'); portal.classList.add('close'); }, 450); setTimeout(() => { av.classList.remove('out'); portal.classList.remove('close'); document.body.classList.remove('avslide'); avBusy = false; }, 1300); };
+  setTimeout(() => { try { avPlace(); } catch (e) {} bub.classList.add('on');               // 4. speech bubble: tip types itself out
+    let n = 0; tx.innerHTML = '<span class="cur"></span>'; const ty = setInterval(() => { n += 2; if (n >= tip.length || !bub.classList.contains('on')) { clearInterval(ty); tx.textContent = tip; return; } tx.innerHTML = esc(tip.slice(0, n)) + '<span class="cur"></span>'; }, 45);
+  }, 1700);
+  setTimeout(() => { av.classList.remove('wave'); av.classList.add('point'); pt.classList.add('on'); }, 3400); // 5. he leans in and points at the tip
+  let t = 0; const done = () => { bub.classList.remove('on'); pt.classList.remove('on'); av.classList.remove('in', 'wave', 'point'); av.classList.add('out'); burst.classList.remove('go'); setTimeout(() => { portal.classList.remove('open'); portal.classList.add('close'); }, 450); setTimeout(() => { av.classList.remove('out'); portal.classList.remove('close'); document.body.classList.remove('avslide'); avBusy = false; }, 1300); };
   (function watch() { t += 500; if (avBlocked() || avMode() !== mode0 || t >= 11000) { done(); return; } setTimeout(watch, 500); })();
 }
 if (!ADMIN) setTimeout(function avLoop() { let shown = false; try { if (!avBusy && !avBlocked()) { avShow(); shown = avBusy; } } catch (e) {} setTimeout(avLoop, shown ? 2 * 60 * 1000 : 15 * 1000); }, 60 * 1000);
