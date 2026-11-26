@@ -6,7 +6,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#000}
 .slide{position:relative;width:1920px;height:1080px;overflow:hidden;color:#fff;font-family:Jost,sans-serif}
 .red{--bg1:#C3304A;--bg2:#8E1426;--bg3:#4A0710;--acc:#F6C453;--ink:#4A0710}
 .blue{--bg1:#3C86C2;--bg2:#1F5B90;--bg3:#0B2746;--acc:#FFD36B;--ink:#0B2746}
-.green{--bg1:#6B7380;--bg2:#3C424C;--bg3:#16191E;--acc:#E4E8EE;--ink:#16191E}
+.green{--bg1:#5B3A9E;--bg2:#331E66;--bg3:#120828;--acc:#F2C14E;--ink:#120828}
 .navy{--bg1:#22477A;--bg2:#102B4D;--bg3:#050F20;--acc:#F2C14E;--ink:#050F20}
 .bg{position:absolute;top:0;right:0;bottom:0;left:0;background:radial-gradient(ellipse at 75% 30%,var(--bg1) 0%,var(--bg2) 45%,var(--bg3) 100%)}
 .sheen{position:absolute;top:-20%;right:-20%;bottom:-20%;left:-20%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.10) 50%,transparent 60%);display:none}
@@ -277,7 +277,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden}
    <div style="font-size:27px;color:rgba(255,255,255,.88);margin-top:6px">&ldquo;There are two blessings that many people are deceived into losing: health and free time.&rdquo; <b style="color:var(--acc)">&mdash; Sahih al-Bukhari 6412</b></div>
   </div>
  </div></div><div class="prog"></div><div class="emb"><div class="emb-in"><img src="assets/shield.png" alt=""></div></div></section>
-<section class="slide navy"><div class="bg"></div><div class="deco"><i></i><i></i><i></i><i></i><i></i><b></b><b></b></div><div class="sheen"></div><img class="mark" src="assets/emblem_white.png"><div class="stage"><div class="dots"></div>
+<section class="slide navy" data-dur="22000" style="--dur:22s"><div class="bg"></div><div class="deco"><i></i><i></i><i></i><i></i><i></i><b></b><b></b></div><div class="sheen"></div><img class="mark" src="assets/emblem_white.png"><div class="stage"><div class="dots"></div>
  <div style="position:absolute;left:96px;top:80px;width:1728px">
   <div class="kick left-in" style="--d:.1s">Motivation vs Obsession</div>
   <h1 class="up" style="--d:.3s;margin-top:24px;font-size:100px">Motivation Starts It.<br><em class="shine">Habit Finishes It.</em></h1>
@@ -379,7 +379,7 @@ function go(n){
   cur=n;
 }
 var ONCE=/[?&]once/.test(location.search),started=false,paused=false,timer=null;
-function tick(){clearTimeout(timer);if(paused)return;timer=setTimeout(function(){if(ONCE&&cur===slides.length-1){try{parent.postMessage('slidesDone','*');}catch(e){}return;}go((cur+1)%slides.length);tick();},DUR);}
+function tick(){clearTimeout(timer);if(paused)return;var sd=slides[cur]&&+slides[cur].getAttribute('data-dur')||DUR;timer=setTimeout(function(){if(ONCE&&cur===slides.length-1){try{parent.postMessage('slidesDone','*');}catch(e){}return;}go((cur+1)%slides.length);tick();},sd);}
 function step(d){var n=cur+d;if(n<0)n=0;if(n>slides.length-1){if(ONCE){try{parent.postMessage('slidesDone','*');}catch(e){}return;}n=0;}go(n);tick();}
 function setPause(p){paused=p;document.getElementById('pz').style.display=p?'block':'none';document.getElementById('bp').textContent=p?'▶':'❚❚';try{parent.postMessage(p?'slidesHold':'slidesGo','*');}catch(e){}if(!p)tick();else clearTimeout(timer);}
 function cmd(c){if(!started)return;if(c==='next')step(1);else if(c==='prev')step(-1);else if(c==='pause')setPause(!paused);showCtl();}
