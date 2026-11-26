@@ -44,12 +44,12 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#000}
 .gold{background:linear-gradient(135deg,#F6C453,#E8A93A);color:#2A0A10;box-shadow:0 24px 60px rgba(0,0,0,.35)}
 @font-face{font-family:Amiri;src:url(../sunnah/assets/amiri-arabic-400-normal.woff2) format('woff2');font-display:block}
 .deco{position:absolute;top:0;right:0;bottom:0;left:0;overflow:hidden;pointer-events:none;z-index:0}
-.deco i{position:absolute;border-radius:50%;border:2px solid rgba(246,196,83,.22);-webkit-animation:dfloat 14s ease-in-out infinite alternate;animation:dfloat 14s ease-in-out infinite alternate}
+.deco i{position:absolute;border-radius:50%;border:2px solid rgba(246,196,83,.22)}
 .deco i:nth-child(1){width:520px;height:520px;left:-160px;bottom:-200px}
 .deco i:nth-child(2){width:300px;height:300px;left:42%;top:-120px;border-color:rgba(255,255,255,.12);animation-duration:18s}
 .deco i:nth-child(3){width:140px;height:140px;right:12%;bottom:9%;background:rgba(246,196,83,.08);border:0;animation-duration:11s}
 .deco i:nth-child(4){width:70px;height:70px;left:30%;bottom:16%;background:rgba(255,255,255,.07);border:0;animation-duration:9s}
-.deco i:nth-child(5){width:900px;height:900px;right:-380px;top:-300px;border-style:dashed;border-color:rgba(255,255,255,.07);-webkit-animation:dspin 90s linear infinite;animation:dspin 90s linear infinite}
+.deco i:nth-child(5){width:900px;height:900px;right:-380px;top:-300px;border-style:dashed;border-color:rgba(255,255,255,.07);}
 .deco b{position:absolute;width:260px;height:260px;background-image:radial-gradient(rgba(246,196,83,.35) 2px,transparent 2.5px);background-size:26px 26px;opacity:.5}
 .deco b:nth-child(6){left:60px;top:40px}.deco b:nth-child(7){right:60px;bottom:60px;opacity:.35}
 .light .deco i{border-color:rgba(195,48,74,.18)}.light .deco b{background-image:radial-gradient(rgba(195,48,74,.3) 2px,transparent 2.5px)}
@@ -60,6 +60,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#000}
 #ctl.show{opacity:1}#ctl button{width:64px;height:64px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:26px;cursor:pointer}
 #ctl .st{position:fixed}#pz{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;font:700 20px sans-serif;padding:8px 18px;border-radius:20px;z-index:99;display:none}
 .stk{position:absolute;right:20px;bottom:14px;width:230px;height:157px;overflow:visible}
+.slide:not(.on) .stk *{animation:none!important}
 .mrun{animation:mrun 7s ease-in-out infinite}.mrun .l1,.mrun .l2,.mrun .a1,.mrun .a2{transform-origin:0 -45px}
 .mrun .l1{animation:legA .3s ease-in-out infinite alternate}.mrun .l2{animation:legA .3s ease-in-out infinite alternate-reverse}
 .mrun .a1,.mrun .a2{transform-origin:0 -72px;animation:legA .3s ease-in-out infinite alternate}

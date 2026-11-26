@@ -2165,7 +2165,7 @@ function avShow() {
   setTimeout(() => { av.classList.remove('out'); av.classList.add('in'); }, 700);   // 2. he springs out of it
   setTimeout(() => { burst.classList.add('go'); av.classList.add('wave'); }, 1200);  // 3. star burst + wave
   setTimeout(() => { try { avPlace(); } catch (e) {} bub.classList.add('on');               // 4. speech bubble: tip types itself out
-    let n = 0; tx.innerHTML = '<span class="cur"></span>'; const ty = setInterval(() => { n += 5; if (n >= tip.length || !bub.classList.contains('on')) { clearInterval(ty); tx.textContent = tip; return; } tx.innerHTML = esc(tip.slice(0, n)) + '<span class="cur"></span>'; }, 110);
+    tx.textContent = tip; // shown at once: typing caused redraws and lag on the TV
   }, 1700);
   setTimeout(() => { av.classList.remove('wave'); av.classList.add('point'); pt.classList.add('on'); }, 3400); // 5. he leans in and points at the tip
   let t = 0; const done = () => { bub.classList.remove('on'); pt.classList.remove('on'); av.classList.remove('in', 'wave', 'point'); av.classList.add('out'); burst.classList.remove('go'); setTimeout(() => { portal.classList.remove('open'); portal.classList.add('close'); }, 450); setTimeout(() => { av.classList.remove('out'); portal.classList.remove('close'); document.body.classList.remove('avslide'); avBusy = false; }, 1300); };
