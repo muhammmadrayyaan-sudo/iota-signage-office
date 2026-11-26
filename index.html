@@ -109,6 +109,11 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .gb{display:flex;align-items:center;justify-content:center;background:#f1ebeb;color:#5a4a4d;border-radius:.8vh;font:700 calc(2vh*var(--scale)) var(--display);padding:.5vh 1vw;text-align:center}
 .gb.on{background:#ffe0e0;color:var(--red);box-shadow:inset 0 0 0 .3vh var(--red)}
 .gb.past{opacity:.45}
+.gbx{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh;border-radius:1vh;background:linear-gradient(180deg,#fff7e6,#fbe9c6);color:#7a4a00;text-align:center;font-family:var(--display);min-width:0;overflow:hidden;z-index:0}
+.gbx small{font-size:1.1vh;letter-spacing:.2em;font-weight:800;opacity:.7}.gbx b{font-size:1.9vh;line-height:1.1}.gbx span{font-size:1.4vh;font-weight:600;opacity:.85}
+.gbx.on{background:linear-gradient(180deg,#F6C453,#E8A93A);color:#2A0A10}
+.gc.span{z-index:1}
+.gcls .gc>.card{flex:1;justify-content:center}
 .gsec{display:flex;align-items:center;gap:.5em;padding:0 .7em;border-radius:.8vh;background:var(--c);color:var(--on);font:800 calc(2.3vh*var(--fit,1)) var(--display);min-height:0;overflow:hidden}.gsec b{background:rgba(255,255,255,.25);padding:0 .35em;border-radius:.4em}
 .gth{flex-direction:column;font-size:calc(1.9vh*var(--fit,1))}
 .gbv{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:1.5vh;padding:0}
@@ -326,10 +331,29 @@ body.tv #avWrap{display:block}
 @-webkit-keyframes avPortal{0%{opacity:0;-webkit-transform:scaleX(0)}25%{opacity:1;-webkit-transform:scaleX(1.15)}40%{-webkit-transform:scaleX(1)}100%{opacity:.55;-webkit-transform:scaleX(1)}}
 @keyframes avPortalC{0%{opacity:.8;transform:scaleX(1)}100%{opacity:0;transform:scaleX(0)}}
 @-webkit-keyframes avPortalC{0%{opacity:.8;-webkit-transform:scaleX(1)}100%{opacity:0;-webkit-transform:scaleX(0)}}
+/* v3 motion: calm and smooth – glide up, soft glow, gentle breathing; no shaking, no flashing */
+#avPoint,#avBurst{display:none!important}
+#av{opacity:0}
+#av.in{opacity:1;-webkit-animation:avRise 1.1s cubic-bezier(.16,.84,.24,1) both;animation:avRise 1.1s cubic-bezier(.16,.84,.24,1) both}
+#av.out{-webkit-animation:avSink .8s cubic-bezier(.6,0,.8,.4) both;animation:avSink .8s cubic-bezier(.6,0,.8,.4) both}
+@keyframes avRise{0%{opacity:0;transform:translateY(100%) scale(.92)}60%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1)}}
+@-webkit-keyframes avRise{0%{opacity:0;-webkit-transform:translateY(100%) scale(.92)}60%{opacity:1}100%{opacity:1;-webkit-transform:translateY(0) scale(1)}}
+@keyframes avSink{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(80%) scale(.95)}}
+@-webkit-keyframes avSink{0%{opacity:1;-webkit-transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(80%) scale(.95)}}
+#av.in img,#av.wave img,#av.point img{-webkit-animation:avBreath 4.5s ease-in-out 1.1s infinite;animation:avBreath 4.5s ease-in-out 1.1s infinite}
+@keyframes avBreath{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2.5%) scale(1.015)}}
+@-webkit-keyframes avBreath{0%,100%{-webkit-transform:translateY(0) scale(1)}50%{-webkit-transform:translateY(-2.5%) scale(1.015)}}
+#av:before{content:"";position:absolute;left:5%;right:5%;top:8%;bottom:0;border-radius:50% 50% 40% 40%;background:radial-gradient(circle at 50% 45%,rgba(246,196,83,.55),rgba(246,196,83,0) 68%);-webkit-filter:blur(.6vh);filter:blur(.6vh);z-index:-1;-webkit-animation:avHalo 4.5s ease-in-out infinite;animation:avHalo 4.5s ease-in-out infinite}
+@keyframes avHalo{0%,100%{opacity:.55;transform:scale(.95)}50%{opacity:.9;transform:scale(1.05)}}
+@-webkit-keyframes avHalo{0%,100%{opacity:.55;-webkit-transform:scale(.95)}50%{opacity:.9;-webkit-transform:scale(1.05)}}
+#avPortal.open{-webkit-animation:avGlow 2.2s ease-out both;animation:avGlow 2.2s ease-out both}
+@keyframes avGlow{0%{opacity:0;transform:scaleX(.3)}40%{opacity:.8;transform:scaleX(1)}100%{opacity:.45;transform:scaleX(1)}}
+@-webkit-keyframes avGlow{0%{opacity:0;-webkit-transform:scaleX(.3)}40%{opacity:.8;-webkit-transform:scaleX(1)}100%{opacity:.45;-webkit-transform:scaleX(1)}}
 #avBubble{position:absolute;z-index:5;max-width:44vw;padding:1.3vh 2.2vh;border-radius:2.2vh;background:#fff;border:.4vh solid #C3304A;box-shadow:0 1vh 3vh rgba(0,0,0,.22);
   color:#2A0A10;font:600 2.6vh/1.25 var(--display);display:flex;align-items:center;gap:1.4vh;pointer-events:none;
   opacity:0;-webkit-transform:scale(.4);transform:scale(.4);-webkit-transform-origin:100% 50%;transform-origin:100% 50%;-webkit-transition:opacity .3s,-webkit-transform .45s cubic-bezier(.3,1.6,.5,1);transition:opacity .3s,transform .45s cubic-bezier(.3,1.6,.5,1)}
 #avBubble.on{opacity:1;-webkit-transform:none;transform:none}
+#avBubble{-webkit-transform-origin:100% 50%;transform-origin:100% 50%;-webkit-transform:translateX(3vh) scale(.88);transform:translateX(3vh) scale(.88);transition:opacity .5s ease,transform .7s cubic-bezier(.16,.84,.24,1)!important}
 #avBubble b{flex:none;background:#F2B705;color:#4A0710;padding:.5vh 1vh;border-radius:.8vh;font-size:1.7vh;letter-spacing:.14em}
 #avBubble:after{content:"";position:absolute;right:-2vh;top:50%;margin-top:-1.1vh;border:1.1vh solid transparent;border-left:1.6vh solid #C3304A}
 body.avslide #avWrap{position:fixed;z-index:30;width:18vh}body.avslide #av{width:18vh;height:18vh}body.avslide #avBurst,body.avslide #avPortal,body.avslide #avBubble{position:fixed;z-index:31}
@@ -988,32 +1012,45 @@ function cardHtml(r, slotTime, nowM, rgOver) {
 }
 /* Student & teacher view: one row per class section (find your class, read across), times across the top.
    Each box shows subject - teacher and the ROOM, so nobody needs to know the room grid. */
-function renderByClass(box, vis, nowM) {
+function renderByClass(box, vis0, nowM) {
+  /* only the class running now and the ones still to come; finished slots and breaks drop off */
+  let vis = vis0.filter(it => !(it.range && nowM >= it.range[1]));
+  while (vis.length && vis[0].kind === 'break') vis.shift();
+  while (vis.length && vis[vis.length - 1].kind === 'break') vis.pop();
+  if (!vis.length) vis = vis0.slice(-1);
   const GR = { XII: 0, XI: 1, X: 2, IX: 3 }, secs = new Map();
   vis.forEach(it => { if (it.kind === 'break') return; Object.keys(it.cells).forEach(rm => it.cells[rm].forEach(r => {
     const k = String(r.sec || '').trim().toUpperCase(); if (!k) return; if (!secs.has(k)) secs.set(k, info(r)); })); });
   const list = [...secs.keys()].sort((a, b) => { const ga = GR[secs.get(a).cls] ?? 9, gb = GR[secs.get(b).cls] ?? 9; return ga - gb || a.localeCompare(b, 'en', { numeric: true }); });
-  const cols = vis.map(it => it.kind === 'break' ? '3.2vw' : 'minmax(0,1fr)').join(' ');
+  const cols = vis.map(it => it.kind === 'break' ? '5.2vw' : 'minmax(0,1fr)').join(' ');
   let h = `<div class="g gcls" style="grid-template-columns:11vw ${cols};grid-template-rows:auto repeat(${list.length},minmax(0,1fr))">`;
   h += '<div class="gh gcorner" style="grid-row:1;grid-column:1">Class</div>';
   vis.forEach((it, i) => {
     const rg = it.range, on = rg && nowM >= rg[0] && nowM < rg[1];
-    if (it.kind === 'break') { h += `<div class="gb gbv${on ? ' on' : ''}" style="grid-row:1 / span ${list.length + 1};grid-column:${i + 2}"><span>${esc(it.note || 'Break')}</span></div>`; return; }
+    if (it.kind === 'break') { const nt = String(it.note || ''), nm = (nt.match(/^([A-Za-z&\s]+?)\s*Break/i) || [, 'Break'])[1].trim(), jm = (nt.match(/\d{1,2}:\d{2}(\s*[AP]M)?/i) || [''])[0];
+      h += `<div class="gbx${on ? ' on' : ''}" style="grid-row:1 / span ${list.length + 1};grid-column:${i + 2}"><small>BREAK</small><b>${esc(nm)}</b>${jm ? `<span>Jamat<br>${esc(jm)}</span>` : ''}</div>`; return; }
     h += `<div class="gt gth${on ? ' on' : ''}" style="grid-row:1;grid-column:${i + 2}">${esc(fmtRange(it.time))}${on ? '<small>NOW</small>' : ''}</div>`;
   });
   list.forEach((k, ri) => {
     const inf = secs.get(k), row = ri + 2;
     h += `<div class="gsec" style="grid-row:${row};grid-column:1;--c:${inf.color};--on:${inkOn(inf.color)}"><b>${esc(inf.cls)}</b><span>${esc(k)}</span></div>`;
-    vis.forEach((it, i) => {
-      if (it.kind === 'break') return;
-      const rs = []; Object.keys(it.cells).forEach(rm => it.cells[rm].forEach(r => { if (String(r.sec || '').trim().toUpperCase() === k) rs.push(r); }));
-      const cards = rs.map(r => { const rm = String(r.room || '').toUpperCase(), rf = roomFrom(r);
-        return cardHtml(r, it.time, nowM).replace(/<div class="cs">[\s\S]*?<\/div>/, `<div class="cs"><b class="rmb">${rf ? esc(rf) + ' → ' : ''}${esc(rm)}</b></div>`); }).join('');
-      h += `<div class="gc${rs.length > 1 ? ' multi' : ''}" style="grid-row:${row};grid-column:${i + 2}">${cards}</div>`;
-    });
+    const cellsOf = it => { const rs = []; if (it.kind === 'break') return rs; Object.keys(it.cells).forEach(rm => it.cells[rm].forEach(r => { if (String(r.sec || '').trim().toUpperCase() === k) rs.push(r); })); return rs; };
+    const sig = r => [r.subj, r.teacher, r.note, r.room].map(x => String(x || '').trim().toLowerCase()).join('|');
+    const card = (r, time, rg) => { const rm = String(r.room || '').toUpperCase(), rf = roomFrom(r);
+      return cardHtml(r, time, nowM, rg).replace(/<div class="cs">[\s\S]*?<\/div>/, `<div class="cs"><b class="rmb">${rf ? esc(rf) + ' → ' : ''}${esc(rm)}</b></div>`); };
+    for (let i = 0; i < vis.length; i++) {
+      const it = vis[i]; if (it.kind === 'break') continue;
+      const rs = cellsOf(it); if (!rs.length) continue;
+      let last = i;
+      if (rs.length === 1) for (let j = i + 1; j < vis.length; j++) { if (vis[j].kind === 'break') continue; const rj = cellsOf(vis[j]); if (rj.length === 1 && sig(rj[0]) === sig(rs[0])) last = j; else break; }
+      if (last > i) { /* the same class back-to-back = one long box, like the exam blocks */
+        const rg = it.range && vis[last].range ? [it.range[0], vis[last].range[1]] : null;
+        h += `<div class="gc span" style="grid-row:${row};grid-column:${i + 2} / ${last + 3}">${card(rs[0], rs[0].time, rg)}</div>`; i = last; continue; }
+      h += `<div class="gc${rs.length > 1 ? ' multi' : ''}" style="grid-row:${row};grid-column:${i + 2}">${rs.map(r => card(r, it.time)).join('')}</div>`;
+    }
   });
   box.innerHTML = h + '</div>';
-  let fit = Math.max(0.8, Math.min(1.35, 14 / Math.max(list.length, 1)));
+  let fit = Math.max(0.8, Math.min(1.45, 19 / Math.max(list.length, 1)));
   const over = () => [].some.call(box.querySelectorAll('.gc:not(.multi) .card'), c => c.scrollHeight > c.clientHeight + 1 || c.scrollWidth > c.clientWidth + 2);
   box.style.setProperty('--fit', fit.toFixed(2));
   for (let k = 0; k < 14 && fit > 0.6 && over(); k++) { fit -= 0.05; box.style.setProperty('--fit', fit.toFixed(2)); }
