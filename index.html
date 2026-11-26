@@ -1374,6 +1374,9 @@ function buildSlides() {
   return out;
 }
 let activeWeb = null, webFails = 0;
+let webHold = false; /* paused with the remote: the slides stay up until resumed */
+addEventListener('message', e => { if (e && activeWeb && e.source === activeWeb && (e.data === 'slidesHold' || e.data === 'slidesGo')) webHold = e.data === 'slidesHold'; });
+addEventListener('keydown', e => { if (!activeWeb) return; const k = e.key, c = (k === 'ArrowRight' || k === 'MediaTrackNext') ? 'next' : (k === 'ArrowLeft' || k === 'MediaTrackPrevious') ? 'prev' : (k === ' ' || k === 'Enter' || k === 'MediaPlayPause' || k === 'p') ? 'pause' : ''; if (c) { e.preventDefault(); try { activeWeb.postMessage({ slideCmd: c }, '*'); } catch (er) {} } });
 addEventListener('message', e => { if (e && e.data === 'slidesDone' && activeWeb && e.source === activeWeb && interWake) { activeWeb = null; setTimeout(() => { if (interWake) interWake(); }, 900); } });
 function abortInter() {
   if (!interRunning) return;
@@ -1419,7 +1422,9 @@ async function runInter(force) {
     els[i].classList.add('on'); prev = els[i];
     const vd = slides[i].video && els[i].querySelector('video');
     if (vd) { const wake = () => interWake && interWake(); vd.onended = wake; vd.onerror = wake; vd.currentTime = 0; vd.play().catch(() => { vd.muted = true; vd.play().catch(wake); }); }
-    { const ms = clamp(slides[i].sec, 3, slides[i].html.indexOf('webslide') > -1 ? 600 : 60) * 1000; avNextAt = Date.now() + ms; await interSleep(ms); }
+    { const isW = slides[i].html.indexOf('webslide') > -1, ms = clamp(slides[i].sec, 3, isW ? 600 : 60) * 1000; avNextAt = Date.now() + ms;
+      if (!isW) await interSleep(ms);
+      else { let left = ms; webHold = false; while (left > 0 && !interAbort) { const t0 = Date.now(); await interSleep(Math.min(left, 1000)); if (!activeWeb) break; if (!webHold) left -= Date.now() - t0; else avNextAt = Date.now() + left; } webHold = false; } }
     if (vd) vd.pause();
     if (slides[i].web) { activeWeb = null; const fr = els[i].querySelector('iframe'); if (fr) setTimeout(() => { try { fr.src = 'about:blank'; } catch (e) {} }, 900); }
   }

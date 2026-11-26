@@ -106,6 +106,9 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden}
 .ar{font-size:70px !important;line-height:1.6 !important}
 .en{font-size:44px !important;margin-top:22px !important}
 .ref{margin-top:24px !important}
+#ctl{position:fixed;left:50%;bottom:30px;-webkit-transform:translateX(-50%);transform:translateX(-50%);display:flex;gap:14px;z-index:99;opacity:0;transition:opacity .4s}
+#ctl.show{opacity:1}#ctl button{width:64px;height:64px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:26px;cursor:pointer}
+#ctl .st{position:fixed}#pz{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;font:700 20px sans-serif;padding:8px 18px;border-radius:20px;z-index:99;display:none}
 </style><style>
 @font-face{font-family:Amiri;font-weight:400;src:url(assets/amiri-arabic-400-normal.woff2)}
 @font-face{font-family:Amiri;font-weight:700;src:url(assets/amiri-arabic-700-normal.woff2)}
@@ -236,6 +239,15 @@ function go(n){
   if(prev){prev.classList.remove('on'); setTimeout(function(){prev.classList.remove('show');},850);}
   cur=n;
 }
-var ONCE=/[?&]once/.test(location.search),started=false;function start(){if(started)return;started=true;go(0);var iv=setInterval(function(){if(ONCE&&cur===slides.length-1){clearInterval(iv);try{parent.postMessage('slidesDone','*');}catch(e){}return;}go((cur+1)%slides.length);},DUR);}
+var ONCE=/[?&]once/.test(location.search),started=false,paused=false,timer=null;
+function tick(){clearTimeout(timer);if(paused)return;timer=setTimeout(function(){if(ONCE&&cur===slides.length-1){try{parent.postMessage('slidesDone','*');}catch(e){}return;}go((cur+1)%slides.length);tick();},DUR);}
+function step(d){var n=cur+d;if(n<0)n=0;if(n>slides.length-1){if(ONCE){try{parent.postMessage('slidesDone','*');}catch(e){}return;}n=0;}go(n);tick();}
+function setPause(p){paused=p;document.getElementById('pz').style.display=p?'block':'none';document.getElementById('bp').textContent=p?'▶':'❚❚';try{parent.postMessage(p?'slidesHold':'slidesGo','*');}catch(e){}if(!p)tick();else clearTimeout(timer);}
+function cmd(c){if(!started)return;if(c==='next')step(1);else if(c==='prev')step(-1);else if(c==='pause')setPause(!paused);showCtl();}
+var ctlT;function showCtl(){var c=document.getElementById('ctl');if(!c)return;c.classList.add('show');clearTimeout(ctlT);ctlT=setTimeout(function(){c.classList.remove('show');},4000);}
+addEventListener('message',function(e){if(e&&e.data&&e.data.slideCmd)cmd(e.data.slideCmd);});
+addEventListener('keydown',function(e){var k=e.key;if(k==='ArrowRight'||k==='MediaTrackNext'){cmd('next');e.preventDefault();}else if(k==='ArrowLeft'||k==='MediaTrackPrevious'){cmd('prev');e.preventDefault();}else if(k===' '||k==='Enter'||k==='MediaPlayPause'||k==='p'){cmd('pause');e.preventDefault();}});
+['mousemove','touchstart'].forEach(function(ev){addEventListener(ev,showCtl,{passive:true});});
+function start(){if(started)return;started=true;go(0);tick();}
 if(document.readyState==='complete')start();else{addEventListener('load',start);setTimeout(start,6000);}
-</script></body></html>
+</script><div id="pz">PAUSED</div><div id="ctl"><button onclick="cmd('prev')">&#9664;</button><button id="bp" onclick="cmd('pause')">&#10074;&#10074;</button><button onclick="cmd('next')">&#9654;</button></div></body></html>
