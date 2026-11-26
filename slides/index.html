@@ -74,6 +74,30 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#000}
 .oclimb .a1,.oclimb .a2{transform-origin:0 -42px;animation:legB .5s ease-in-out infinite alternate}
 @keyframes oclimb{0%{transform:translate(30px,140px)}12.5%{transform:translate(60px,140px)}25%{transform:translate(80px,115px)}37.5%{transform:translate(100px,115px)}50%{transform:translate(120px,90px)}62.5%{transform:translate(140px,90px)}75%{transform:translate(160px,65px)}87.5%{transform:translate(180px,65px)}100%{transform:translate(200px,40px)}}
 @keyframes legB{from{transform:rotate(-20deg)}to{transform:rotate(20deg)}}
+/* obsession / motivation / consistency: smooth crossfades, no falling */
+.c3{flex:1;padding:28px 32px 26px;border-radius:30px;position:relative}
+.c3t{font-size:40px;font-weight:700;color:rgba(255,255,255,.8)}
+.c3b{display:flex;gap:14px;align-items:center;font-size:28px;margin-top:12px}.c3b span{width:13px;height:13px;border-radius:50%;background:currentColor;flex:none;opacity:.8}
+.stk3{display:block;width:100%;height:170px;margin:6px 0 4px;overflow:visible}
+.slide:not(.on) .stk3 *{animation:none!important}
+.orun{animation:orun 8s ease-in-out infinite}.orun .l1,.orun .l2{transform-origin:6px -45px}.orun .a1,.orun .a2{transform-origin:2px -72px}
+.orun .l1,.orun .a2{animation:legA .16s linear infinite alternate}.orun .l2,.orun .a1{animation:legA .16s linear infinite alternate-reverse}
+.orun .sw{animation:sw .5s ease-out infinite}.orun .s2{animation-delay:.25s}
+@keyframes sw{0%{opacity:0;transform:translateY(0)}30%{opacity:1}100%{opacity:0;transform:translateY(16px)}}
+@keyframes orun{0%{transform:translate(20px,140px);opacity:0}4%{opacity:1}15%{transform:translate(200px,140px) scaleX(1)}16%{transform:translate(200px,140px) scaleX(-1)}30%{transform:translate(30px,140px) scaleX(-1)}31%{transform:translate(30px,140px) scaleX(1)}45%{transform:translate(200px,140px) scaleX(1)}46%{transform:translate(200px,140px) scaleX(-1)}58%{transform:translate(150px,140px) scaleX(-1);opacity:1}62%,100%{transform:translate(150px,140px) scaleX(-1);opacity:0}}
+.otired{opacity:0;animation:otired 8s ease-in-out infinite}
+@keyframes otired{0%,58%{opacity:0}64%,94%{opacity:1}100%{opacity:0}}
+.batf{animation:batf 8s linear infinite}
+@keyframes batf{0%{width:44px;fill:#4ade80}30%{fill:#facc15}50%{fill:#f97316}60%,94%{width:4px;fill:#ef4444}100%{width:44px;fill:#4ade80}}
+.mrun2{animation:mrun2 8s ease-out infinite}.mrun2 .l1,.mrun2 .l2{transform-origin:0 -45px}.mrun2 .a1,.mrun2 .a2{transform-origin:0 -72px}
+.mrun2 .l1,.mrun2 .a2{animation:legM 8s linear infinite}.mrun2 .l2,.mrun2 .a1{animation:legM2 8s linear infinite}
+@keyframes legM{0%,2.5%,7.5%,12.5%,17.5%,22.5%,30%,40%{transform:rotate(-28deg)}5%,10%,15%,20%,26%,35%{transform:rotate(28deg)}46%,100%{transform:rotate(0)}}
+@keyframes legM2{0%,2.5%,7.5%,12.5%,17.5%,22.5%,30%,40%{transform:rotate(28deg)}5%,10%,15%,20%,26%,35%{transform:rotate(-28deg)}46%,100%{transform:rotate(0)}}
+@keyframes mrun2{0%{transform:translate(20px,140px);opacity:0}4%{opacity:1}46%{transform:translate(170px,140px);opacity:1}54%,100%{transform:translate(170px,140px);opacity:0}}
+.mrun2 .fl{transform-origin:0 -112px;animation:flame2 8s ease-in-out infinite}
+@keyframes flame2{0%,15%{opacity:1;transform:scale(1.2)}40%{opacity:.6;transform:scale(.6)}50%,100%{opacity:0;transform:scale(.2)}}
+.msit{opacity:0;animation:msit 8s ease-in-out infinite}
+@keyframes msit{0%,48%{opacity:0}56%,94%{opacity:1}100%{opacity:0}}
 .feeg h1{color:#fff!important}.feeg h1 em{color:var(--acc)!important}.feeg .lead,.feeg>.stage>div>p{color:rgba(255,255,255,.88)!important}.feeg .kick{color:var(--acc)!important}
 .kick:before{content:"";width:60px;height:4px;background:var(--acc);border-radius:2px}
 h1{font-size:96px;line-height:.98;font-weight:700;letter-spacing:-.012em}
@@ -165,22 +189,37 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden}
    <div style="font-size:27px;color:rgba(255,255,255,.88);margin-top:6px">&ldquo;There are two blessings that many people are deceived into losing: health and free time.&rdquo; <b style="color:var(--acc)">&mdash; Sahih al-Bukhari 6412</b></div>
   </div>
  </div></div><div class="prog"></div><div class="emb"><div class="emb-in"><img src="assets/shield.png" alt=""></div></div></section>
-<section class="slide navy" data-dur="22000" style="--dur:22s"><div class="bg"></div><div class="deco"><i></i><i></i><i></i><i></i><i></i><b></b><b></b></div><div class="sheen"></div><img class="mark" src="assets/emblem_white.png"><div class="stage"><div class="dots"></div>
- <div style="position:absolute;left:96px;top:80px;width:1728px">
-  <div class="kick left-in" style="--d:.1s">Motivation vs Consistency</div>
-  <h1 class="up" style="--d:.3s;margin-top:24px;font-size:100px">Motivation Starts It.<br><em class="shine">Habit Finishes It.</em></h1>
-  <div style="display:flex;gap:40px;margin-top:40px">
-   <div class="glass pop" style="--d:0.9s;flex:1;padding:34px 38px 34px;border-radius:30px;position:relative;min-height:330px"><div style="font-size:42px;font-weight:700;color:rgba(255,255,255,.75)">Motivation</div><svg class="stk" viewBox="0 0 220 150"><line x1="0" y1="140" x2="220" y2="140" stroke="rgba(255,255,255,.35)" stroke-width="3"/>
-<g class="mrun"><g class="body" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"><circle cx="0" cy="-92" r="11" fill="#fff"/><line x1="0" y1="-80" x2="0" y2="-45"/>
-<line class="a1" x1="0" y1="-72" x2="-18" y2="-55"/><line class="a2" x1="0" y1="-72" x2="18" y2="-58"/><line class="l1" x1="0" y1="-45" x2="-16" y2="-5"/><line class="l2" x1="0" y1="-45" x2="16" y2="-5"/></g>
-<text class="zz" x="14" y="-108" fill="#fff" font-size="20" font-weight="700">z z</text><path class="fl" d="M-6 -112 q6 -16 12 0 q-6 6 -12 0z" fill="#F2C14E"/></g></svg><div class="up" style="--d:1.15s;display:flex;gap:16px;align-items:center;font-size:31px;margin-top:18px"><span style="width:14px;height:14px;border-radius:50%;background:currentColor;flex:none;opacity:.8"></span>Comes and goes with your mood</div><div class="up" style="--d:1.40s;display:flex;gap:16px;align-items:center;font-size:31px;margin-top:18px"><span style="width:14px;height:14px;border-radius:50%;background:currentColor;flex:none;opacity:.8"></span>Waits for the &ldquo;right&rdquo; time</div><div class="up" style="--d:1.65s;display:flex;gap:16px;align-items:center;font-size:31px;margin-top:18px"><span style="width:14px;height:14px;border-radius:50%;background:currentColor;flex:none;opacity:.8"></span>Big start, quick stop</div></div>
-   <div class="pop" style="--d:1.6s;align-self:center;font-size:60px;font-weight:800;color:var(--acc)">vs</div>
-   <div class="gold pop" style="--d:1.8s;flex:1;padding:34px 38px;border-radius:30px;position:relative;min-height:330px"><div style="font-size:42px;font-weight:700;color:var(--ink)">Consistency</div><svg class="stk" viewBox="0 0 220 150"><path d="M10 140 H60 V115 H100 V90 H140 V65 H180 V40 H220" stroke="rgba(42,10,16,.45)" stroke-width="4" fill="none"/>
-<g class="oclimb"><g stroke="#2A0A10" stroke-width="5" stroke-linecap="round" fill="none"><circle cx="0" cy="-60" r="10" fill="#2A0A10"/><line x1="0" y1="-49" x2="0" y2="-20"/>
-<line class="a1" x1="0" y1="-42" x2="-14" y2="-28"/><line class="a2" x1="0" y1="-42" x2="14" y2="-30"/><line class="l1" x1="0" y1="-20" x2="-10" y2="0"/><line class="l2" x1="0" y1="-20" x2="12" y2="0"/></g></g></svg><div class="up" style="--d:2.05s;display:flex;gap:16px;align-items:center;font-size:31px;margin-top:18px"><span style="width:14px;height:14px;border-radius:50%;background:currentColor;flex:none;opacity:.8"></span>Shows up every day, even tired</div><div class="up" style="--d:2.30s;display:flex;gap:16px;align-items:center;font-size:31px;margin-top:18px"><span style="width:14px;height:14px;border-radius:50%;background:currentColor;flex:none;opacity:.8"></span>Small steps, done consistently</div><div class="up" style="--d:2.55s;display:flex;gap:16px;align-items:center;font-size:31px;margin-top:18px"><span style="width:14px;height:14px;border-radius:50%;background:currentColor;flex:none;opacity:.8"></span>Keeps going until it&rsquo;s done</div></div>
+<section class="slide navy" data-dur="24000" style="--dur:24s"><div class="bg"></div><div class="deco"><i></i><i></i><i></i><i></i><i></i><b></b><b></b></div><div class="sheen"></div><img class="mark" src="assets/emblem_white.png"><div class="stage"><div class="dots"></div>
+ <div style="position:absolute;left:96px;top:70px;width:1728px">
+  <div class="kick left-in" style="--d:.1s">Obsession vs Motivation vs Consistency</div>
+  <h1 class="up" style="--d:.3s;margin-top:20px;font-size:84px">Obsession Burns Out. Motivation Fades.<br><em class="shine">Consistency Wins.</em></h1>
+  <div style="display:flex;gap:30px;margin-top:34px">
+   <div class="glass pop c3" style="--d:0.8s;background:rgba(195,48,74,.22)"><div class="c3t">Obsession</div>
+    <svg class="stk3" viewBox="0 0 260 150"><line x1="0" y1="140" x2="260" y2="140" stroke="rgba(255,255,255,.35)" stroke-width="3"/>
+     <g class="bat" transform="translate(196,14)"><rect x="0" y="0" width="50" height="22" rx="4" fill="none" stroke="#fff" stroke-width="3"/><rect x="50" y="7" width="5" height="8" fill="#fff"/><rect class="batf" x="3" y="3" width="44" height="16" rx="2"/></g>
+     <g class="orun"><g class="ofig" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"><circle cx="0" cy="-92" r="11" fill="#fff"/><line x1="0" y1="-80" x2="6" y2="-45"/>
+      <line class="a1" x1="2" y1="-72" x2="-18" y2="-58"/><line class="a2" x1="2" y1="-72" x2="20" y2="-60"/><line class="l1" x1="6" y1="-45" x2="-12" y2="-5"/><line class="l2" x1="6" y1="-45" x2="22" y2="-5"/>
+      <path class="sw" d="M-20 -96 q-4 6 0 8 q4 -2 0 -8z" fill="#9fd3ff" stroke="none"/><path class="sw s2" d="M18 -104 q-4 6 0 8 q4 -2 0 -8z" fill="#9fd3ff" stroke="none"/></g></g>
+     <g class="otired" transform="translate(150,140)" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"><line x1="-12" y1="0" x2="0" y2="-38"/><line x1="14" y1="0" x2="0" y2="-38"/><line x1="0" y1="-38" x2="24" y2="-62"/><circle cx="36" cy="-62" r="11" fill="#fff"/><line x1="22" y1="-58" x2="-4" y2="-22"/><line x1="22" y1="-58" x2="10" y2="-22"/></g>
+    </svg>
+    <div class="up c3b" style="--d:1.1s"><span></span>All or nothing, no rest</div><div class="up c3b" style="--d:1.3s"><span></span>Skips sleep and meals</div><div class="up c3b" style="--d:1.5s"><span></span>Fast start, burns out</div></div>
+   <div class="glass pop c3" style="--d:1.2s"><div class="c3t">Motivation</div>
+    <svg class="stk3" viewBox="0 0 260 150"><line x1="0" y1="140" x2="260" y2="140" stroke="rgba(255,255,255,.35)" stroke-width="3"/>
+     <g class="mrun2"><g class="mfig" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"><circle cx="0" cy="-92" r="11" fill="#fff"/><line x1="0" y1="-80" x2="0" y2="-45"/>
+      <line class="a1" x1="0" y1="-72" x2="-18" y2="-55"/><line class="a2" x1="0" y1="-72" x2="18" y2="-58"/><line class="l1" x1="0" y1="-45" x2="-16" y2="-5"/><line class="l2" x1="0" y1="-45" x2="16" y2="-5"/>
+      <path class="fl" d="M-6 -112 q6 -16 12 0 q-6 6 -12 0z" fill="#F2C14E" stroke="none"/></g></g>
+     <g class="msit" transform="translate(170,140)" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"><line x1="0" y1="-12" x2="22" y2="-30"/><line x1="22" y1="-30" x2="30" y2="0"/><line x1="0" y1="-12" x2="-6" y2="-48"/><circle cx="-4" cy="-61" r="11" fill="#fff"/><line x1="-6" y1="-42" x2="18" y2="-28"/>
+      <text x="12" y="-80" fill="#fff" stroke="none" font-size="20" font-weight="700">z z</text></g>
+    </svg>
+    <div class="up c3b" style="--d:1.5s"><span></span>Comes and goes with mood</div><div class="up c3b" style="--d:1.7s"><span></span>Waits for the &ldquo;right&rdquo; time</div><div class="up c3b" style="--d:1.9s"><span></span>Big start, quick stop</div></div>
+   <div class="gold pop c3" style="--d:1.6s"><div class="c3t" style="color:var(--ink)">Consistency</div>
+    <svg class="stk3" viewBox="0 0 260 150"><path d="M10 140 H60 V115 H100 V90 H140 V65 H180 V40 H250" stroke="rgba(42,10,16,.45)" stroke-width="4" fill="none"/>
+     <g class="oclimb"><g stroke="#2A0A10" stroke-width="5" stroke-linecap="round" fill="none"><circle cx="0" cy="-60" r="10" fill="#2A0A10"/><line x1="0" y1="-49" x2="0" y2="-20"/>
+      <line class="a1" x1="0" y1="-42" x2="-14" y2="-28"/><line class="a2" x1="0" y1="-42" x2="14" y2="-30"/><line class="l1" x1="0" y1="-20" x2="-10" y2="0"/><line class="l2" x1="0" y1="-20" x2="12" y2="0"/></g></g></svg>
+    <div class="up c3b" style="--d:1.9s"><span></span>Shows up every day, even tired</div><div class="up c3b" style="--d:2.1s"><span></span>Small steps, done daily</div><div class="up c3b" style="--d:2.3s"><span></span>Keeps going until it&rsquo;s done</div></div>
   </div>
-  <div class="up" style="--d:3.0s;margin-top:36px;text-align:center">
-   <div style="font-family:Amiri,serif;font-size:50px;color:var(--acc);direction:rtl;white-space:nowrap">أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ تَعَالَى أَدْوَمُهَا وَإِنْ قَلَّ</div>
+  <div class="up" style="--d:2.8s;margin-top:30px;text-align:center">
+   <div style="font-family:Amiri,serif;font-size:48px;color:var(--acc);direction:rtl;white-space:nowrap">أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ تَعَالَى أَدْوَمُهَا وَإِنْ قَلَّ</div>
    <div style="font-size:28px;color:rgba(255,255,255,.85);margin-top:8px">&ldquo;The most beloved deeds to Allah are those done consistently, even if they are small.&rdquo; <b style="color:var(--acc)">&mdash; Sahih Muslim 783</b></div>
   </div>
  </div>

@@ -114,8 +114,8 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .gbx.on{background:linear-gradient(180deg,#F6C453,#E8A93A);color:#2A0A10}
 .gc.span{z-index:1}
 .gcls .gc>.card{flex:1;justify-content:center}
-.gsec span{white-space:normal;word-break:break-word;line-height:1.05;min-width:0}.gsec.long{font-size:calc(1.8vh*var(--fit,1))}
-.gsec{display:flex;align-items:center;gap:.5em;padding:0 .7em;border-radius:.8vh;background:var(--c);color:var(--on);font:800 calc(2.3vh*var(--fit,1)) var(--display);min-height:0;overflow:hidden}.gsec b{background:rgba(255,255,255,.25);padding:0 .35em;border-radius:.4em}
+.gsec span{white-space:nowrap;line-height:1.05}.gsec b{flex:none}.gsec.long{font-size:calc(2vh*var(--fit,1))}
+.gsec{display:flex;align-items:center;gap:.5em;padding:0 .7em;white-space:nowrap;border-radius:.8vh;background:var(--c);color:var(--on);font:800 calc(2.3vh*var(--fit,1)) var(--display);min-height:0;overflow:hidden}.gsec b{background:rgba(255,255,255,.25);padding:0 .35em;border-radius:.4em}
 .gth{flex-direction:column;font-size:calc(1.9vh*var(--fit,1))}
 .gbv{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:1.5vh;padding:0}
 .rmb{background:#1c1416;color:#fff;padding:.05em .45em;border-radius:.35em;letter-spacing:.04em}
@@ -361,6 +361,7 @@ body.tv #avWrap{display:block}
 #avBubble:after{content:"";position:absolute;right:-2vh;top:50%;margin-top:-1.1vh;border:1.1vh solid transparent;border-left:1.6vh solid #C3304A}
 body.avslide #avWrap{position:fixed;z-index:30;width:18vh}body.avslide #av{width:18vh;height:18vh}body.avslide #avBurst,body.avslide #avPortal,body.avslide #avBubble{position:fixed;z-index:31}
 body:not(.tv) #avBubble,body:not(.tv) #avPortal,body:not(.tv) #avBurst{display:none}
+#avWrap{width:10.4vh}#av{width:10.4vh;height:10.4vh;bottom:.5vh}body.avslide #avWrap{width:18vh}body.avslide #av{width:18vh;height:18vh;bottom:-.5vh}
 /* ===== end avatar ===== */
 </style>
 </head>
@@ -1026,7 +1027,7 @@ function renderByClass(box, vis0, nowM) {
     const k = String(r.sec || '').trim().toUpperCase(); if (!k) return; if (!secs.has(k)) secs.set(k, info(r)); })); });
   const list = [...secs.keys()].sort((a, b) => { const ga = GR[secs.get(a).cls] ?? 9, gb = GR[secs.get(b).cls] ?? 9; return ga - gb || a.localeCompare(b, 'en', { numeric: true }); });
   const cols = vis.map(it => it.kind === 'break' ? '5.2vw' : 'minmax(0,1fr)').join(' ');
-  let h = `<div class="g gcls" style="grid-template-columns:11vw ${cols};grid-template-rows:auto repeat(${list.length},minmax(0,1fr))">`;
+  let h = `<div class="g gcls" style="grid-template-columns:minmax(9vw,max-content) ${cols};grid-template-rows:auto repeat(${list.length},minmax(0,1fr))">`;
   h += '<div class="gh gcorner" style="grid-row:1;grid-column:1">Class</div>';
   vis.forEach((it, i) => {
     const rg = it.range, on = rg && nowM >= rg[0] && nowM < rg[1];
@@ -1036,7 +1037,7 @@ function renderByClass(box, vis0, nowM) {
   });
   list.forEach((k, ri) => {
     const inf = secs.get(k), row = ri + 2;
-    const kk = k.replace(/\//g, '/\u200B'); h += `<div class="gsec${k.length > 5 ? ' long' : ''}" style="grid-row:${row};grid-column:1;--c:${inf.color};--on:${inkOn(inf.color)}"><b>${esc(inf.cls)}</b><span>${esc(kk)}</span></div>`; // long names (IXG1/XG1) wrap instead of being cut
+    const kk = k; h += `<div class="gsec${k.length > 5 ? ' long' : ''}" style="grid-row:${row};grid-column:1;--c:${inf.color};--on:${inkOn(inf.color)}"><b>${esc(inf.cls)}</b><span>${esc(kk)}</span></div>`; // long names (IXG1/XG1) wrap instead of being cut
     const cellsOf = it => { const rs = []; if (it.kind === 'break') return rs; Object.keys(it.cells).forEach(rm => it.cells[rm].forEach(r => { if (String(r.sec || '').trim().toUpperCase() === k) rs.push(r); })); return rs; };
     const sig = r => [r.subj, r.teacher, r.note, r.room].map(x => String(x || '').trim().toLowerCase()).join('|');
     const card = (r, time, rg) => { const rm = String(r.room || '').toUpperCase(), rf = roomFrom(r);
@@ -1054,7 +1055,7 @@ function renderByClass(box, vis0, nowM) {
   });
   box.innerHTML = h + '</div>';
   let fit = Math.max(0.8, Math.min(1.45, 19 / Math.max(list.length, 1)));
-  const over = () => [].some.call(box.querySelectorAll('.gc:not(.multi) .card'), c => c.scrollHeight > c.clientHeight + 1 || c.scrollWidth > c.clientWidth + 2);
+  const over = () => [].some.call(box.querySelectorAll('.gc:not(.multi) .card, .gsec'), c => c.scrollHeight > c.clientHeight + 1 || c.scrollWidth > c.clientWidth + 2);
   box.style.setProperty('--fit', fit.toFixed(2));
   for (let k = 0; k < 14 && fit > 0.6 && over(); k++) { fit -= 0.05; box.style.setProperty('--fit', fit.toFixed(2)); }
   [].forEach.call(box.querySelectorAll('.gc.multi'), g => { let f = 0.85; g.style.setProperty('--fit', (fit * f).toFixed(2)); for (let q = 0; q < 12 && f > 0.4 && (g.scrollHeight > g.clientHeight + 1 || [].some.call(g.querySelectorAll(".card"), c => c.scrollHeight > c.clientHeight + 1)); q++) { f -= 0.05; g.style.setProperty('--fit', (fit * f).toFixed(2)); } });
@@ -2150,7 +2151,7 @@ function avPlace() {
   const w = $('#avWrap'), bn = $('.banner').getBoundingClientRect(), st = $('#stage').getBoundingClientRect(), tt = $('#title').getBoundingClientRect(), ck = $('.clk').getBoundingClientRect(), hd = $('header.top').getBoundingClientRect(), aw = w.offsetWidth;
   let x = (tt.right + ck.left) / 2 - aw / 2; if (ck.left - tt.right < aw + 10) x = ck.left - aw - 8;
   const cx = x - st.left + aw / 2, barTop = bn.top - st.top;
-  w.style.left = (x - st.left) + 'px'; w.style.height = (barTop + bn.height * 0.5) + 'px';
+  w.style.left = (x - st.left) + 'px'; w.style.height = barTop + 'px'; // whole face shows above the red bar
   const b = $('#avBurst'); b.style.left = cx + 'px'; b.style.top = (barTop - aw * 0.55) + 'px';
   const p = $('#avPortal'); p.style.left = cx + 'px'; p.style.top = barTop + 'px';
   const bb = $('#avBubble'); bb.style.right = (st.right - x + 14) + 'px'; bb.style.top = (hd.top - st.top + hd.height / 2) + 'px'; bb.style.marginTop = '-' + (bb.offsetHeight / 2 || 30) + 'px';
