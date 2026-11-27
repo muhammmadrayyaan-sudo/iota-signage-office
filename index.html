@@ -125,7 +125,7 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .slab b{background:rgba(255,255,255,.25);padding:.1em .35em;border-radius:.5vh}.slab span{word-break:break-word;min-width:0}
 .stiles{flex:1;display:flex;gap:.5vw;min-width:0}
 .stile{min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:row;align-items:center;gap:1.1vw;padding:.4vh 1vw;border-radius:1vh;background:var(--tint);border:.25vh solid transparent;border-left:.8vh solid var(--c);color:var(--ink);justify-content:center}
-.stime{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:.25em;font:800 calc(2.9vh*var(--fit,1)) var(--display);white-space:nowrap;color:#8B0A14;letter-spacing:.02em}
+.stime{flex:0 0 auto;display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:.15em .45em;width:9.6em;font:800 calc(2.9vh*var(--fit,1)) var(--display);white-space:nowrap;color:#8B0A14;letter-spacing:.02em}
 .stime i{font-style:normal;font-size:.72em;padding:.1em .55em;border-radius:99px;background:#B3121F;color:#fff;letter-spacing:.12em}
 .stile.nx .stime i{background:#C9A227;color:#2A0A10}
 .slines{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:.3vh}.sl{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 .9vw}
@@ -137,6 +137,22 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .stile.on .stime i{animation:sBlink 1s steps(2,start) infinite}
 @keyframes sGlow{0%,100%{box-shadow:0 0 0 .2vh rgba(179,18,31,.25)}50%{box-shadow:0 0 1.6vh .5vh rgba(179,18,31,.55)}}
 @keyframes sBlink{to{visibility:hidden}}
+.stime span{flex-basis:100%}.stime em{font-style:normal;font-size:.62em;font-weight:700;color:#555;letter-spacing:.02em}
+.stile.on .stime em{color:#B3121F}
+.stile{position:relative;transition:transform .4s}
+.stile.on{background:linear-gradient(100deg,#fff 0%,#FFF4F4 100%)}
+.stile.on:after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.75) 50%,transparent 65%);transform:translateX(-110%);animation:sShine 5s ease-in-out infinite;pointer-events:none}
+@keyframes sShine{0%,55%{transform:translateX(-110%)}85%,100%{transform:translateX(110%)}}
+.sbar{position:absolute;left:0;right:0;bottom:0;height:.55vh;background:rgba(179,18,31,.12)}
+.sbar b{display:block;height:100%;background:linear-gradient(90deg,#B3121F,#E0364A);border-radius:0 99px 99px 0;transition:width 1s}
+.stile.nx{border-color:rgba(201,162,39,.55)}
+.stile.nx .stime i{animation:sNx 2.2s ease-in-out infinite}
+@keyframes sNx{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.slab{position:relative;overflow:hidden}
+.slab:after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-50%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:sLab 7s ease-in-out infinite;animation-delay:calc(var(--i,0)*.35s)}
+@keyframes sLab{0%,70%{transform:translateX(0)}100%{transform:translateX(400%)}}
+.strip.enter .srow{animation:sIn .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*.08s)}
+@keyframes sIn{from{opacity:0;transform:translateX(-3vw)}to{opacity:1;transform:none}}
 .gc{display:flex;flex-direction:column;gap:.3vh;min-height:0;min-width:0}
 .card{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:.2vh .6vw;border-radius:.8vh;border-left:.8vh solid var(--c);background:var(--tint);color:var(--ink)}
 .card .cs{display:flex;align-items:baseline;gap:.5em;white-space:nowrap;font:800 calc(1.95vh*var(--scale)*var(--fit,1))/1.1 var(--display)}
@@ -1054,22 +1070,26 @@ function renderStrip(box, vis0, nowM) {
       if (p && sig(p.rs) === sig(sl.rs) && p.last.range && sl.it.range && sl.it.range[0] - p.last.range[1] <= 45) { p.last = sl.it; p.n++; }
       else tiles.push({ first: sl.it, last: sl.it, rs: sl.rs, n: 1 }); });
     let nextDone = false;
-    h += `<div class="srow" style="--c:${inf.color};--on:${inkOn(inf.color)};--tint:${inf.color}22"><div class="slab"><b>${esc(inf.cls)}</b><span>${esc(k.replace(/\//g, '/​'))}</span></div><div class="stiles">`;
+    h += `<div class="srow" style="--i:${list.indexOf(k)};--c:${inf.color};--on:${inkOn(inf.color)};--tint:${inf.color}22"><div class="slab"><b>${esc(inf.cls)}</b><span>${esc(k.replace(/\//g, '/​'))}</span></div><div class="stiles">`;
     tiles.forEach(t => {
       const rg = t.first.range && t.last.range ? [t.first.range[0], t.last.range[1]] : null;
       const on = rg && nowM >= rg[0] && nowM < rg[1], nx = !on && !nextDone && rg && nowM < rg[0];
       if (on || nx) nextDone = true;
       const tm = fmtRange(ends(t.first.time)[0] + '-' + (ends(t.last.time)[1] || ''));
+      const mins = m => m >= 60 ? Math.floor(m / 60) + 'h ' + (m % 60 ? (m % 60) + 'm' : '') : m + ' min';
+      const pct = on ? Math.round(100 * (nowM - rg[0]) / Math.max(1, rg[1] - rg[0])) : 0;
+      const sub = on ? `<em>ends in ${mins(rg[1] - nowM)}</em>` : nx ? `<em>starts in ${mins(rg[0] - nowM)}</em>` : '';
       const lines = t.rs.map(r => { const n = String(r.note || '').trim(), th = teachName(r.teacher), rf = roomFrom(r), rm = String(r.room || '').toUpperCase();
         const ex = /test|exam|quiz|mid/i.test(n + ' ' + r.subj);
         return `<div class="sl"><div class="ssub">${esc(subjName(r.subj).replace(/^Mathematics$/, 'Math'))}</div>` +
           `<div class="smeta">${th ? `<span class="stch">${esc(th)}</span>` : ''}${rm ? `<b class="srm${rf ? ' mv' : ''}">${rf ? esc(rf) + ' → ' : ''}${esc(rm)}</b>` : ''}${n && !rf ? `<span class="snote${ex ? ' ex' : ''}">${esc(n)}</span>` : ''}</div></div>`; }).join('');
       h += `<div class="stile${on ? ' on' : ''}${nx ? ' nx' : ''}" style="flex:${t.n} 1 0">` +
-        `<div class="stime"><span>${esc(tm)}</span>${on ? '<i>NOW</i>' : nx ? '<i>NEXT</i>' : ''}</div><div class="slines">${lines}</div></div>`;
+        `<div class="stime"><span>${esc(tm)}</span>${on ? '<i>NOW</i>' : nx ? '<i>NEXT</i>' : ''}${sub}</div><div class="slines">${lines}</div>${on ? `<div class="sbar"><b style="width:${pct}%"></b></div>` : ''}</div>`;
     });
     h += '</div></div>';
   });
-  box.innerHTML = h + '</div>';
+  const sigNow = list.join(',') + '|' + vis.length; const fresh = box.dataset.ssig !== sigNow; box.dataset.ssig = sigNow;
+  box.innerHTML = h + '</div>'; if (fresh) box.firstChild.classList.add('enter');
   let fit = Math.max(0.7, Math.min(1.4, 11 / Math.max(list.length, 1)));
   const over = () => [].some.call(box.querySelectorAll('.stile'), c => c.scrollHeight > c.clientHeight + 1 || c.scrollWidth > c.clientWidth + 2);
   box.style.setProperty('--fit', fit.toFixed(2));
