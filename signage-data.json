@@ -46,7 +46,7 @@
   "SH": "Shahid Munawar"
  },
  "classColors": {},
- "ver": 15,
+ "ver": 16,
  "groups": [
   {
    "id": "xiib",
@@ -769,7 +769,7 @@
    "name": "IOTA animated slides",
    "file": "slides/",
    "on": true,
-   "sec": 15,
+   "sec": 40,
    "v": 1
   },
   {
