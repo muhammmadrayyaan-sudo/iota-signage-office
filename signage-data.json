@@ -46,7 +46,7 @@
   "SH": "Shahid Munawar"
  },
  "classColors": {},
- "ver": 14,
+ "ver": 15,
  "groups": [
   {
    "id": "xiib",
@@ -151,27 +151,27 @@
  "interNoticeSec": 4,
  "notices": [
   {
-   "on": true,
+   "on": false,
    "title": "Policy",
    "text": "Keep your phone on silent and don’t use it during class."
   },
   {
-   "on": true,
+   "on": false,
    "title": "Policy",
    "text": "Use the coaching phone to contact your parents."
   },
   {
-   "on": true,
+   "on": false,
    "title": "Policy",
    "text": "Be in class before it starts."
   },
   {
-   "on": true,
+   "on": false,
    "title": "Policy",
    "text": "Attendance is compulsory. Inform the office if you will be absent."
   },
   {
-   "on": true,
+   "on": false,
    "title": "Policy",
    "text": "Wear your ID card at all times on campus."
   }
@@ -768,8 +768,8 @@
    "type": "web",
    "name": "IOTA animated slides",
    "file": "slides/",
-   "on": false,
-   "sec": 60,
+   "on": true,
+   "sec": 15,
    "v": 1
   },
   {
