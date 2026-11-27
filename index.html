@@ -119,6 +119,56 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .gth{flex-direction:column;font-size:calc(1.9vh*var(--fit,1))}
 .gbv{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:1.5vh;padding:0}
 .rmb{background:#1c1416;color:#fff;padding:.05em .45em;border-radius:.35em;letter-spacing:.04em}
+/* ===== Board view (admin office, 27 Nov): airport-departures style — one row per class: NOW | NEXT | LATER ===== */
+#gridWrap.board{background:linear-gradient(160deg,#0B1A2E 0%,#10223B 55%,#0B1729 100%);box-shadow:0 .6vh 2.4vh rgba(10,20,40,.35)}
+.brd{display:flex;flex-direction:column;height:100%;min-height:0;padding:1vh 1.1vw 1.2vh;box-sizing:border-box;color:#E8EEF7;font-family:var(--display)}
+.bh,.br{display:grid;grid-template-columns:10vw minmax(0,1.4fr) minmax(0,1.15fr) minmax(0,1fr);gap:.8vw;align-items:stretch}
+.bh{padding:.2vh .4vw .8vh;font:800 2vh var(--display);letter-spacing:.28em;color:#7F93B0;text-transform:uppercase}
+.bh span{display:flex;align-items:center;gap:.6em}
+.bh .hn i{width:1em;height:1em;border-radius:50%;background:#FF3B4E;box-shadow:0 0 0 0 rgba(255,59,78,.7);animation:bDot 1.6s ease-out infinite}
+@keyframes bDot{0%{box-shadow:0 0 0 0 rgba(255,59,78,.7)}100%{box-shadow:0 0 0 .9em rgba(255,59,78,0)}}
+.brows{flex:1;display:flex;flex-direction:column;gap:.75vh;min-height:0}
+.br{flex:1 1 0;min-height:0;padding:0 .4vw;border-radius:1.1vh;background:rgba(255,255,255,.045);border:.15vh solid rgba(255,255,255,.06)}
+.br:nth-child(even){background:rgba(255,255,255,.075)}
+.bc{min-width:0;min-height:0;overflow:hidden;display:flex;align-items:center}
+.bcls{margin:.7vh 0;border-radius:.9vh;background:var(--c);color:var(--on);gap:.45em;padding:0 .7em;font:800 calc(3.2vh*var(--fit,1)) var(--display);line-height:1;box-shadow:inset 0 -.5vh 0 rgba(0,0,0,.18)}
+.bcls b{font-size:.62em;background:rgba(255,255,255,.28);padding:.18em .4em;border-radius:.35em}
+.bcls span{white-space:nowrap}.bcls.long{font-size:calc(2.35vh*var(--fit,1))}
+.bnow{position:relative;gap:.9vw;padding:0 .9vw .4vh;margin:.35vh 0;border-radius:.9vh;background:linear-gradient(100deg,rgba(255,59,78,.20),rgba(255,59,78,.05));border:.2vh solid rgba(255,90,105,.55);box-shadow:0 0 2vh rgba(255,59,78,.18) inset}
+.bnow:after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.10) 50%,transparent 60%);transform:translateX(-110%);animation:bShine 6s ease-in-out infinite;pointer-events:none}
+@keyframes bShine{0%,55%{transform:translateX(-110%)}100%{transform:translateX(110%)}}
+.bnow.idle{background:none;border:.2vh dashed rgba(255,255,255,.12);box-shadow:none;color:#6F84A3;font:600 calc(2.4vh*var(--fit,1)) var(--body);justify-content:flex-start}
+.bnow.idle:after{display:none}
+.rm{flex:none;display:grid;place-items:center;min-width:2.4em;padding:.18em .3em;border-radius:.4em;background:#FACC15;color:#111827;font:800 calc(3.2vh*var(--fit,1)) var(--display);letter-spacing:.02em;line-height:1}
+.rm small{display:none}.rm.mv small{display:block;font-size:.4em;letter-spacing:.05em;margin-bottom:.1em}
+.rm.ol{background:none;color:#FACC15;border:.25vh solid rgba(250,204,21,.8);font-size:calc(2.7vh*var(--fit,1))}
+.rm.mv{background:#F97316;color:#fff}
+.bl{min-width:0;flex:1;display:flex;flex-direction:column;gap:.15vh;justify-content:center}
+.bl.ml{gap:.35vh}.bl.ml .bi{display:flex;align-items:baseline;gap:.5vw;min-width:0;white-space:nowrap}.bl.ml .bsub{font-size:calc(2.3vh*var(--fit,1));flex:none}.bl.ml .btch{font-size:calc(1.8vh*var(--fit,1));min-width:0}.rm.sm{font-size:calc(1.9vh*var(--fit,1));min-width:2.3em;align-self:center}
+.bsub{font:800 calc(3.1vh*var(--fit,1))/1 var(--display);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btch{font:600 calc(2vh*var(--fit,1))/1.05 var(--body);color:#AFC0D8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bnx .bsub{font-size:calc(2.9vh*var(--fit,1));color:#EAF1FB}.bnx .btch{font-size:calc(2.1vh*var(--fit,1))}
+.btag{display:inline-block;margin-left:.5em;padding:.1em .5em;border-radius:.35em;font:800 .62em var(--display);letter-spacing:.06em;vertical-align:.15em;background:rgba(255,255,255,.14);color:#fff}
+.btag.t{background:#EF233C;animation:bTag 1.2s ease-in-out infinite}.btag.x{background:#7C3AED}.btag.p{background:#0EA5E9}
+@keyframes bTag{50%{opacity:.55}}
+.bend{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:.3vh;font:800 calc(2.4vh*var(--fit,1)) var(--display);color:#FF8A96;white-space:nowrap}
+.bend i{font-style:normal;font-size:.72em;letter-spacing:.16em;color:#fff;background:#EF233C;padding:.18em .55em;border-radius:.3em;animation:bTag 1s steps(2,start) infinite}
+.bbar{position:absolute;left:0;right:0;bottom:0;height:.55vh;background:rgba(255,255,255,.12)}
+.bbar b{display:block;height:100%;background:linear-gradient(90deg,#FF3B4E,#FFB703);box-shadow:0 0 1vh rgba(255,183,3,.7);transition:width 1s}
+.bnx{gap:.8vw;padding:.4vh .6vw}
+.bwhen{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:4.2em;font:800 calc(3vh*var(--fit,1))/1 var(--display);color:#FBBF24;font-variant-numeric:tabular-nums}
+.bwhen em{font-style:normal;font:700 calc(1.9vh*var(--fit,1)) var(--body);color:#8FA3BF;margin-top:.3vh;white-space:nowrap}
+.bnx.soon .bwhen em{color:#FBBF24}
+.blt{flex-wrap:wrap;align-content:center;gap:.5vh .4vw;padding:.4vh 0;max-height:100%}
+.chip{display:inline-flex;align-items:center;gap:.4em;padding:.25em .55em;border-radius:.5em;background:rgba(255,255,255,.08);border:.15vh solid rgba(255,255,255,.1);font:700 calc(2.3vh*var(--fit,1)) var(--display);color:#D6E0EE;white-space:nowrap}
+.chip b{color:#FBBF24;font-variant-numeric:tabular-nums}.chip u{text-decoration:none;color:#FACC15;opacity:.85}
+.chip.t{border-color:rgba(239,35,60,.6)}
+.blt .none{font:600 calc(1.9vh*var(--fit,1)) var(--body);color:#5F7391}
+.bflip{animation:bFlip .7s cubic-bezier(.3,.7,.3,1) both}
+@keyframes bFlip{0%{transform:perspective(60vh) rotateX(-88deg);opacity:0}60%{transform:perspective(60vh) rotateX(12deg);opacity:1}100%{transform:none}}
+.brd.enter .br{animation:bIn .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*.07s)}
+@keyframes bIn{from{opacity:0;transform:translateX(-3vw)}to{opacity:1;transform:none}}
+.brd .bye{color:#E8EEF7}
 .strip{display:flex;flex-direction:column;gap:.9vh;height:100%;min-height:0}
 .srow{flex:1 1 0;min-height:0;display:flex;gap:.6vw}
 .slab{flex:0 0 12vw;display:flex;align-items:center;gap:.5em;padding:0 .7em;border-radius:1vh;background:var(--c);color:var(--on);font:800 calc(3vh*var(--fit,1)) var(--display);overflow:hidden;line-height:1.05}
@@ -1049,6 +1099,65 @@ function cardHtml(r, slotTime, nowM, rgOver) {
     ((tpill || pill) ? `<div class="cth">${tpill || pill}</div>` : '') + `</div>`;
 }
 
+/* Board view (admin office): airport-departures style. One row per class section:
+   NOW (room, subject, teacher, time left + progress bar) | NEXT (start time, countdown, room) | LATER (small chips).
+   Cells that change flip over like a departures board. */
+function renderBoard(box, vis0, nowM) {
+  const vis = vis0.filter(it => it.kind !== 'break' && !(it.range && nowM >= it.range[1]));
+  const GR = { XII: 0, XI: 1, X: 2, IX: 3 }, secs = new Map();
+  vis.forEach(it => Object.keys(it.cells).forEach(rm => it.cells[rm].forEach(r => {
+    const k = String(r.sec || '').trim().toUpperCase(); if (!k) return;
+    if (!secs.has(k)) secs.set(k, { inf: info(r), slots: [] });
+    const S0 = secs.get(k).slots; let sl = S0.find(x => x.it === it); if (!sl) S0.push(sl = { it, rs: [] }); sl.rs.push(r); })));
+  box.classList.add('board');
+  if (!secs.size) { box.innerHTML = '<div class="brd"><div class="empty bye"><div class="bye1">Assalamu Alaikum</div><div class="bye2">Classes are over for today.</div><div class="bye3">Have a safe journey home. See you tomorrow, In shaa Allah!</div></div></div>'; return; }
+  const list = [...secs.keys()].sort((a, b) => { const ga = GR[secs.get(a).inf.cls] ?? 9, gb = GR[secs.get(b).inf.cls] ?? 9; return ga - gb || a.localeCompare(b, 'en', { numeric: true }); });
+  const sig = rs => rs.map(r => [r.subj, r.teacher, r.note, r.room].map(x => String(x || '').trim().toLowerCase()).join('|')).sort().join('#');
+  const ends = t => String(t || '').split(/\s*[-–—]\s*/);
+  const mins = m => m >= 60 ? Math.floor(m / 60) + 'h' + (m % 60 ? ' ' + (m % 60) + 'm' : '') : m + ' min';
+  const subj = r => esc(subjName(r.subj).replace(/^Mathematics$/, 'Math') || (r.note || ''));
+  const tag = r => { const n = String(r.note || '').trim(), a = (n + ' ' + r.subj).toLowerCase();
+    if (/mid\s*exam|exam|test|quiz/.test(a)) return `<span class="btag t">${esc(((n + ' ' + r.subj).match(/mid\s*exam|exam|quiz|test/i) || ['TEST'])[0].toUpperCase())}</span>`;
+    if (/extra/.test(a)) return '<span class="btag x">EXTRA</span>'; if (/practice/.test(a)) return '<span class="btag p">PRACTICE</span>';
+    if (/free unit/.test(a)) return '<span class="btag">FREE UNIT</span>'; return ''; };
+  const own = r => { const m = String(r.note || '').match(/\d{1,2}:\d{2}\s*[-–—]\s*\d{1,2}:\d{2}/); return m ? rangeOf(m[0]) : null; };
+  const room = (r, cls) => { const rm = String(r.room || '').toUpperCase(), rf = roomFrom(r); return rm ? `<span class="rm${cls || ''}${rf ? ' mv' : ''}"><small>${rf ? esc(rf) + ' →' : 'ROOM'}</small>${esc(rm)}</span>` : ''; };
+  const multi = (rs, cls) => `<div class="bl ml">${rs.map(r => `<div class="bi">${room(r, (cls || '') + ' sm')}<span class="bsub">${subj(r)}${tag(r)}</span><span class="btch">${esc(teachName(r.teacher) || '')}</span></div>`).join('')}</div>`; // one class split across rooms (e.g. Bio / Maths groups): one compact line each
+  const hm = m => { const h = Math.floor(m / 60), mm = m % 60; return (h % 12 || 12) + ':' + String(mm).padStart(2, '0'); };
+  const prev = box._bsig || {}, next = {};
+  let h = '<div class="brd"><div class="bh"><span>Class</span><span class="hn"><i></i>Now</span><span>Next</span><span>Later today</span></div><div class="brows">';
+  list.forEach((k, ri) => {
+    const { inf, slots } = secs.get(k), tiles = [];
+    slots.forEach(sl => { const p = tiles[tiles.length - 1];
+      if (p && sig(p.rs) === sig(sl.rs) && p.last.range && sl.it.range && sl.it.range[0] - p.last.range[1] <= 45) p.last = sl.it;
+      else tiles.push({ first: sl.it, last: sl.it, rs: sl.rs }); });
+    tiles.forEach(t => { t.rg = t.first.range && t.last.range ? [t.first.range[0], t.last.range[1]] : null; const o = t.rs.length === 1 && own(t.rs[0]); if (o && t.rg && o[0] < t.rg[1] && o[1] > t.rg[0]) t.rg = o; });
+    const nowT = tiles.find(t => t.rg && nowM >= t.rg[0] && nowM < t.rg[1]);
+    const rest = tiles.filter(t => t !== nowT && !(t.rg && nowM >= t.rg[1]));
+    const nxT = rest.find(t => t.rg && nowM < t.rg[0]) || null, later = rest.filter(t => t !== nxT);
+    let cNow, cNx, cLt;
+    if (nowT) {
+      const pct = Math.round(100 * (nowM - nowT.rg[0]) / Math.max(1, nowT.rg[1] - nowT.rg[0]));
+      cNow = `<div class="bc bnow">${nowT.rs.length === 1 ? room(nowT.rs[0]) : ''}${nowT.rs.length > 1 ? multi(nowT.rs) : `<div class="bl">${nowT.rs.map(r => `<div class="bsub">${subj(r)}${tag(r)}</div><div class="btch">${esc(teachName(r.teacher) || '')}</div>`).join('')}</div>`}` +
+        `<div class="bend"><i>NOW</i>${nowT.rs.length > 1 ? mins(nowT.rg[1] - nowM) + ' left' : 'ends in ' + mins(nowT.rg[1] - nowM)}</div><div class="bbar"><b style="width:${pct}%"></b></div></div>`;
+    } else cNow = `<div class="bc bnow idle">No class right now</div>`;
+    if (nxT) {
+      const d = nxT.rg[0] - nowM;
+      cNx = `<div class="bc bnx${d <= 15 ? ' soon' : ''}"><div class="bwhen">${hm(nxT.rg[0])}<em>in ${mins(d)}</em></div>${nxT.rs.length > 1 ? multi(nxT.rs, ' ol') : `<div class="bl">${nxT.rs.map(r => `<div class="bsub">${subj(r)}${tag(r)}</div><div class="btch">${esc(teachName(r.teacher) || '')}</div>`).join('')}</div>${room(nxT.rs[0], ' ol')}`}</div>`;
+    } else cNx = `<div class="bc bnx"><div class="blt"><span class="none">—</span></div></div>`;
+    cLt = `<div class="bc blt">${later.length ? later.slice(0, 3).map(t => `<span class="chip${t.rs.some(r => /test|exam|quiz/i.test(r.note + ' ' + r.subj)) ? ' t' : ''}"><b>${t.rg ? hm(t.rg[0]) : esc(t.first.time)}</b>${t.rs.length > 1 ? t.rs.map(r => esc(r.subj)).join(' / ') : subj(t.rs[0])}${t.rs.length === 1 && t.rs[0].room ? ` <u>${esc(String(t.rs[0].room).toUpperCase())}</u>` : ''}</span>`).join('') + (later.length > 3 ? `<span class="chip">+${later.length - 3} more</span>` : '') : '<span class="none">—</span>'}</div>`;
+    const strip = x => x.replace(/ends in [^<]*|in \d[^<]*|width:\d+%/g, ''); // the countdown ticking is not a "change"
+    const fl = (n, html) => { const st = strip(html); next[k + n] = st; return prev[k + n] !== undefined && prev[k + n] !== st ? html.replace('class="bc ', 'class="bc bflip ') : html; };
+    h += `<div class="br" style="--i:${ri}"><div class="bc bcls${k.length > 5 ? ' long' : ''}" style="--c:${inf.color};--on:${inkOn(inf.color)}"><b>${esc(inf.cls)}</b><span>${esc(k)}</span></div>${fl('n', cNow)}${fl('x', cNx)}${fl('l', cLt)}</div>`;
+  });
+  box._bsig = next;
+  const sigNow = list.join(','); const fresh = box.dataset.bsig !== sigNow; box.dataset.bsig = sigNow;
+  box.innerHTML = h + '</div></div>'; if (fresh) box.firstChild.classList.add('enter');
+  let fit = Math.max(0.8, Math.min(1.3, 10.5 / Math.max(list.length, 1)));
+  const over = () => [].some.call(box.querySelectorAll('.bc'), c => c.scrollHeight > c.clientHeight + 2);
+  box.style.setProperty('--fit', fit.toFixed(2));
+  for (let q = 0; q < 16 && fit > 0.7 && over(); q++) { fit -= 0.05; box.style.setProperty('--fit', fit.toFixed(2)); }
+}
 /* Strip view (27 Nov): one row per class section; across it, that class's subjects in order, each with its
    own time. No time columns. The class running now glows and blinks NOW; the next one is tagged NEXT. */
 function renderStrip(box, vis0, nowM) {
@@ -1154,7 +1263,7 @@ function renderGrid() {
   const vis = cut >= items.length ? [] : items.slice(from);
   if (!vis.length) { box.innerHTML = '<div class="empty bye"><div class="bye1">Assalamu Alaikum</div><div class="bye2">Classes are over for today.</div><div class="bye3">Have a safe journey home. See you tomorrow, In shaa Allah!</div></div>'; return; }
   if (S.layout === 'grid') { renderByClass(box, vis, nowM); return; }
-  if (S.layout !== 'room') { renderStrip(box, vis, nowM); return; }
+  if (S.layout !== 'room') { if (IS_OFFICE_SITE && !IS_CAMPUS2) { renderBoard(box, vis, nowM); return; } box.classList.remove('board'); renderStrip(box, vis, nowM); return; }
   const rowsTpl = 'auto auto ' + vis.map(it => it.kind === 'break' ? 'auto' : 'minmax(0,1fr)').join(' ');
   let h = `<div class="g" style="grid-template-columns:10vw repeat(${rooms.length},minmax(0,1fr));grid-template-rows:${rowsTpl}">`;
   h += '<div class="gh gcorner" style="grid-row:1 / span 2;grid-column:1">Time</div>';
