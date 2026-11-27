@@ -2,7 +2,7 @@
    - Pages (the signage and the slides pages): internet first, but if the internet does not answer within 5 s
      the saved copy is shown, so a "connected but no internet" Wi-Fi never leaves the TV on a blank screen.
    - Pictures and fonts of the animated slides: the saved copy is shown at once and refreshed in the background. */
-const C = 'iota-signage-v5';
+const C = 'iota-signage-v6';
 const A = ['emblem_white.png', 'logo.png', 'shield.png', 'jost-latin-300-normal.woff2', 'jost-latin-400-normal.woff2', 'jost-latin-500-normal.woff2', 'jost-latin-600-normal.woff2', 'jost-latin-700-normal.woff2', 'jost-latin-800-normal.woff2', 'noto-nastaliq-urdu-arabic-400-normal.woff2', 'noto-nastaliq-urdu-arabic-600-normal.woff2'];
 const PRE = ['./', 'assets/avatar.png', 'logo.png', 'logo-big.png', 'slides/', 'sunnah/', 'slides/img/app.jpg', 'slides/img/crowd.jpg', 'slides/img/iceberg.jpg', 'slides/img/path.jpg', 'sunnah/img/h1.jpg', 'sunnah/img/h2.jpg', 'sunnah/img/h3.jpg', 'sunnah/img/h4.jpg', 'sunnah/img/h5.jpg', 'sunnah/img/h6.jpg', 'sunnah/assets/amiri-arabic-400-normal.woff2', 'sunnah/assets/amiri-arabic-700-normal.woff2']
   .concat(A.map(f => 'slides/assets/' + f), A.map(f => 'sunnah/assets/' + f));

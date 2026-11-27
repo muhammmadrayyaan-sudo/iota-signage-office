@@ -119,6 +119,24 @@ table.tt{width:100%;border-collapse:collapse;font:600 calc(2.45vh * var(--scale)
 .gth{flex-direction:column;font-size:calc(1.9vh*var(--fit,1))}
 .gbv{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:1.5vh;padding:0}
 .rmb{background:#1c1416;color:#fff;padding:.05em .45em;border-radius:.35em;letter-spacing:.04em}
+.strip{display:flex;flex-direction:column;gap:.9vh;height:100%;min-height:0}
+.srow{flex:1 1 0;min-height:0;display:flex;gap:.6vw}
+.slab{flex:0 0 12vw;display:flex;align-items:center;gap:.5em;padding:0 .7em;border-radius:1vh;background:var(--c);color:var(--on);font:800 calc(3vh*var(--fit,1)) var(--display);overflow:hidden;line-height:1.05}
+.slab b{background:rgba(255,255,255,.25);padding:.1em .35em;border-radius:.5vh}.slab span{word-break:break-word;min-width:0}
+.stiles{flex:1;display:flex;gap:.5vw;min-width:0}
+.stile{min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:row;align-items:center;gap:1.1vw;padding:.4vh 1vw;border-radius:1vh;background:var(--tint);border:.25vh solid transparent;border-left:.8vh solid var(--c);color:var(--ink);justify-content:center}
+.stime{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:.25em;font:800 calc(2.9vh*var(--fit,1)) var(--display);white-space:nowrap;color:#8B0A14;letter-spacing:.02em}
+.stime i{font-style:normal;font-size:.72em;padding:.1em .55em;border-radius:99px;background:#B3121F;color:#fff;letter-spacing:.12em}
+.stile.nx .stime i{background:#C9A227;color:#2A0A10}
+.slines{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:.3vh}.sl{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 .9vw}
+.ssub{font:800 calc(3.6vh*var(--fit,1)) var(--display);line-height:1.1}
+.smeta{display:flex;flex-wrap:wrap;align-items:center;gap:.3em .6em;font:600 calc(2.5vh*var(--fit,1)) var(--body,inherit);color:#333}
+.srm{background:var(--c);color:var(--on);padding:0 .45em;border-radius:.5vh;font-weight:800}.srm.mv{background:#E07A00;color:#fff}
+.snote{background:rgba(0,0,0,.07);padding:0 .45em;border-radius:.5vh;font-size:.85em;font-weight:700}.snote.ex{background:#B3121F;color:#fff}
+.stile.on{background:#fff;border-color:#B3121F;box-shadow:0 0 0 .3vh rgba(179,18,31,.25);animation:sGlow 1.6s ease-in-out infinite}
+.stile.on .stime i{animation:sBlink 1s steps(2,start) infinite}
+@keyframes sGlow{0%,100%{box-shadow:0 0 0 .2vh rgba(179,18,31,.25)}50%{box-shadow:0 0 1.6vh .5vh rgba(179,18,31,.55)}}
+@keyframes sBlink{to{visibility:hidden}}
 .gc{display:flex;flex-direction:column;gap:.3vh;min-height:0;min-width:0}
 .card{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:.2vh .6vw;border-radius:.8vh;border-left:.8vh solid var(--c);background:var(--tint);color:var(--ink)}
 .card .cs{display:flex;align-items:baseline;gap:.5em;white-space:nowrap;font:800 calc(1.95vh*var(--scale)*var(--fit,1))/1.1 var(--display)}
@@ -1014,6 +1032,49 @@ function cardHtml(r, slotTime, nowM, rgOver) {
     `<div class="cs"><b>${esc(i.cls)}</b><span>${esc(r.sec)}</span>${own}</div><div class="cj">${esc(subjName(r.subj).replace(/^Mathematics$/, 'Math'))}${th ? ' - ' + esc(th) : ''}</div>` +
     ((tpill || pill) ? `<div class="cth">${tpill || pill}</div>` : '') + `</div>`;
 }
+
+/* Strip view (27 Nov): one row per class section; across it, that class's subjects in order, each with its
+   own time. No time columns. The class running now glows and blinks NOW; the next one is tagged NEXT. */
+function renderStrip(box, vis0, nowM) {
+  const vis = vis0.filter(it => it.kind !== 'break' && !(it.range && nowM >= it.range[1]));
+  const GR = { XII: 0, XI: 1, X: 2, IX: 3 }, secs = new Map();
+  vis.forEach(it => Object.keys(it.cells).forEach(rm => it.cells[rm].forEach(r => {
+    const k = String(r.sec || '').trim().toUpperCase(); if (!k) return;
+    if (!secs.has(k)) secs.set(k, { inf: info(r), slots: [] });
+    const S0 = secs.get(k).slots; let sl = S0.find(x => x.it === it); if (!sl) S0.push(sl = { it, rs: [] }); sl.rs.push(r); })));
+  if (!secs.size) { box.innerHTML = '<div class="empty bye"><div class="bye2">Classes are over for today.</div></div>'; return; }
+  const list = [...secs.keys()].sort((a, b) => { const ga = GR[secs.get(a).inf.cls] ?? 9, gb = GR[secs.get(b).inf.cls] ?? 9; return ga - gb || a.localeCompare(b, 'en', { numeric: true }); });
+  const sig = rs => rs.map(r => [r.subj, r.teacher, r.note, r.room].map(x => String(x || '').trim().toLowerCase()).join('|')).sort().join('#');
+  const ends = t => String(t || '').split(/\s*[-–—]\s*/);
+  let h = '<div class="strip">';
+  list.forEach(k => {
+    const { inf, slots } = secs.get(k);
+    const tiles = [];
+    slots.forEach(sl => { const p = tiles[tiles.length - 1];
+      if (p && sig(p.rs) === sig(sl.rs) && p.last.range && sl.it.range && sl.it.range[0] - p.last.range[1] <= 45) { p.last = sl.it; p.n++; }
+      else tiles.push({ first: sl.it, last: sl.it, rs: sl.rs, n: 1 }); });
+    let nextDone = false;
+    h += `<div class="srow" style="--c:${inf.color};--on:${inkOn(inf.color)};--tint:${inf.color}22"><div class="slab"><b>${esc(inf.cls)}</b><span>${esc(k.replace(/\//g, '/​'))}</span></div><div class="stiles">`;
+    tiles.forEach(t => {
+      const rg = t.first.range && t.last.range ? [t.first.range[0], t.last.range[1]] : null;
+      const on = rg && nowM >= rg[0] && nowM < rg[1], nx = !on && !nextDone && rg && nowM < rg[0];
+      if (on || nx) nextDone = true;
+      const tm = fmtRange(ends(t.first.time)[0] + '-' + (ends(t.last.time)[1] || ''));
+      const lines = t.rs.map(r => { const n = String(r.note || '').trim(), th = teachName(r.teacher), rf = roomFrom(r), rm = String(r.room || '').toUpperCase();
+        const ex = /test|exam|quiz|mid/i.test(n + ' ' + r.subj);
+        return `<div class="sl"><div class="ssub">${esc(subjName(r.subj).replace(/^Mathematics$/, 'Math'))}</div>` +
+          `<div class="smeta">${th ? `<span class="stch">${esc(th)}</span>` : ''}${rm ? `<b class="srm${rf ? ' mv' : ''}">${rf ? esc(rf) + ' → ' : ''}${esc(rm)}</b>` : ''}${n && !rf ? `<span class="snote${ex ? ' ex' : ''}">${esc(n)}</span>` : ''}</div></div>`; }).join('');
+      h += `<div class="stile${on ? ' on' : ''}${nx ? ' nx' : ''}" style="flex:${t.n} 1 0">` +
+        `<div class="stime"><span>${esc(tm)}</span>${on ? '<i>NOW</i>' : nx ? '<i>NEXT</i>' : ''}</div><div class="slines">${lines}</div></div>`;
+    });
+    h += '</div></div>';
+  });
+  box.innerHTML = h + '</div>';
+  let fit = Math.max(0.7, Math.min(1.4, 11 / Math.max(list.length, 1)));
+  const over = () => [].some.call(box.querySelectorAll('.stile'), c => c.scrollHeight > c.clientHeight + 1 || c.scrollWidth > c.clientWidth + 2);
+  box.style.setProperty('--fit', fit.toFixed(2));
+  for (let q = 0; q < 16 && fit > 0.5 && over(); q++) { fit -= 0.05; box.style.setProperty('--fit', fit.toFixed(2)); }
+}
 /* Student & teacher view: one row per class section (find your class, read across), times across the top.
    Each box shows subject - teacher and the ROOM, so nobody needs to know the room grid. */
 function renderByClass(box, vis0, nowM) {
@@ -1072,7 +1133,8 @@ function renderGrid() {
   while (from > 0 && nCls < 4) { from--; if (items[from].kind !== 'break') nCls++; }
   const vis = cut >= items.length ? [] : items.slice(from);
   if (!vis.length) { box.innerHTML = '<div class="empty bye"><div class="bye1">Assalamu Alaikum</div><div class="bye2">Classes are over for today.</div><div class="bye3">Have a safe journey home. See you tomorrow, In shaa Allah!</div></div>'; return; }
-  if (S.layout !== 'room') { renderByClass(box, vis, nowM); return; }
+  if (S.layout === 'grid') { renderByClass(box, vis, nowM); return; }
+  if (S.layout !== 'room') { renderStrip(box, vis, nowM); return; }
   const rowsTpl = 'auto auto ' + vis.map(it => it.kind === 'break' ? 'auto' : 'minmax(0,1fr)').join(' ');
   let h = `<div class="g" style="grid-template-columns:10vw repeat(${rooms.length},minmax(0,1fr));grid-template-rows:${rowsTpl}">`;
   h += '<div class="gh gcorner" style="grid-row:1 / span 2;grid-column:1">Time</div>';
