@@ -1263,7 +1263,7 @@ function renderGrid() {
   const vis = cut >= items.length ? [] : items.slice(from);
   if (!vis.length) { box.innerHTML = '<div class="empty bye"><div class="bye1">Assalamu Alaikum</div><div class="bye2">Classes are over for today.</div><div class="bye3">Have a safe journey home. See you tomorrow, In shaa Allah!</div></div>'; return; }
   if (S.layout === 'grid') { renderByClass(box, vis, nowM); return; }
-  if (S.layout !== 'room') { if (IS_OFFICE_SITE && !IS_CAMPUS2) { renderBoard(box, vis, nowM); return; } box.classList.remove('board'); renderStrip(box, vis, nowM); return; }
+  if (S.layout !== 'room') { box.classList.remove('board'); renderStrip(box, vis, nowM); return; }
   const rowsTpl = 'auto auto ' + vis.map(it => it.kind === 'break' ? 'auto' : 'minmax(0,1fr)').join(' ');
   let h = `<div class="g" style="grid-template-columns:10vw repeat(${rooms.length},minmax(0,1fr));grid-template-rows:${rowsTpl}">`;
   h += '<div class="gh gcorner" style="grid-row:1 / span 2;grid-column:1">Time</div>';
