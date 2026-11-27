@@ -1490,10 +1490,10 @@ function logoSlideHtml() {
 let webTurn = 0;
 function buildSlides() {
   const out = [];
-  const webs = (S.videos || []).filter(v => v.on && v.type === 'web'), pickWeb = (!OFFICE && webs.length > 1) ? webs[webTurn++ % webs.length].id : null;
-  if (S.interLogo) out.push({ html: logoSlideHtml(), sec: S.interLogoSec });
+  const webs = (S.videos || []).filter(v => v.on && v.type === 'web' && (!IS_OFFICE_SITE || /^slides\//.test(v.file))), pickWeb = (!OFFICE && webs.length > 1) ? webs[webTurn++ % webs.length].id : null;
+  if (S.interLogo && !IS_OFFICE_SITE) out.push({ html: logoSlideHtml(), sec: S.interLogoSec }); // admin office: no logo slide, only Campus Rules + Fee Payment
   const FX = ['curtain', 'zoom', 'zoomout', 'slide', 'left', 'up', 'down', 'wipe', 'flip', 'fade'];
-  if (S.videoOn) (S.videos || []).filter(v => v.on).forEach((v, i) => {
+  if (S.videoOn) (S.videos || []).filter(v => v.on && (!IS_OFFICE_SITE || (v.type === 'web' && /^slides\//.test(v.file)))).forEach((v, i) => { /* admin office: only the slides/ page */
     const pick = v.fx || S.slideFx || 'curtain', fx = pick === 'mix' ? FX[i % FX.length] : pick, fit = v.fit || S.picFit || 'blur', u = `${rawUrl(v.file)}?v=${v.v || 0}`;
     if (v.type === 'web') { if (pickWeb && v.id !== pickWeb) return; out.push({ web: true, sec: v.sec || 80, html: `<iframe class="webslide" data-src="${v.file}?once=1&r=${Date.now()}" scrolling="no" allow="autoplay"></iframe>` }); return; }
     out.push(v.type === 'image'
@@ -1501,7 +1501,7 @@ function buildSlides() {
       : { video: true, sec: 45, html: `<video class="vid vfit-${fit === 'blur' ? 'contain' : fit}" playsinline preload="auto" src="${u}"></video>` });
   });
   const brand = $('#brand').innerHTML;
-  (S.notices || []).filter(n => n.on && ((n.title || '').trim() || (n.text || '').trim())).forEach(n =>
+  (IS_OFFICE_SITE ? [] : (S.notices || [])).filter(n => n.on && ((n.title || '').trim() || (n.text || '').trim())).forEach(n =>
     out.push({ html: `<div class="slbrand brand">${brand}</div><div class="nt"><div class="ntt">${esc(n.title)}</div><div class="ntb">${esc(n.text)}</div></div>`, sec: S.interNoticeSec }));
   return out;
 }
@@ -2255,7 +2255,7 @@ function avShow() {
   let t = 0; const done = () => { bub.classList.remove('on'); pt.classList.remove('on'); av.classList.remove('in', 'wave', 'point'); av.classList.add('out'); burst.classList.remove('go'); setTimeout(() => { portal.classList.remove('open'); portal.classList.add('close'); }, 450); setTimeout(() => { av.classList.remove('out'); portal.classList.remove('close'); document.body.classList.remove('avslide'); avBusy = false; }, 1300); };
   (function watch() { t += 500; if (avBlocked() || avMode() !== mode0 || t >= 11000) { done(); return; } setTimeout(watch, 500); })();
 }
-if (!ADMIN) setTimeout(function avLoop() { let shown = false; try { if (!avBusy && !avBlocked()) { avShow(); shown = avBusy; } } catch (e) {} setTimeout(avLoop, shown ? 2 * 60 * 1000 : 15 * 1000); }, 60 * 1000);
+if (!ADMIN && !IS_OFFICE_SITE) setTimeout(function avLoop() { /* admin office: no study-tip avatar */ let shown = false; try { if (!avBusy && !avBlocked()) { avShow(); shown = avBusy; } } catch (e) {} setTimeout(avLoop, shown ? 2 * 60 * 1000 : 15 * 1000); }, 60 * 1000);
 let lastTickOk = Date.now(); const bootAt = Date.now();
 tick(); setInterval(() => { tick(); lastTickOk = Date.now(); }, 1000); scheduleInter();
 if (!ADMIN) {
