@@ -1110,7 +1110,7 @@ function renderBoard(box, vis0, nowM) {
     if (!secs.has(k)) secs.set(k, { inf: info(r), slots: [] });
     const S0 = secs.get(k).slots; let sl = S0.find(x => x.it === it); if (!sl) S0.push(sl = { it, rs: [] }); sl.rs.push(r); })));
   box.classList.add('board');
-  if (!secs.size) { box.innerHTML = '<div class="brd"><div class="empty bye"><div class="bye1">Assalamu Alaikum</div><div class="bye2">Classes are over for today.</div><div class="bye3">Have a safe journey home. See you tomorrow, In shaa Allah!</div></div></div>'; return; }
+  if (!secs.size) { box.innerHTML = '<div class="brd"><div class="empty bye"><div class="bye2">Classes are over for today.</div><div class="bye3">Have a safe journey home. See you tomorrow, In shaa Allah!</div></div></div>'; return; }
   const list = [...secs.keys()].sort((a, b) => { const ga = GR[secs.get(a).inf.cls] ?? 9, gb = GR[secs.get(b).inf.cls] ?? 9; return ga - gb || a.localeCompare(b, 'en', { numeric: true }); });
   const sig = rs => rs.map(r => [r.subj, r.teacher, r.note, r.room].map(x => String(x || '').trim().toLowerCase()).join('|')).sort().join('#');
   const ends = t => String(t || '').split(/\s*[-–—]\s*/);
@@ -1261,7 +1261,7 @@ function renderGrid() {
   let nCls = items.slice(cut).filter(it => it.kind !== 'break').length, from = cut;
   while (from > 0 && nCls < 4) { from--; if (items[from].kind !== 'break') nCls++; }
   const vis = cut >= items.length ? [] : items.slice(from);
-  if (!vis.length) { box.innerHTML = '<div class="empty bye"><div class="bye1">Assalamu Alaikum</div><div class="bye2">Classes are over for today.</div><div class="bye3">Have a safe journey home. See you tomorrow, In shaa Allah!</div></div>'; return; }
+  if (!vis.length) { box.innerHTML = '<div class="empty bye"><div class="bye2">Classes are over for today.</div><div class="bye3">Have a safe journey home. See you tomorrow, In shaa Allah!</div></div>'; return; }
   if (S.layout === 'grid') { renderByClass(box, vis, nowM); return; }
   if (S.layout !== 'room') { if (IS_OFFICE_SITE && !IS_CAMPUS2) { renderBoard(box, vis, nowM); return; } box.classList.remove('board'); renderStrip(box, vis, nowM); return; }
   const rowsTpl = 'auto auto ' + vis.map(it => it.kind === 'break' ? 'auto' : 'minmax(0,1fr)').join(' ');
